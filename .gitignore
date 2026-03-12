@@ -1,0 +1,5 @@
+# Environment files
+/.idea
+# Project exclude paths
+/book-store-backend/storage/app/
+/book-store-backend/storage/framework/
