@@ -16,7 +16,7 @@ final readonly class MeilisearchTaskAwaiter
     public function __construct(
         private Client $client,
         private int    $timeoutMs,   // макс. время ожидания одной задачи
-        private int    $intervalMs,      // как часто поллим статус
+        private int    $intervalMs,  // как часто поллим статус
     ) {
     }
 
