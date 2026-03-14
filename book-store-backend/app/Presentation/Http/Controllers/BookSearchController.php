@@ -22,6 +22,6 @@ final class BookSearchController extends Controller
             SearchBooksCommand::fromArray($request->validated())
         );
 
-        return response()->json(BookSearchResource::fromResult($result));
+        return new JsonResponse(new BookSearchResource($result));
     }
 }

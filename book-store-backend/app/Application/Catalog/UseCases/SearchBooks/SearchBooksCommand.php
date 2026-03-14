@@ -18,8 +18,8 @@ final readonly class SearchBooksCommand
         public ?BookStatusEnum $status     = null,
         public ?AccessTypeEnum $accessType = null,
         public ?string         $language   = null,
-        public int             $limit      = 20,
-        public int             $offset     = 0,
+        public int             $limit,
+        public int             $offset,
     ) {}
 
     public function toQuery(): BookSearchQuery

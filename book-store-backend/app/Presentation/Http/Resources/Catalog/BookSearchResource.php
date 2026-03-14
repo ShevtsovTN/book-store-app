@@ -4,23 +4,21 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Resources\Catalog;
 
+use App\Application\Catalog\DTOs\BookSearchHit;
 use App\Application\Catalog\DTOs\BookSearchResult;
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 
-final readonly class BookSearchResource
+final class BookSearchResource extends JsonResource
 {
-    private function __construct(
-        public array $hits,
-        public int   $total,
-        public int   $limit,
-        public int   $offset,
-        public int   $processingTimeMs,
-    ) {}
-
-    public static function fromResult(BookSearchResult $result): self
+    public function toArray(Request $request): array
     {
-        return new self(
-            hits:             array_map(
-                static fn ($hit) => [
+        /** @var BookSearchResult $result */
+        $result = $this->resource;
+
+        return [
+            'data' => array_map(
+                static fn (BookSearchHit $hit) => [
                     'id'            => $hit->bookId,
                     'title'         => $hit->title,
                     'slug'          => $hit->slug,
@@ -31,10 +29,12 @@ final readonly class BookSearchResource
                 ],
                 $result->hits,
             ),
-            total:            $result->total,
-            limit:            $result->limit,
-            offset:           $result->offset,
-            processingTimeMs: $result->processingTimeMs,
-        );
+            'meta' => [
+                'total'              => $result->total,
+                'limit'              => $result->limit,
+                'offset'             => $result->offset,
+                'processing_time_ms' => $result->processingTimeMs,
+            ],
+        ];
     }
 }
