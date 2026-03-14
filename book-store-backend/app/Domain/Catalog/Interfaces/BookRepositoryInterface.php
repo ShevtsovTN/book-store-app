@@ -13,4 +13,5 @@ interface BookRepositoryInterface
     public function findAll(BookFilter $filter): BookCollection;
     public function save(Book $book): Book;
     public function delete(int $id): void;
+    public function cursor(): \Generator;
 }

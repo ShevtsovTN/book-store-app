@@ -2,7 +2,8 @@
 
 use App\Domain\Catalog\Exceptions\BookNotFoundException;
 use App\Domain\Catalog\Exceptions\TagNotFoundException;
-use App\Domain\Catalog\Exceptions\TagNotFoundExceptionNotFoundException;
+use App\Presentation\Console\Commands\Search\ConfigureSearchIndexCommand;
+use App\Presentation\Console\Commands\Search\ReindexBooksCommand;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -18,6 +19,10 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         //
     })
+    ->withCommands([
+        ConfigureSearchIndexCommand::class,
+        ReindexBooksCommand::class,
+    ])
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->dontReportDuplicates();
         $exceptions->render(function (Throwable $e) {

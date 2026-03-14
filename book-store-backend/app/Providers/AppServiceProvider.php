@@ -21,6 +21,8 @@ use App\Infrastructure\Persistence\Repositories\EloquentBookTagRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentTagRepository;
 use App\Infrastructure\Queue\LaravelEventDispatcher;
 use App\Infrastructure\Search\MeilisearchBookIndex;
+use App\Infrastructure\Search\MeilisearchIndexConfigurator;
+use App\Infrastructure\Search\MeilisearchTaskAwaiter;
 use App\Infrastructure\Slugger\LaravelSlugGenerator;
 use App\Infrastructure\Storage\S3BookCoverStorage;
 use App\Infrastructure\Storage\S3BookFileStorage;
@@ -40,6 +42,16 @@ class AppServiceProvider extends ServiceProvider
                 apiKey: config('services.meilisearch.key'),
             );
         });
+
+        $this->app->singleton(
+            MeilisearchTaskAwaiter::class,
+            fn() => new MeilisearchTaskAwaiter(
+                client: app(Client::class),
+                timeoutMs: (int)config('services.meilisearch.timeout_ms', 5000),
+                intervalMs: (int)config('services.meilisearch.interval_ms', 50),
+            )
+        );
+        $this->app->singleton(MeilisearchIndexConfigurator::class);
 
         $this->app->bind(BookRepositoryInterface::class, EloquentBookRepository::class);
         $this->app->bind(BookFileParserInterface::class, BookFileParserRouter::class);

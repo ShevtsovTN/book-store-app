@@ -112,4 +112,11 @@ final class EloquentBookRepository implements BookRepositoryInterface
             publishedAt: $model->published_at
         );
     }
+
+    public function cursor(): \Generator
+    {
+        foreach (BookModel::query()->lazyById(chunkSize: 500) as $model) {
+            yield $this->toDomain($model);
+        }
+    }
 }
