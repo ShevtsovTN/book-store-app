@@ -18,8 +18,8 @@ final readonly class SearchBooksCommand
         public ?BookStatusEnum $status     = null,
         public ?AccessTypeEnum $accessType = null,
         public ?string         $language   = null,
-        public int             $limit,
-        public int             $offset,
+        public int             $limit      = self::DEFAULT_LIMIT,
+        public int             $offset     = self::DEFAULT_OFFSET,
     ) {}
 
     public function toQuery(): BookSearchQuery
@@ -34,11 +34,9 @@ final readonly class SearchBooksCommand
         );
     }
 
-
-
     public static function fromArray(array $validated): self
     {
-        return new SearchBooksCommand(
+        return new self(
             query:      $validated['q'] ?? '',
             status:     isset($validated['status'])
                 ? BookStatusEnum::from($validated['status'])
@@ -47,8 +45,8 @@ final readonly class SearchBooksCommand
                 ? AccessTypeEnum::from($validated['access_type'])
                 : null,
             language:   $validated['language'] ?? null,
-            limit:      !empty($validated['limit']) ? (int) ($validated['limit']) : self::DEFAULT_LIMIT,
-            offset:     !empty($validated['offset']) ? (int) ($validated['offset']) : self::DEFAULT_OFFSET,
+            limit:      isset($validated['limit'])  ? (int) $validated['limit']  : self::DEFAULT_LIMIT,
+            offset:     isset($validated['offset']) ? (int) $validated['offset'] : self::DEFAULT_OFFSET,
         );
     }
 }
