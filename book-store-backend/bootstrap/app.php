@@ -2,8 +2,11 @@
 
 use App\Domain\Catalog\Exceptions\BookNotFoundException;
 use App\Domain\Catalog\Exceptions\TagNotFoundException;
+use App\Domain\Identity\Exceptions\InvalidCredentialsException;
+use App\Domain\Identity\Exceptions\ReaderAlreadyExistsException;
 use App\Presentation\Console\Commands\Search\ConfigureSearchIndexCommand;
 use App\Presentation\Console\Commands\Search\ReindexBooksCommand;
+use App\Presentation\Http\Middleware\RequireRoleMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -17,7 +20,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        //
+        $middleware->alias([
+            'role' => RequireRoleMiddleware::class,
+        ]);
     })
     ->withCommands([
         ConfigureSearchIndexCommand::class,
@@ -31,6 +36,14 @@ return Application::configure(basePath: dirname(__DIR__))
                 $e instanceof TagNotFoundException => response()->json([
                     'message' => $e->getMessage(),
                 ], Response::HTTP_NOT_FOUND),
+                $e instanceof ReaderAlreadyExistsException => response()->json(
+                    ['message' => $e->getMessage()],
+                    Response::HTTP_CONFLICT,
+                ),
+                $e instanceof InvalidCredentialsException  => response()->json(
+                    ['message' => $e->getMessage()],
+                    Response::HTTP_UNAUTHORIZED,
+                ),
                 default => null,
             };
         });

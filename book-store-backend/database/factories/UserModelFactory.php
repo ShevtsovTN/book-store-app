@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Domain\Identity\Enums\RoleEnum;
 use App\Infrastructure\Persistence\Models\UserModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
@@ -32,6 +33,7 @@ class UserModelFactory extends Factory
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
+            'role' => RoleEnum::READER,
         ];
     }
 

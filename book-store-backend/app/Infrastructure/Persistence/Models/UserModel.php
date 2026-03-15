@@ -2,6 +2,7 @@
 
 namespace App\Infrastructure\Persistence\Models;
 
+use App\Domain\Identity\Enums\RoleEnum;
 use Database\Factories\UserModelFactory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -21,6 +22,7 @@ use Laravel\Sanctum\PersonalAccessToken;
  * @property string|null $remember_token
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ * @property RoleEnum   $role
  * @property-read DatabaseNotificationCollection<int, DatabaseNotification> $notifications
  * @property-read int|null $notifications_count
  * @property-read Collection<int, PersonalAccessToken> $tokens
@@ -42,6 +44,7 @@ class UserModel extends Authenticatable
         'name',
         'email',
         'password',
+        'role',
     ];
 
     /**
@@ -64,6 +67,7 @@ class UserModel extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'role' => RoleEnum::class,
         ];
     }
 
