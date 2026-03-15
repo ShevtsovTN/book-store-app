@@ -37,8 +37,8 @@ services:
 
   frontend:
     build:
-      context: ../book-store-frontend    # ← откуда берём файлы (package.json, package-lock.json)
-      dockerfile: ../book-store-docker/node/Dockerfile  # ← где лежит Dockerfile
+      context: ../book-store-frontend
+      dockerfile: ../book-store-docker/node/Dockerfile
     working_dir: /app
     volumes:
       - ../book-store-frontend:/app

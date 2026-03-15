@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Reading;
 
+use App\Domain\Identity\Enums\RoleEnum;
 use App\Domain\Reading\Interfaces\ReadingProgressCacheRepositoryInterface;
 use App\Infrastructure\Persistence\Models\BookChapterModel;
 use App\Infrastructure\Persistence\Models\BookModel;
@@ -17,7 +18,7 @@ final class ReadingHistoryTest extends TestCase
 {
     use DatabaseTransactions;
 
-    private UserModel $user;
+    private string $token;
 
     protected function setUp(): void
     {
@@ -28,12 +29,15 @@ final class ReadingHistoryTest extends TestCase
             new FakeReadingProgressCacheRepository(),
         );
 
-        $this->user = UserModel::factory()->create();
+        $user = UserModel::factory()->create([
+            'role' => RoleEnum::READER
+        ]);
+        $this->token = $user->createToken('reader-token')->plainTextToken;
     }
 
     public function test_history_returns_200(): void
     {
-        $this->actingAs($this->user, 'sanctum')
+        $this->withToken($this->token)
             ->getJson(route('reading.history'))
             ->assertStatus(200)
             ->assertJsonStructure([
@@ -44,7 +48,7 @@ final class ReadingHistoryTest extends TestCase
 
     public function test_history_is_empty_for_new_user(): void
     {
-        $this->actingAs($this->user, 'sanctum')
+        $this->withToken($this->token)
             ->getJson(route('reading.history'))
             ->assertJsonFragment([
                 'total_sessions'         => 0,
@@ -66,10 +70,10 @@ final class ReadingHistoryTest extends TestCase
             ->for($chapter, 'chapter')
             ->create();
 
-        $started = $this->actingAs($this->user, 'sanctum')
+        $started = $this->withToken($this->token)
             ->postJson(route('reading.session.start', ['bookId' => $book->id]), []);
 
-        $this->actingAs($this->user, 'sanctum')
+        $this->withToken($this->token)
             ->patchJson(route('reading.session.end', [
                 'bookId'    => $book->id,
                 'sessionId' => $started->json('session_id'),
@@ -78,7 +82,7 @@ final class ReadingHistoryTest extends TestCase
                 'duration_seconds' => 300,
             ]);
 
-        $this->actingAs($this->user, 'sanctum')
+        $this->withToken($this->token)
             ->getJson(route('reading.history'))
             ->assertJsonFragment(['total_sessions' => 1])
             ->assertJsonFragment(['duration_seconds' => 300]);
@@ -86,14 +90,18 @@ final class ReadingHistoryTest extends TestCase
 
     public function test_history_requires_auth(): void
     {
-        $this->getJson(route('reading.history'))
+        $this
+            ->getJson(route('reading.history'))
             ->assertStatus(401);
     }
 
     public function test_history_isolates_between_users(): void
     {
         /** @var UserModel $otherUser */
-        $otherUser = UserModel::factory()->create();
+        $otherUser = UserModel::factory()->create([
+            'role' => RoleEnum::READER
+        ]);
+        $otherUserToken = $otherUser->createToken('reader-token')->plainTextToken;
         /** @var BookModel $book */
         $book = BookModel::factory()->create();
         /** @var BookChapterModel $chapter */
@@ -105,17 +113,24 @@ final class ReadingHistoryTest extends TestCase
             ->for($chapter, 'chapter')
             ->create();
 
-        $started = $this->actingAs($otherUser, 'sanctum')
+        $started = $this->withToken($otherUserToken)
             ->postJson(route('reading.session.start', ['bookId' => $book->id]), []);
 
-        $this->actingAs($otherUser, 'sanctum')
+        $this->withToken($otherUserToken)
             ->patchJson(route('reading.session.end', [
                 'bookId'    => $book->id,
                 'sessionId' => $started->json('session_id'),
             ]), ['end_page_id' => $page->id, 'duration_seconds' => 60]);
 
-        $this->actingAs($this->user, 'sanctum')
+        $this->resetAuthState();
+
+        $this->withToken($this->token)
             ->getJson(route('reading.history'))
             ->assertJsonFragment(['total_sessions' => 0]);
+    }
+
+    private function resetAuthState(): void
+    {
+        $this->app['auth']->forgetGuards();
     }
 }

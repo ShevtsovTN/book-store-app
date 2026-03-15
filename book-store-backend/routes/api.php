@@ -37,7 +37,7 @@ Route::prefix('v1')->group(function () {
                     Route::post('progress', [ReadingProgressController::class, 'save'])
                         ->name('reading.progress.save');
 
-                    Route::post ('sessions/{sessionId}', [ReadingSessionController::class, 'start'])
+                    Route::post ('sessions', [ReadingSessionController::class, 'start'])
                         ->name('reading.session.start');
                     Route::patch('sessions/{sessionId}', [ReadingSessionController::class, 'end'])
                         ->name('reading.session.end');
