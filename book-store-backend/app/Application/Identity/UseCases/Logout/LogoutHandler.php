@@ -14,6 +14,6 @@ final readonly class LogoutHandler
 
     public function handle(LogoutCommand $command): void
     {
-        $this->auth->revokeToken($command->readerId);
+        $this->auth->revokeToken($command->userId);
     }
 }

@@ -15,7 +15,7 @@ use App\Domain\Identity\ValueObjects\Email;
 final readonly class LoginAdminHandler
 {
     public function __construct(
-        private UserRepositoryInterface        $readers,
+        private UserRepositoryInterface        $users,
         private AuthenticationServiceInterface $auth,
         private PasswordHasherInterface        $hasher,
     ) {}
@@ -23,17 +23,17 @@ final readonly class LoginAdminHandler
     public function handle(LoginAdminCommand $command): AuthResult
     {
         $email  = new Email($command->email);
-        $reader = $this->readers->findByEmail($email);
+        $user = $this->users->findByEmail($email);
 
-        if ($reader === null
-            || $reader->getRole() !== RoleEnum::ADMIN
-            || !$this->hasher->verify($command->plainPassword, $reader->getPassword()->value)
+        if ($user === null
+            || $user->getRole() !== RoleEnum::ADMIN
+            || !$this->hasher->verify($command->plainPassword, $user->getPassword()->value)
         ) {
             throw InvalidCredentialsException::create();
         }
 
-        $token = $this->auth->issueToken($reader);
+        $token = $this->auth->issueToken($user);
 
-        return new AuthResult(user: $reader, token: $token);
+        return new AuthResult(user: $user, token: $token);
     }
 }

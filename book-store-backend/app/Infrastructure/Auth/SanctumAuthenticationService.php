@@ -18,12 +18,12 @@ final readonly class SanctumAuthenticationService implements AuthenticationServi
         private Guard $guard,
     ) {}
 
-    public function issueToken(User $reader): AuthToken
+    public function issueToken(User $user): AuthToken
     {
         /** @var UserModel $model */
-        $model = UserModel::query()->findOrFail($reader->getId()->value);
+        $model = UserModel::query()->findOrFail($user->getId()->value);
 
-        $tokenName = match ($reader->getRole()) {
+        $tokenName = match ($user->getRole()) {
             RoleEnum::ADMIN  => 'admin-token',
             RoleEnum::READER => 'reader-token',
         };
@@ -33,12 +33,12 @@ final readonly class SanctumAuthenticationService implements AuthenticationServi
         );
     }
 
-    public function revokeToken(UserId $readerId): void
+    public function revokeToken(UserId $userId): void
     {
         /** @var UserModel|null $model */
         $model = $this->guard->user();
 
-        if ($model === null || $model->id !== $readerId->value) {
+        if ($model === null || $model->id !== $userId->value) {
             return;
         }
 
