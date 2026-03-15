@@ -14,7 +14,7 @@ trait RequiresMinIO
         try {
             Storage::disk('s3')->exists('health-check');
         } catch (Exception $e) {
-            $this->markTestSkipped('MinIO недоступен: ' . $e->getMessage());
+            $this->markTestSkipped('MinIO is unavailable: ' . $e->getMessage());
         }
     }
 }

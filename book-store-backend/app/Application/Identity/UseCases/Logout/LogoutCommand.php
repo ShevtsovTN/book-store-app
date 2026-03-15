@@ -9,6 +9,6 @@ use App\Domain\Identity\ValueObjects\UserId;
 final readonly class LogoutCommand
 {
     public function __construct(
-        public UserId $readerId,
+        public UserId $userId,
     ) {}
 }

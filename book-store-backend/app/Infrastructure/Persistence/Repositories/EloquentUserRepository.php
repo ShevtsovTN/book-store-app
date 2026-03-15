@@ -11,13 +11,13 @@ use App\Infrastructure\Persistence\Models\UserModel;
 
 final class EloquentUserRepository implements UserRepositoryInterface
 {
-    public function save(User $reader): User
+    public function save(User $user): User
     {
-        if ($reader->getId() === null) {
-            $model = UserModel::query()->create($this->toArray($reader));
+        if ($user->getId() === null) {
+            $model = UserModel::query()->create($this->toArray($user));
         } else {
-            $model = UserModel::query()->findOrFail($reader->getId()->value);
-            $model->update($this->toArray($reader));
+            $model = UserModel::query()->findOrFail($user->getId()->value);
+            $model->update($this->toArray($user));
         }
 
         return $this->toDomain($model);
@@ -39,13 +39,13 @@ final class EloquentUserRepository implements UserRepositoryInterface
             ->exists();
     }
 
-    private function toArray(User $reader): array
+    private function toArray(User $user): array
     {
         return [
-            'name'     => $reader->getName(),
-            'email'    => $reader->getEmail()->value,
-            'password' => $reader->getPassword()->value,
-            'role'     => $reader->getRole()->value,
+            'name'     => $user->getName(),
+            'email'    => $user->getEmail()->value,
+            'password' => $user->getPassword()->value,
+            'role'     => $user->getRole()->value,
         ];
     }
 

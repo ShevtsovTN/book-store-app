@@ -28,22 +28,22 @@ final readonly class UpdateBookHandler
         }
 
         $updated = new Book(
-            id: $book->id,
             title: $command->title,
             slug: $book->slug,
-            description: $command->description,
-            isbn: $command->isbn,
             language: $command->language,
-            publisher: $command->publisher,
-            publishedYear: $command->publishedYear,
             edition: $book->edition,
             pagesCount: $book->pagesCount,
-            coverPath: $book->coverPath,
-            filePath: $book->filePath,
             accessType: $command->accessType,
             price: new Money($command->price, new Currency($command->currency)),
             status: $book->status,
+            description: $command->description,
+            isbn: $command->isbn,
             publishedAt: $book->publishedAt,
+            coverPath: $book->coverPath,
+            filePath: $book->filePath,
+            publisher: $command->publisher,
+            publishedYear: $command->publishedYear,
+            id: $book->id,
         );
 
         $saved = $this->books->save($updated);

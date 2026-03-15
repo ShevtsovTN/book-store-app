@@ -33,21 +33,21 @@ final readonly class UploadBookCoverHandler
         );
 
         $updated = new Book(
-            id:            $book->id,
-            title:         $book->title,
-            slug:          $book->slug,
-            description:   $book->description,
-            isbn:          $book->isbn,
-            language:      $book->language,
-            publisher:     $book->publisher,
+            title: $book->title,
+            slug: $book->slug,
+            language: $book->language,
+            edition: $book->edition,
+            pagesCount: $book->pagesCount,
+            accessType: $book->accessType,
+            price: $book->price,
+            status: $book->status,
+            description: $book->description,
+            isbn: $book->isbn,
+            publishedAt: $book->publishedAt,
+            coverPath: $path,
+            publisher: $book->publisher,
             publishedYear: $book->publishedYear,
-            edition:       $book->edition,
-            pagesCount:    $book->pagesCount,
-            coverPath:     $path,
-            accessType:    $book->accessType,
-            price:         $book->price,
-            status:        $book->status,
-            publishedAt:   $book->publishedAt,
+            id: $book->id,
         );
 
         $saved = $this->books->save($updated);

@@ -9,7 +9,7 @@ use App\Domain\Identity\ValueObjects\Email;
 
 interface UserRepositoryInterface
 {
-    public function save(User $reader): User;
+    public function save(User $user): User;
     public function findByEmail(Email $email): ?User;
     public function existsByEmail(Email $email): bool;
 }

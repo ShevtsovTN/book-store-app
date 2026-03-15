@@ -18,21 +18,22 @@ final class BookTest extends TestCase
     private function makeBook(array $overrides = []): Book
     {
         return new Book(
-            id:            $overrides['id']            ?? null,
-            title:         $overrides['title']         ?? 'Master and Margarita',
-            slug:          $overrides['slug']          ?? 'master-i-margarita',
-            description:   $overrides['description']   ?? null,
-            isbn:          $overrides['isbn']          ?? null,
-            language:      $overrides['language']      ?? 'ru',
-            publisher:     $overrides['publisher']     ?? null,
+            title: $overrides['title']         ?? 'Master and Margarita',
+            slug: $overrides['slug']          ?? 'master-i-margarita',
+            language: $overrides['language']      ?? 'ru',
+            edition: $overrides['edition']       ?? 1,
+            pagesCount: $overrides['pagesCount']    ?? 0,
+            accessType: $overrides['accessType']    ?? AccessTypeEnum::FREE,
+            price: $overrides['price']         ?? Money::zero(new Currency(self::DEFAULT_CURRENCY)),
+            status: $overrides['status']        ?? BookStatusEnum::DRAFT,
+            description: $overrides['description']   ?? null,
+            isbn: $overrides['isbn']          ?? null,
+            publishedAt: $overrides['publishedAt']   ?? null,
+            coverPath: $overrides['coverPath']     ?? null,
+            filePath: $overrides['filePath']      ?? null,
+            publisher: $overrides['publisher']     ?? null,
             publishedYear: $overrides['publishedYear'] ?? null,
-            edition:       $overrides['edition']       ?? 1,
-            pagesCount:    $overrides['pagesCount']    ?? 0,
-            coverPath:     $overrides['coverPath']     ?? null,
-            accessType:    $overrides['accessType']    ?? AccessTypeEnum::FREE,
-            price:         $overrides['price']         ?? Money::zero(new Currency(self::DEFAULT_CURRENCY)),
-            status:        $overrides['status']        ?? BookStatusEnum::DRAFT,
-            publishedAt:   $overrides['publishedAt']   ?? null,
+            id: $overrides['id']            ?? null,
         );
     }
 

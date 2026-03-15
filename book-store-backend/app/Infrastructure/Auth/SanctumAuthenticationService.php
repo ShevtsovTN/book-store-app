@@ -10,20 +10,21 @@ use App\Domain\Identity\ValueObjects\AuthToken;
 use App\Infrastructure\Persistence\Models\UserModel;
 use App\Domain\Identity\Entities\User;
 use App\Domain\Identity\ValueObjects\UserId;
-use Illuminate\Contracts\Auth\Guard;
+use Illuminate\Http\Request;
+use Laravel\Sanctum\PersonalAccessToken;
 
 final readonly class SanctumAuthenticationService implements AuthenticationServiceInterface
 {
     public function __construct(
-        private Guard $guard,
+        private Request $request,
     ) {}
 
-    public function issueToken(User $reader): AuthToken
+    public function issueToken(User $user): AuthToken
     {
         /** @var UserModel $model */
-        $model = UserModel::query()->findOrFail($reader->getId()->value);
+        $model = UserModel::query()->findOrFail($user->getId()->value);
 
-        $tokenName = match ($reader->getRole()) {
+        $tokenName = match ($user->getRole()) {
             RoleEnum::ADMIN  => 'admin-token',
             RoleEnum::READER => 'reader-token',
         };
@@ -33,15 +34,14 @@ final readonly class SanctumAuthenticationService implements AuthenticationServi
         );
     }
 
-    public function revokeToken(UserId $readerId): void
+    public function revokeCurrentToken(UserId $userId): void
     {
-        /** @var UserModel|null $model */
-        $model = $this->guard->user();
+        $bearerToken = $this->request->bearerToken();
 
-        if ($model === null || $model->id !== $readerId->value) {
+        if ($bearerToken === null) {
             return;
         }
 
-        $model->currentAccessToken()->delete();
+        PersonalAccessToken::findToken($bearerToken)?->delete();
     }
 }

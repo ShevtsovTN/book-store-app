@@ -2,8 +2,10 @@
 
 namespace Tests\Feature\Catalog;
 
+use App\Domain\Identity\Enums\RoleEnum;
 use App\Infrastructure\Persistence\Models\BookModel;
 use App\Infrastructure\Persistence\Models\TagModel;
+use App\Infrastructure\Persistence\Models\UserModel;
 use DB;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -13,6 +15,21 @@ final class BookTagTest extends TestCase
 {
     use DatabaseTransactions;
 
+    private string $adminToken;
+    private string $readerToken;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        /** @var UserModel $admin */
+        $admin  = UserModel::factory()->create(['role' => RoleEnum::ADMIN]);
+        $this->adminToken = $admin->createToken('admin-token')->plainTextToken;
+
+        /** @var UserModel $reader */
+        $reader  = UserModel::factory()->create(['role' => RoleEnum::READER]);
+        $this->readerToken = $reader->createToken('reader-token')->plainTextToken;
+    }
+
     public function test_sync_replaces_all_tags_and_returns_204(): void
     {
         /** @var BookModel $book */
@@ -20,10 +37,12 @@ final class BookTagTest extends TestCase
         /** @var Collection<TagModel> $tags */
         $tags = TagModel::factory()->count(3)->create();
 
-        $this->postJson(
-            route('books.tags.sync', ['id' => $book->id]),
-            ['tag_ids' => $tags->pluck('id')->toArray()]
-        )->assertStatus(204);
+        $this
+            ->withToken($this->adminToken)
+            ->postJson(
+                route('admin.books.tags.sync', ['id' => $book->id]),
+                ['tag_ids' => $tags->pluck('id')->toArray()]
+            )->assertStatus(204);
     }
 
     public function test_sync_persists_tags_to_database(): void
@@ -33,10 +52,12 @@ final class BookTagTest extends TestCase
         /** @var Collection<TagModel> $tags */
         $tags = TagModel::factory()->count(2)->create();
 
-        $this->postJson(
-            route('books.tags.sync', ['id' => $book->id]),
-            ['tag_ids' => $tags->pluck('id')->toArray()]
-        );
+        $this
+            ->withToken($this->adminToken)
+            ->postJson(
+                route('admin.books.tags.sync', ['id' => $book->id]),
+                ['tag_ids' => $tags->pluck('id')->toArray()]
+            );
 
         foreach ($tags as $tag) {
             $this->assertDatabaseHas('book_tag', [
@@ -57,10 +78,12 @@ final class BookTagTest extends TestCase
 
         $book->tags()->sync($oldTags->pluck('id')->toArray());
 
-        $this->postJson(
-            route('books.tags.sync', ['id' => $book->id]),
-            ['tag_ids' => [$newTag->id]]
-        );
+        $this
+            ->withToken($this->adminToken)
+            ->postJson(
+                route('admin.books.tags.sync', ['id' => $book->id]),
+                ['tag_ids' => [$newTag->id]]
+            );
 
         foreach ($oldTags as $tag) {
             $this->assertDatabaseMissing('book_tag', [
@@ -83,10 +106,12 @@ final class BookTagTest extends TestCase
         $tags = TagModel::factory()->count(2)->create();
         $book->tags()->sync($tags->pluck('id')->toArray());
 
-        $this->postJson(
-            route('books.tags.sync', ['id' => $book->id]),
-            ['tag_ids' => []]
-        )->assertStatus(204);
+        $this
+            ->withToken($this->adminToken)
+            ->postJson(
+                route('admin.books.tags.sync', ['id' => $book->id]),
+                ['tag_ids' => []]
+            )->assertStatus(204);
 
         foreach ($tags as $tag) {
             $this->assertDatabaseMissing('book_tag', [
@@ -101,10 +126,12 @@ final class BookTagTest extends TestCase
         /** @var BookModel $book */
         $book = BookModel::factory()->create();
 
-        $this->postJson(
-            route('books.tags.sync', ['id' => $book->id]),
-            []
-        )->assertStatus(422)
+        $this
+            ->withToken($this->adminToken)
+            ->postJson(
+                route('admin.books.tags.sync', ['id' => $book->id]),
+                []
+            )->assertStatus(422)
             ->assertJsonValidationErrors(['tag_ids']);
     }
 
@@ -113,10 +140,12 @@ final class BookTagTest extends TestCase
         /** @var BookModel $book */
         $book = BookModel::factory()->create();
 
-        $this->postJson(
-            route('books.tags.sync', ['id' => $book->id]),
-            ['tag_ids' => [99999]]
-        )->assertStatus(422);
+        $this
+            ->withToken($this->adminToken)
+            ->postJson(
+                route('admin.books.tags.sync', ['id' => $book->id]),
+                ['tag_ids' => [99999]]
+            )->assertStatus(422);
     }
 
     public function test_sync_returns_404_when_book_not_found(): void
@@ -124,10 +153,12 @@ final class BookTagTest extends TestCase
         /** @var TagModel $tag */
         $tag = TagModel::factory()->create();
 
-        $this->postJson(
-            route('books.tags.sync', ['id' => 99999]),
-            ['tag_ids' => [$tag->id]]
-        )->assertStatus(404);
+        $this
+            ->withToken($this->adminToken)
+            ->postJson(
+                route('admin.books.tags.sync', ['id' => 99999]),
+                ['tag_ids' => [$tag->id]]
+            )->assertStatus(404);
     }
 
     public function test_attach_adds_tag_to_book_and_returns_204(): void
@@ -137,9 +168,11 @@ final class BookTagTest extends TestCase
         /** @var TagModel $tag */
         $tag  = TagModel::factory()->create();
 
-        $this->postJson(
-            route('books.tags.attach', ['id' => $book->id, 'tagId' => $tag->id])
-        )->assertStatus(204);
+        $this
+            ->withToken($this->adminToken)
+            ->postJson(
+                route('admin.books.tags.attach', ['id' => $book->id, 'tagId' => $tag->id])
+            )->assertStatus(204);
 
         $this->assertDatabaseHas('book_tag', [
             'book_id' => $book->id,
@@ -154,8 +187,12 @@ final class BookTagTest extends TestCase
         /** @var TagModel $tag */
         $tag  = TagModel::factory()->create();
 
-        $this->postJson(route('books.tags.attach', ['id' => $book->id, 'tagId' => $tag->id]));
-        $this->postJson(route('books.tags.attach', ['id' => $book->id, 'tagId' => $tag->id]))
+        $this
+            ->withToken($this->adminToken)
+            ->postJson(route('admin.books.tags.attach', ['id' => $book->id, 'tagId' => $tag->id]));
+        $this
+            ->withToken($this->adminToken)
+            ->postJson(route('admin.books.tags.attach', ['id' => $book->id, 'tagId' => $tag->id]))
             ->assertStatus(204);
 
         $this->assertSame(
@@ -171,9 +208,11 @@ final class BookTagTest extends TestCase
     {
         $tag = TagModel::factory()->create();
 
-        $this->postJson(
-            route('books.tags.attach', ['id' => 99999, 'tagId' => $tag->id])
-        )->assertStatus(404);
+        $this
+            ->withToken($this->adminToken)
+            ->postJson(
+                route('admin.books.tags.attach', ['id' => 99999, 'tagId' => $tag->id])
+            )->assertStatus(404);
     }
 
     public function test_attach_returns_404_when_tag_not_found(): void
@@ -181,9 +220,11 @@ final class BookTagTest extends TestCase
         /** @var BookModel $book */
         $book = BookModel::factory()->create();
 
-        $this->postJson(
-            route('books.tags.attach', ['id' => $book->id, 'tagId' => 99999])
-        )->assertStatus(404);
+        $this
+            ->withToken($this->adminToken)
+            ->postJson(
+                route('admin.books.tags.attach', ['id' => $book->id, 'tagId' => 99999])
+            )->assertStatus(404);
     }
 
     public function test_detach_removes_tag_from_book_and_returns_204(): void
@@ -194,9 +235,11 @@ final class BookTagTest extends TestCase
         $tag  = TagModel::factory()->create();
         $book->tags()->attach($tag->id);
 
-        $this->deleteJson(
-            route('books.tags.detach', ['id' => $book->id, 'tagId' => $tag->id])
-        )->assertStatus(204);
+        $this
+            ->withToken($this->adminToken)
+            ->deleteJson(
+                route('admin.books.tags.detach', ['id' => $book->id, 'tagId' => $tag->id])
+            )->assertStatus(204);
 
         $this->assertDatabaseMissing('book_tag', [
             'book_id' => $book->id,
@@ -211,9 +254,11 @@ final class BookTagTest extends TestCase
         /** @var TagModel $tag */
         $tag  = TagModel::factory()->create();
 
-        $this->deleteJson(
-            route('books.tags.detach', ['id' => $book->id, 'tagId' => $tag->id])
-        )->assertStatus(204);
+        $this
+            ->withToken($this->adminToken)
+            ->deleteJson(
+                route('admin.books.tags.detach', ['id' => $book->id, 'tagId' => $tag->id])
+            )->assertStatus(204);
     }
 
     public function test_detach_does_not_affect_other_tags(): void
@@ -227,9 +272,11 @@ final class BookTagTest extends TestCase
 
         $book->tags()->sync([$keepTag->id, $removeTag->id]);
 
-        $this->deleteJson(
-            route('books.tags.detach', ['id' => $book->id, 'tagId' => $removeTag->id])
-        );
+        $this
+            ->withToken($this->adminToken)
+            ->deleteJson(
+                route('admin.books.tags.detach', ['id' => $book->id, 'tagId' => $removeTag->id])
+            );
 
         $this->assertDatabaseHas('book_tag', [
             'book_id' => $book->id,
@@ -247,8 +294,10 @@ final class BookTagTest extends TestCase
         /** @var TagModel $tag */
         $tag = TagModel::factory()->create();
 
-        $this->deleteJson(
-            route('books.tags.detach', ['id' => 99999, 'tagId' => $tag->id])
+        $this
+            ->withToken($this->adminToken)
+            ->deleteJson(
+            route('admin.books.tags.detach', ['id' => 99999, 'tagId' => $tag->id])
         )->assertStatus(404);
     }
 }

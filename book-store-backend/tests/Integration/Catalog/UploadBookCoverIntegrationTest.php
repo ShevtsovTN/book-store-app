@@ -4,22 +4,29 @@ declare(strict_types=1);
 
 namespace Tests\Integration\Catalog;
 
+use App\Domain\Identity\Enums\RoleEnum;
 use App\Infrastructure\Persistence\Models\BookModel;
+use App\Infrastructure\Persistence\Models\UserModel;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 use Tests\Traits\RequiresMinIO;
 
 final class UploadBookCoverIntegrationTest extends TestCase
 {
-    use DatabaseTransactions, RequiresMinIO;
+    use DatabaseTransactions;
+    use RequiresMinIO;
+
+    private string $adminToken;
 
     protected function setUp(): void
     {
         parent::setUp();
+
+        /** @var UserModel $admin */
+        $admin = UserModel::factory()->create(['role' => RoleEnum::ADMIN]);
+        $this->adminToken = $admin->createToken('admin-token')->plainTextToken;
 
         $this->ensureMinioIsAccessible();
         $this->cleanupBucket();
@@ -38,10 +45,12 @@ final class UploadBookCoverIntegrationTest extends TestCase
         $book = BookModel::factory()->create();
         $file = UploadedFile::fake()->image('cover.jpg', 800, 600);
 
-        $response = $this->postJson(
-            route('books.cover', ['id' => $book->id]),
-            ['cover' => $file],
-        );
+        $response = $this
+            ->withToken($this->adminToken)
+            ->postJson(
+                route('admin.books.cover', ['id' => $book->id]),
+                ['cover' => $file],
+            );
 
         $response->assertStatus(200);
 
@@ -59,29 +68,33 @@ final class UploadBookCoverIntegrationTest extends TestCase
         $book = BookModel::factory()->create();
         $file = UploadedFile::fake()->image('cover.jpg', 800, 600);
 
-        $response = $this->postJson(
-            route('books.cover', ['id' => $book->id]),
-            ['cover' => $file],
-        );
+        $response = $this
+            ->withToken($this->adminToken)
+            ->postJson(
+                route('admin.books.cover', ['id' => $book->id]),
+                ['cover' => $file],
+            );
 
         $coverUrl = $response->json('cover_url');
 
         $this->assertNotNull($coverUrl);
         $this->assertStringContainsString('minio:9000', $coverUrl);
 
-        $this->assertStringContainsString('X-Amz-Signature', $coverUrl);
+        $this->assertStringContainsString('/bookstore/covers/', $coverUrl);
     }
 
     public function test_old_cover_is_deleted_from_minio_when_new_uploaded(): void
     {
         /** @var BookModel $book */
-        $book      = BookModel::factory()->create();
+        $book = BookModel::factory()->create();
         $firstFile = UploadedFile::fake()->image('first-cover.jpg');
 
-        $this->postJson(
-            route('books.cover', ['id' => $book->id]),
-            ['cover' => $firstFile],
-        );
+        $this
+            ->withToken($this->adminToken)
+            ->postJson(
+                route('admin.books.cover', ['id' => $book->id]),
+                ['cover' => $firstFile],
+            );
 
         $firstCoverPath = BookModel::find($book->id)->cover_path;
 
@@ -89,10 +102,12 @@ final class UploadBookCoverIntegrationTest extends TestCase
 
         $secondFile = UploadedFile::fake()->image('second-cover.jpg');
 
-        $this->postJson(
-            route('books.cover', ['id' => $book->id]),
-            ['cover' => $secondFile],
-        );
+        $this
+            ->withToken($this->adminToken)
+            ->postJson(
+                route('admin.books.cover', ['id' => $book->id]),
+                ['cover' => $secondFile],
+            );
 
         $this->assertFalse(
             Storage::disk('s3')->exists($firstCoverPath),
@@ -106,14 +121,16 @@ final class UploadBookCoverIntegrationTest extends TestCase
         $book = BookModel::factory()->create();
         $file = UploadedFile::fake()->image('cover.jpg', 400, 600);
 
-        $this->postJson(
-            route('books.cover', ['id' => $book->id]),
-            ['cover' => $file],
-        );
+        $this
+            ->withToken($this->adminToken)
+            ->postJson(
+                route('admin.books.cover', ['id' => $book->id]),
+                ['cover' => $file],
+            );
 
         $coverPath = BookModel::find($book->id)->cover_path;
 
-        $storedContent  = Storage::disk('s3')->get($coverPath);
+        $storedContent = Storage::disk('s3')->get($coverPath);
         $originalContent = file_get_contents($file->getRealPath());
 
         $this->assertEquals(

@@ -15,7 +15,7 @@ final class RegisterReaderRequest extends FormRequest
     {
         return [
             'name'                  => ['required', 'string', 'max:100'],
-            'email'                 => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+            'email'                 => ['required', 'string', 'email', 'max:255'],
             'password'              => ['required', 'string', 'min:8'],
             'password_confirmation' => ['required', 'string', 'same:password'],
         ];

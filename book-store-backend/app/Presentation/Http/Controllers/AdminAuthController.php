@@ -13,7 +13,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class AdminAuthController extends Controller
+final class AdminAuthController extends Controller
 {
     public function __construct(
         private readonly LoginAdminHandler $loginHandler,

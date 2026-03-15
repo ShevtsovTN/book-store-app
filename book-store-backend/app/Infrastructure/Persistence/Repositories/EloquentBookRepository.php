@@ -94,22 +94,22 @@ final class EloquentBookRepository implements BookRepositoryInterface
     private function toDomain(BookModel $model): Book
     {
         return new Book(
-            id: $model->id,
             title: $model->title,
             slug: $model->slug,
-            description: $model->description,
-            isbn: $model->isbn,
             language: $model->language,
-            publisher: $model->publisher,
-            publishedYear: $model->published_year,
             edition: $model->edition,
             pagesCount: $model->pages_count,
-            coverPath: $model->cover_path,
-            filePath: $model->file_path,
             accessType: $model->access_type,
             price: new Money($model->price, new Currency($model->currency)),
             status: $model->status,
-            publishedAt: $model->published_at
+            description: $model->description,
+            isbn: $model->isbn,
+            publishedAt: $model->published_at,
+            coverPath: $model->cover_path,
+            filePath: $model->file_path,
+            publisher: $model->publisher,
+            publishedYear: $model->published_year,
+            id: $model->id
         );
     }
 

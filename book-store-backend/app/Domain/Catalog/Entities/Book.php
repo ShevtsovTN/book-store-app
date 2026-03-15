@@ -12,22 +12,22 @@ use DateTimeImmutable;
 final readonly class Book
 {
     public function __construct(
-        public ?int               $id = null,
         public string             $title,
         public string             $slug,
-        public ?string            $description = null,
-        public ?string            $isbn = null,
         public string             $language,
-        public ?string            $publisher = null,
-        public ?int               $publishedYear = null,
         public int                $edition,
         public int                $pagesCount,
-        public ?string            $coverPath = null,
-        public ?string            $filePath = null,
         public AccessTypeEnum     $accessType,
         public Money              $price,
         public BookStatusEnum     $status,
+        public ?string            $description = null,
+        public ?string            $isbn = null,
         public ?DateTimeImmutable $publishedAt = null,
+        public ?string            $coverPath = null,
+        public ?string            $filePath = null,
+        public ?string            $publisher = null,
+        public ?int               $publishedYear = null,
+        public ?int               $id = null,
     ) {
     }
 
@@ -46,65 +46,65 @@ final readonly class Book
     public function publish(): self
     {
         return new self(
-            id: $this->id,
             title: $this->title,
             slug: $this->slug,
-            description: $this->description,
-            isbn: $this->isbn,
             language: $this->language,
-            publisher: $this->publisher,
-            publishedYear: $this->publishedYear,
             edition: $this->edition,
             pagesCount: $this->pagesCount,
-            coverPath: $this->coverPath,
-            filePath: $this->filePath,
             accessType: $this->accessType,
             price: $this->price,
             status: BookStatusEnum::PUBLISHED,
+            description: $this->description,
+            isbn: $this->isbn,
             publishedAt: new DateTimeImmutable(),
+            coverPath: $this->coverPath,
+            filePath: $this->filePath,
+            publisher: $this->publisher,
+            publishedYear: $this->publishedYear,
+            id: $this->id,
         );
     }
 
     public function withPagesCount(int $pagesCount): self
     {
         return new self(
-            id:            $this->id,
-            title:         $this->title,
-            slug:          $this->slug,
-            description:   $this->description,
-            isbn:          $this->isbn,
-            language:      $this->language,
-            publisher:     $this->publisher,
+            title: $this->title,
+            slug: $this->slug,
+            language: $this->language,
+            edition: $this->edition,
+            pagesCount: $pagesCount,
+            accessType: $this->accessType,
+            price: $this->price,
+            status: $this->status,
+            description: $this->description,
+            isbn: $this->isbn,
+            publishedAt: $this->publishedAt,
+            coverPath: $this->coverPath,
+            publisher: $this->publisher,
             publishedYear: $this->publishedYear,
-            edition:       $this->edition,
-            pagesCount:    $pagesCount,
-            coverPath:     $this->coverPath,
-            accessType:    $this->accessType,
-            price:         $this->price,
-            status:        $this->status,
-            publishedAt:   $this->publishedAt,
+            id: $this->id,
         );
     }
 
     public function withFilePath(string $filePath): self
     {
         return new self(
-            id:            $this->id,
-            title:         $this->title,
-            slug:          $this->slug,
-            description:   $this->description,
-            isbn:          $this->isbn,
-            language:      $this->language,
-            publisher:     $this->publisher,
+            title: $this->title,
+            slug: $this->slug,
+            language: $this->language,
+            edition: $this->edition,
+            pagesCount: $this->pagesCount,
+            accessType: $this->accessType,
+            price: $this->price,
+            status: $this->status,
+            description: $this->description,
+            isbn: $this->isbn,
+            publishedAt: $this->publishedAt,
+            coverPath: $this->coverPath,
+            filePath: $filePath,
+            publisher: $this->publisher,
             publishedYear: $this->publishedYear,
-            edition:       $this->edition,
-            pagesCount:    $this->pagesCount,
-            coverPath:     $this->coverPath,
-            filePath:      $filePath,
-            accessType:    $this->accessType,
-            price:         $this->price,
-            status:        $this->status,
-            publishedAt:   $this->publishedAt,
+            id: $this->id,
         );
     }
 }
