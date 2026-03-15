@@ -6,7 +6,9 @@ namespace Tests\Feature\Catalog;
 
 use App\Application\Catalog\Interfaces\BookFileStorageInterface;
 use App\Application\Catalog\Jobs\ParseBookFileJob;
+use App\Domain\Identity\Enums\RoleEnum;
 use App\Infrastructure\Persistence\Models\BookModel;
+use App\Infrastructure\Persistence\Models\UserModel;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Queue;
@@ -17,6 +19,8 @@ final class UploadBookFileTest extends TestCase
 {
     use DatabaseTransactions;
 
+    private string $adminToken;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -24,6 +28,10 @@ final class UploadBookFileTest extends TestCase
         Queue::fake();
 
         $this->instance(BookFileStorageInterface::class, new FakeBookFileStorage());
+
+        /** @var UserModel $admin */
+        $admin = UserModel::factory()->create(['role' => RoleEnum::ADMIN]);
+        $this->adminToken = $admin->createToken('admin-token')->plainTextToken;
     }
 
     public function test_upload_pdf_returns_202(): void
@@ -32,10 +40,12 @@ final class UploadBookFileTest extends TestCase
         $book = BookModel::factory()->create();
         $file = UploadedFile::fake()->create('book.pdf', 100, 'application/pdf');
 
-        $response = $this->postJson(
-            route('books.file', ['id' => $book->id]),
-            ['book_file' => $file],
-        );
+        $response = $this
+            ->withToken($this->adminToken)
+            ->postJson(
+                route('admin.books.file', ['id' => $book->id]),
+                ['book_file' => $file],
+            );
 
         $response->assertStatus(202);
     }
@@ -46,10 +56,12 @@ final class UploadBookFileTest extends TestCase
         $book = BookModel::factory()->create();
         $file = UploadedFile::fake()->create('book.epub', 100, 'application/epub+zip');
 
-        $response = $this->postJson(
-            route('books.file', ['id' => $book->id]),
-            ['book_file' => $file],
-        );
+        $response = $this
+            ->withToken($this->adminToken)
+            ->postJson(
+                route('admin.books.file', ['id' => $book->id]),
+                ['book_file' => $file],
+            );
 
         $response->assertStatus(202);
     }
@@ -60,16 +72,18 @@ final class UploadBookFileTest extends TestCase
         $book = BookModel::factory()->create();
         $file = UploadedFile::fake()->create('book.pdf', 100, 'application/pdf');
 
-        $response = $this->postJson(
-            route('books.file', ['id' => $book->id]),
-            ['book_file' => $file],
-        );
+        $response = $this
+            ->withToken($this->adminToken)
+            ->postJson(
+                route('admin.books.file', ['id' => $book->id]),
+                ['book_file' => $file],
+            );
 
         $response->assertStatus(202)
             ->assertJsonStructure(['book_id', 'file_path', 'status'])
             ->assertJsonFragment([
                 'book_id' => $book->id,
-                'status'  => 'processing',
+                'status' => 'processing',
             ]);
     }
 
@@ -79,14 +93,16 @@ final class UploadBookFileTest extends TestCase
         $book = BookModel::factory()->create();
         $file = UploadedFile::fake()->create('book.pdf', 100, 'application/pdf');
 
-        $this->postJson(
-            route('books.file', ['id' => $book->id]),
-            ['book_file' => $file],
-        );
+        $this
+            ->withToken($this->adminToken)
+            ->postJson(
+                route('admin.books.file', ['id' => $book->id]),
+                ['book_file' => $file],
+            );
 
         Queue::assertPushed(
             ParseBookFileJob::class,
-            static fn ($job) => $job->bookId === $book->id
+            static fn($job) => $job->bookId === $book->id
                 && $job->mimeType === 'application/pdf',
         );
     }
@@ -97,10 +113,12 @@ final class UploadBookFileTest extends TestCase
         $book = BookModel::factory()->create();
         $file = UploadedFile::fake()->create('book.pdf', 100, 'application/pdf');
 
-        $this->postJson(
-            route('books.file', ['id' => $book->id]),
-            ['book_file' => $file],
-        );
+        $this
+            ->withToken($this->adminToken)
+            ->postJson(
+                route('admin.books.file', ['id' => $book->id]),
+                ['book_file' => $file],
+            );
 
         Queue::assertPushedTimes(ParseBookFileJob::class, 1);
     }
@@ -110,10 +128,12 @@ final class UploadBookFileTest extends TestCase
         /** @var BookModel $book */
         $book = BookModel::factory()->create();
 
-        $response = $this->postJson(
-            route('books.file', ['id' => $book->id]),
-            [],
-        );
+        $response = $this
+            ->withToken($this->adminToken)
+            ->postJson(
+                route('admin.books.file', ['id' => $book->id]),
+                [],
+            );
 
         $response->assertStatus(422)
             ->assertJsonValidationErrors(['book_file']);
@@ -125,10 +145,12 @@ final class UploadBookFileTest extends TestCase
         $book = BookModel::factory()->create();
         $file = UploadedFile::fake()->image('cover.jpg');
 
-        $response = $this->postJson(
-            route('books.file', ['id' => $book->id]),
-            ['book_file' => $file],
-        );
+        $response = $this
+            ->withToken($this->adminToken)
+            ->postJson(
+                route('admin.books.file', ['id' => $book->id]),
+                ['book_file' => $file],
+            );
 
         $response->assertStatus(422)
             ->assertJsonValidationErrors(['book_file']);
@@ -140,10 +162,12 @@ final class UploadBookFileTest extends TestCase
         $book = BookModel::factory()->create();
         $file = UploadedFile::fake()->create('book.pdf', 102401, 'application/pdf');
 
-        $response = $this->postJson(
-            route('books.file', ['id' => $book->id]),
-            ['book_file' => $file],
-        );
+        $response = $this
+            ->withToken($this->adminToken)
+            ->postJson(
+                route('admin.books.file', ['id' => $book->id]),
+                ['book_file' => $file],
+            );
 
         $response->assertStatus(422)
             ->assertJsonValidationErrors(['book_file']);
@@ -157,10 +181,12 @@ final class UploadBookFileTest extends TestCase
         foreach (['application/pdf' => 'book.pdf', 'application/epub+zip' => 'book.epub'] as $mime => $filename) {
             $file = UploadedFile::fake()->create($filename, 100, $mime);
 
-            $response = $this->postJson(
-                route('books.file', ['id' => $book->id]),
-                ['book_file' => $file],
-            );
+            $response = $this
+                ->withToken($this->adminToken)
+                ->postJson(
+                    route('admin.books.file', ['id' => $book->id]),
+                    ['book_file' => $file],
+                );
 
             $response->assertStatus(202, "Format {$mime} must be allowed");
         }
@@ -170,10 +196,12 @@ final class UploadBookFileTest extends TestCase
     {
         $file = UploadedFile::fake()->create('book.pdf', 100, 'application/pdf');
 
-        $response = $this->postJson(
-            route('books.file', ['id' => 99999]),
-            ['book_file' => $file],
-        );
+        $response = $this
+            ->withToken($this->adminToken)
+            ->postJson(
+                route('admin.books.file', ['id' => 99999]),
+                ['book_file' => $file],
+            );
 
         $response->assertStatus(404);
     }
@@ -182,10 +210,12 @@ final class UploadBookFileTest extends TestCase
     {
         $file = UploadedFile::fake()->create('book.pdf', 100, 'application/pdf');
 
-        $this->postJson(
-            route('books.file', ['id' => 99999]),
-            ['book_file' => $file],
-        );
+        $this
+            ->withToken($this->adminToken)
+            ->postJson(
+                route('admin.books.file', ['id' => 99999]),
+                ['book_file' => $file],
+            );
 
         Queue::assertNothingPushed();
     }

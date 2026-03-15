@@ -25,22 +25,22 @@ final readonly class CreateBookHandler
         $slug = $this->slugGenerator->generate($command->title);
 
         $book = new Book(
-            id: null,
             title: $command->title,
             slug: $slug,
-            description: $command->description,
-            isbn: $command->isbn,
             language: $command->language,
-            publisher: $command->publisher,
-            publishedYear: $command->publishedYear,
             edition: 1,
             pagesCount: 0,
-            coverPath: null,
-            filePath: null,
             accessType: $command->accessType,
             price: new Money($command->price, new Currency($command->currency)),
             status: BookStatusEnum::DRAFT,
+            description: $command->description,
+            isbn: $command->isbn,
             publishedAt: null,
+            coverPath: null,
+            filePath: null,
+            publisher: $command->publisher,
+            publishedYear: $command->publishedYear,
+            id: null,
         );
 
         $saved = $this->books->save($book);

@@ -6,17 +6,26 @@ namespace Tests\Feature\Catalog;
 
 use App\Application\Catalog\Interfaces\BookCoverStorageInterface;
 use App\Application\Catalog\Interfaces\BookFileStorageInterface;
+use App\Application\Catalog\Interfaces\BookSearchIndexInterface;
 use App\Domain\Catalog\Enums\AccessTypeEnum;
 use App\Domain\Catalog\Enums\BookStatusEnum;
+use App\Domain\Identity\Enums\RoleEnum;
 use App\Infrastructure\Persistence\Models\BookModel;
+use App\Infrastructure\Persistence\Models\UserModel;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\Fakes\FakeBookCoverStorage;
 use Tests\Fakes\FakeBookFileStorage;
+use Tests\Fakes\FakeMeilisearchBookIndex;
 use Tests\TestCase;
 
 final class BookCrudTest extends TestCase
 {
     use DatabaseTransactions;
+
+    private string $adminToken;
+    private string $readerToken;
+    private FakeBookCoverStorage $coverStorage;
+    private FakeBookFileStorage $fileStorage;
 
     protected function setUp(): void
     {
@@ -27,11 +36,22 @@ final class BookCrudTest extends TestCase
 
         $this->instance(BookCoverStorageInterface::class, $this->coverStorage);
         $this->instance(BookFileStorageInterface::class, $this->fileStorage);
+        $this->instance(BookSearchIndexInterface::class,   new FakeMeilisearchBookIndex());
+
+        /** @var UserModel $admin */
+        $admin  = UserModel::factory()->create(['role' => RoleEnum::ADMIN]);
+        $this->adminToken = $admin->createToken('admin-token')->plainTextToken;
+
+        /** @var UserModel $reader */
+        $reader  = UserModel::factory()->create(['role' => RoleEnum::READER]);
+        $this->readerToken = $reader->createToken('reader-token')->plainTextToken;
     }
 
     public function test_create_book_returns_201(): void
     {
-        $response = $this->postJson(route('books.store'), $this->validPayload([
+        $response = $this
+            ->withToken($this->adminToken)
+            ->postJson(route('admin.books.store'), $this->validPayload([
             'description' => 'A classic novel about love and romance.',
             'language'    => 'en'
         ]));
@@ -45,22 +65,26 @@ final class BookCrudTest extends TestCase
 
     public function test_create_book_persists_to_database(): void
     {
-        $this->postJson(route('books.store'), $this->validPayload([
-            'title' => 'Wars and Peace',
-            'description' => 'A classic novel about love and romance.',
-            'language'    => 'en'
-        ]));
+        $this
+            ->withToken($this->adminToken)
+            ->postJson(route('admin.books.store'), $this->validPayload([
+                'title' => 'Wars and Peace',
+                'description' => 'A classic novel about love and romance.',
+                'language' => 'en'
+            ]));
 
         $this->assertDatabaseHas('books', ['title' => 'Wars and Peace']);
     }
 
     public function test_create_book_requires_title(): void
     {
-        $response = $this->postJson(route('books.store'), $this->validPayload([
-            'title' => null,
-            'description' => 'A classic novel about love and romance.',
-            'language'    => 'en'
-        ]));
+        $response = $this
+            ->withToken($this->adminToken)
+            ->postJson(route('admin.books.store'), $this->validPayload([
+                'title' => null,
+                'description' => 'A classic novel about love and romance.',
+                'language' => 'en'
+            ]));
 
         $response->assertStatus(422)
             ->assertJsonValidationErrors(['title']);
@@ -68,11 +92,13 @@ final class BookCrudTest extends TestCase
 
     public function test_create_book_requires_valid_access_type(): void
     {
-        $response = $this->postJson(route('books.store'), $this->validPayload([
-            'access_type' => 'invalid',
-            'description' => 'A classic novel about love and romance.',
-            'language'    => 'en'
-        ]));
+        $response = $this
+            ->withToken($this->adminToken)
+            ->postJson(route('admin.books.store'), $this->validPayload([
+                'access_type' => 'invalid',
+                'description' => 'A classic novel about love and romance.',
+                'language' => 'en'
+            ]));
 
         $response->assertStatus(422)
             ->assertJsonValidationErrors(['access_type']);
@@ -80,11 +106,13 @@ final class BookCrudTest extends TestCase
 
     public function test_create_book_requires_valid_currency(): void
     {
-        $response = $this->postJson(route('books.store'), $this->validPayload([
-            'currency' => 'XXX',
-            'description' => 'A classic novel about love and romance.',
-            'language'    => 'en'
-        ]));
+        $response = $this
+            ->withToken($this->adminToken)
+            ->postJson(route('admin.books.store'), $this->validPayload([
+                'currency' => 'XXX',
+                'description' => 'A classic novel about love and romance.',
+                'language' => 'en'
+            ]));
 
         $response->assertStatus(422)
             ->assertJsonValidationErrors(['currency']);
@@ -97,7 +125,7 @@ final class BookCrudTest extends TestCase
 
         $response = $this->getJson(
             route('books.show', [
-                'book' => $model->id,
+                'id' => $model->id,
             ])
         );
 
@@ -110,7 +138,7 @@ final class BookCrudTest extends TestCase
         /** @var BookModel $model */
         $model = BookModel::factory()->create(['file_path' => null]);
 
-        $this->getJson(route('books.show', ['book' => $model->id]))
+        $this->getJson(route('books.show', ['id' => $model->id]))
             ->assertStatus(200)
             ->assertJsonFragment(['file_links' => []]);
     }
@@ -123,7 +151,7 @@ final class BookCrudTest extends TestCase
 
         $this->fileStorage->registerExisting("books/{$model->id}/test-book.pdf");
 
-        $response = $this->getJson(route('books.show', ['book' => $model->id]));
+        $response = $this->getJson(route('books.show', ['id' => $model->id]));
 
         $response->assertStatus(200);
         $this->assertNotEmpty($response->json('file_links'));
@@ -139,7 +167,7 @@ final class BookCrudTest extends TestCase
         $this->fileStorage->registerExisting("books/{$model->id}/test-book.pdf");
         $this->fileStorage->registerExisting("books/{$model->id}/test-book.epub");
 
-        $response = $this->getJson(route('books.show', ['book' => $model->id]));
+        $response = $this->getJson(route('books.show', ['id' => $model->id]));
 
         $response->assertStatus(200);
         $this->assertCount(2, $response->json('file_links'));
@@ -150,7 +178,7 @@ final class BookCrudTest extends TestCase
         /** @var BookModel $model */
         $model = BookModel::factory()->create(['cover_path' => null]);
 
-        $this->getJson(route('books.show', ['book' => $model->id]))
+        $this->getJson(route('books.show', ['id' => $model->id]))
             ->assertStatus(200)
             ->assertJsonFragment(['cover_url' => null]);
     }
@@ -161,7 +189,7 @@ final class BookCrudTest extends TestCase
         $model = BookModel::factory()->create();
         $model->update(['cover_path' => "covers/{$model->id}/cover.jpg"]);
 
-        $response = $this->getJson(route('books.show', ['book' => $model->id]));
+        $response = $this->getJson(route('books.show', ['id' => $model->id]));
 
         $this->assertStringContainsString("covers/{$model->id}/cover.jpg", $response->json('cover_url'));
     }
@@ -170,7 +198,7 @@ final class BookCrudTest extends TestCase
     {
         $response = $this->getJson(
             route('books.show', [
-                'book' => 99999,
+                'id' => 99999,
             ])
         );
 
@@ -229,17 +257,19 @@ final class BookCrudTest extends TestCase
         /** @var BookModel $model */
         $model = BookModel::factory()->create();
 
-        $response = $this->putJson(
-            route('books.update',
-                [
-                    'book' => $model->id,
-                ]
-            ),
-            $this->validPayload([
-                'title' => 'Updated Title',
-                'language' => 'en',
-            ])
-        );
+        $response = $this
+            ->withToken($this->adminToken)
+            ->putJson(
+                route('admin.books.update',
+                    [
+                        'id' => $model->id,
+                    ]
+                ),
+                $this->validPayload([
+                    'title' => 'Updated Title',
+                    'language' => 'en',
+                ])
+            );
 
         $response->assertStatus(200)
             ->assertJsonFragment(['title' => 'Updated Title']);
@@ -250,17 +280,19 @@ final class BookCrudTest extends TestCase
         /** @var BookModel $model */
         $model = BookModel::factory()->create();
 
-        $this->putJson(
-            route('books.update',
-                [
-                    'book' => $model->id,
-                ]
-            ),
-            $this->validPayload([
-                'title' => 'New Title',
-                'language' => 'en',
-            ])
-        );
+        $this
+            ->withToken($this->adminToken)
+            ->putJson(
+                route('admin.books.update',
+                    [
+                        'id' => $model->id,
+                    ]
+                ),
+                $this->validPayload([
+                    'title' => 'New Title',
+                    'language' => 'en',
+                ])
+            );
 
         $this->assertDatabaseHas('books', [
             'id'    => $model->id,
@@ -270,16 +302,18 @@ final class BookCrudTest extends TestCase
 
     public function test_update_nonexistent_book_returns_404(): void
     {
-        $response = $this->putJson(
-            route('books.update',
-                [
-                    'book' => 999999,
-                ]
-            ),
-            $this->validPayload([
-                'title' => 'New Title',
-                'language' => 'en',
-            ]));
+        $response = $this
+            ->withToken($this->adminToken)
+            ->putJson(
+                route('admin.books.update',
+                    [
+                        'id' => 999999,
+                    ]
+                ),
+                $this->validPayload([
+                    'title' => 'New Title',
+                    'language' => 'en',
+                ]));
 
         $response->assertStatus(404);
     }
@@ -289,7 +323,9 @@ final class BookCrudTest extends TestCase
         /** @var BookModel $model */
         $model = BookModel::factory()->create();
 
-        $response = $this->deleteJson(route('books.destroy', ['book' => $model->id]));
+        $response = $this
+            ->withToken($this->adminToken)
+            ->deleteJson(route('admin.books.destroy', ['id' => $model->id]));
 
         $response->assertStatus(204);
     }
@@ -299,14 +335,18 @@ final class BookCrudTest extends TestCase
         /** @var BookModel $model */
         $model = BookModel::factory()->create();
 
-        $this->deleteJson(route('books.destroy', ['book' => $model->id]));
+        $this
+            ->withToken($this->adminToken)
+            ->deleteJson(route('admin.books.destroy', ['id' => $model->id]));
 
         $this->assertSoftDeleted('books', ['id' => $model->id]);
     }
 
     public function test_delete_nonexistent_book_returns_404(): void
     {
-        $response = $this->deleteJson(route('books.destroy', ['book' => 9999999]));
+        $response = $this
+            ->withToken($this->adminToken)
+            ->deleteJson(route('admin.books.destroy', ['id' => 9999999]));
 
         $response->assertStatus(404);
     }
@@ -320,7 +360,9 @@ final class BookCrudTest extends TestCase
         $this->fileStorage->registerExisting("books/{$model->id}/test-book.pdf");
         $this->fileStorage->registerExisting("books/{$model->id}/test-book.epub");
 
-        $this->deleteJson(route('books.destroy', ['book' => $model->id]));
+        $this
+            ->withToken($this->adminToken)
+            ->deleteJson(route('admin.books.destroy', ['id' => $model->id]));
 
         $this->assertTrue($this->fileStorage->wasDeleted("books/{$model->id}"));
         $this->assertEmpty($this->fileStorage->listFiles("books/{$model->id}"));
@@ -329,13 +371,14 @@ final class BookCrudTest extends TestCase
     public function test_delete_book_removes_cover_from_storage(): void
     {
         /** @var BookModel $model */
-        $model = BookModel::factory()->create([
-            'cover_path' => 'covers/1/cover.jpg',
-        ]);
+        $model = BookModel::factory()->create();
+        $model->update(['cover_path' => "covers/{$model->id}/cover.jpg"]);
 
-        $this->deleteJson(route('books.destroy', ['book' => $model->id]));
+        $this
+            ->withToken($this->adminToken)
+            ->deleteJson(route('admin.books.destroy', ['id' => $model->id]));
 
-        $this->assertTrue($this->coverStorage->wasDeleted('covers/1/cover.jpg'));
+        $this->assertTrue($this->coverStorage->wasDeleted("covers/{$model->id}/cover.jpg"));
     }
 
     public function test_delete_book_removes_file_from_storage(): void
@@ -346,9 +389,11 @@ final class BookCrudTest extends TestCase
 
         $this->fileStorage->registerExisting("books/{$model->id}/test-book.pdf");
 
-        $this->deleteJson(route('books.destroy', ['book' => $model->id]));
+        $this
+            ->withToken($this->adminToken)
+            ->deleteJson(route('admin.books.destroy', ['id' => $model->id]));
 
-        $this->assertTrue($this->fileStorage->wasDeleted("books/{$model->id}")); // ← динамический id
+        $this->assertTrue($this->fileStorage->wasDeleted("books/{$model->id}"));
         $this->assertEmpty($this->fileStorage->listFiles("books/{$model->id}"));
     }
 
@@ -360,7 +405,9 @@ final class BookCrudTest extends TestCase
             'file_path'  => null,
         ]);
 
-        $this->deleteJson(route('books.destroy', ['book' => $model->id]))
+        $this
+            ->withToken($this->adminToken)
+            ->deleteJson(route('admin.books.destroy', ['id' => $model->id]))
             ->assertStatus(204);
 
         $this->assertEmpty($this->coverStorage->getDeleted());

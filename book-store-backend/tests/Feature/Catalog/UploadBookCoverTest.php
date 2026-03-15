@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Tests\Feature\Catalog;
 
 use App\Application\Catalog\Interfaces\BookCoverStorageInterface;
+use App\Domain\Identity\Enums\RoleEnum;
 use App\Infrastructure\Persistence\Models\BookModel;
+use App\Infrastructure\Persistence\Models\UserModel;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -15,6 +17,7 @@ use Tests\TestCase;
 final class UploadBookCoverTest extends TestCase
 {
     use DatabaseTransactions;
+    private string $adminToken;
 
     protected function setUp(): void
     {
@@ -23,6 +26,9 @@ final class UploadBookCoverTest extends TestCase
         Storage::fake('s3');
 
         $this->instance(BookCoverStorageInterface::class, new FakeBookCoverStorage());
+        /** @var UserModel $admin */
+        $admin  = UserModel::factory()->create(['role' => RoleEnum::ADMIN]);
+        $this->adminToken = $admin->createToken('admin-token')->plainTextToken;
     }
 
     public function test_upload_cover_returns_200(): void
@@ -32,10 +38,12 @@ final class UploadBookCoverTest extends TestCase
         $file = UploadedFile::fake()
             ->image('cover.jpg', 800, 600);
 
-        $response = $this->postJson(
-            route('books.cover', ['id' => $book->id,]),
-            ['cover' => $file],
-        );
+        $response = $this
+            ->withToken($this->adminToken)
+            ->postJson(
+                route('admin.books.cover', ['id' => $book->id,]),
+                ['cover' => $file],
+            );
 
         $response->assertStatus(200);
     }
@@ -46,10 +54,11 @@ final class UploadBookCoverTest extends TestCase
         $book = BookModel::factory()->create(['cover_path' => null]);
         $file = UploadedFile::fake()->image('cover.jpg', 800, 600);
 
-        $this->postJson(
-            route('books.cover', $book->id),
-            ['cover' => $file],
-        );
+        $this
+            ->withToken($this->adminToken)->postJson(
+                route('admin.books.cover', $book->id),
+                ['cover' => $file],
+            );
 
         $this->assertDatabaseMissing('books', [
             'id'         => $book->id,
@@ -63,10 +72,11 @@ final class UploadBookCoverTest extends TestCase
         $book = BookModel::factory()->create();
         $file = UploadedFile::fake()->image('cover.jpg');
 
-        $response = $this->postJson(
-            route('books.cover', $book->id),
-            ['cover' => $file],
-        );
+        $response = $this
+            ->withToken($this->adminToken)->postJson(
+                route('admin.books.cover', $book->id),
+                ['cover' => $file],
+            );
 
         $response->assertStatus(200)
             ->assertJsonStructure(['cover_url']);
@@ -75,20 +85,20 @@ final class UploadBookCoverTest extends TestCase
     public function test_upload_cover_replaces_old_cover(): void
     {
         /** @var BookModel $book */
-        $book = BookModel::factory()->create([
-            'cover_path' => 'covers/1/old-cover.jpg',
-        ]);
+        $book = BookModel::factory()->create();
+        $book->update(['cover_path' => 'covers/' . $book->id . '/old-cover.jpg']);
 
         $file = UploadedFile::fake()->image('new-cover.jpg');
 
-        $this->postJson(
-            route('books.cover', $book->id),
-            ['cover' => $file],
-        );
+        $this
+            ->withToken($this->adminToken)->postJson(
+                route('admin.books.cover', $book->id),
+                ['cover' => $file],
+            );
 
         $this->assertDatabaseMissing('books', [
             'id'         => $book->id,
-            'cover_path' => 'covers/1/old-cover.jpg',
+            'cover_path' => 'covers/' . $book->id . '/old-cover.jpg',
         ]);
     }
 
@@ -97,7 +107,9 @@ final class UploadBookCoverTest extends TestCase
         /** @var BookModel $book */
         $book = BookModel::factory()->create();
 
-        $response = $this->postJson(route('books.cover', $book->id), []);
+        $response = $this
+            ->withToken($this->adminToken)
+            ->postJson(route('admin.books.cover', $book->id), []);
 
         $response->assertStatus(422)
             ->assertJsonValidationErrors(['cover']);
@@ -109,10 +121,12 @@ final class UploadBookCoverTest extends TestCase
         $book = BookModel::factory()->create();
         $file = UploadedFile::fake()->create('document.pdf', 100, 'application/pdf');
 
-        $response = $this->postJson(
-            route('books.cover', $book->id),
-            ['cover' => $file],
-        );
+        $response = $this
+            ->withToken($this->adminToken)
+            ->postJson(
+                route('admin.books.cover', $book->id),
+                ['cover' => $file],
+            );
 
         $response->assertStatus(422)
             ->assertJsonValidationErrors(['cover']);
@@ -125,10 +139,12 @@ final class UploadBookCoverTest extends TestCase
 
         $file = UploadedFile::fake()->image('cover.jpg')->size(6000);
 
-        $response = $this->postJson(
-            route('books.cover', $book->id),
-            ['cover' => $file],
-        );
+        $response = $this
+            ->withToken($this->adminToken)
+            ->postJson(
+                route('admin.books.cover', $book->id),
+                ['cover' => $file],
+            );
 
         $response->assertStatus(422)
             ->assertJsonValidationErrors(['cover']);
@@ -142,10 +158,12 @@ final class UploadBookCoverTest extends TestCase
         foreach (['jpg', 'jpeg', 'png', 'webp'] as $format) {
             $file = UploadedFile::fake()->image("cover.{$format}");
 
-            $response = $this->postJson(
-                route('books.cover', $book->id),
-                ['cover' => $file],
-            );
+            $response = $this
+                ->withToken($this->adminToken)
+                ->postJson(
+                    route('admin.books.cover', $book->id),
+                    ['cover' => $file],
+                );
 
             $response->assertStatus(200, "Формат {$format} должен быть допустимым");
         }
@@ -155,10 +173,12 @@ final class UploadBookCoverTest extends TestCase
     {
         $file = UploadedFile::fake()->image('cover.jpg');
 
-        $response = $this->postJson(
-            route('books.cover', 99999),
-            ['cover' => $file],
-        );
+        $response = $this
+            ->withToken($this->adminToken)
+            ->postJson(
+                route('admin.books.cover', 99999),
+                ['cover' => $file],
+            );
 
         $response->assertStatus(404);
     }
