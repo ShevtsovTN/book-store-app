@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Tests\Integration\Catalog;
 
 use App\Application\Catalog\Jobs\ParseBookFileJob;
+use App\Domain\Identity\Enums\RoleEnum;
 use App\Infrastructure\Persistence\Models\BookModel;
+use App\Infrastructure\Persistence\Models\UserModel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Queue;
@@ -18,9 +20,15 @@ final class UploadBookFileIntegrationTest extends TestCase
     use RefreshDatabase;
     use RequiresMinIO;
 
+    private string $adminToken;
+
     protected function setUp(): void
     {
         parent::setUp();
+
+        /** @var UserModel $admin */
+        $admin = UserModel::factory()->create(['role' => RoleEnum::ADMIN]);
+        $this->adminToken = $admin->createToken('admin-token')->plainTextToken;
 
         $this->ensureMinioIsAccessible();
         $this->cleanupBucket();
@@ -40,10 +48,12 @@ final class UploadBookFileIntegrationTest extends TestCase
         $book = BookModel::factory()->create();
         $file = UploadedFile::fake()->create('book.pdf', 100, 'application/pdf');
 
-        $response = $this->postJson(
-            route('books.file', ['id' => $book->id]),
-            ['book_file' => $file],
-        );
+        $response = $this
+            ->withToken($this->adminToken)
+            ->postJson(
+                route('admin.books.file', ['id' => $book->id]),
+                ['book_file' => $file],
+            );
 
         $filePath = $response->json('file_path');
 
@@ -59,10 +69,12 @@ final class UploadBookFileIntegrationTest extends TestCase
         $book = BookModel::factory()->create();
         $file = UploadedFile::fake()->create('book.epub', 100, 'application/epub+zip');
 
-        $response = $this->postJson(
-            route('books.file', ['id' => $book->id]),
-            ['book_file' => $file],
-        );
+        $response = $this
+            ->withToken($this->adminToken)
+            ->postJson(
+                route('admin.books.file', ['id' => $book->id]),
+                ['book_file' => $file],
+            );
 
         $filePath = $response->json('file_path');
 
@@ -80,13 +92,15 @@ final class UploadBookFileIntegrationTest extends TestCase
 
         $originalContent = file_get_contents($file->getRealPath());
 
-        $response = $this->postJson(
-            route('books.file', ['id' => $book->id]),
-            ['book_file' => $file],
-        );
+        $response = $this
+            ->withToken($this->adminToken)
+            ->postJson(
+                route('admin.books.file', ['id' => $book->id]),
+                ['book_file' => $file],
+            );
 
-        $filePath       = $response->json('file_path');
-        $storedContent  = Storage::disk('s3')->get($filePath);
+        $filePath = $response->json('file_path');
+        $storedContent = Storage::disk('s3')->get($filePath);
 
         $this->assertEquals(
             md5($originalContent),
@@ -101,16 +115,18 @@ final class UploadBookFileIntegrationTest extends TestCase
         $book = BookModel::factory()->create();
         $file = UploadedFile::fake()->create('book.pdf', 100, 'application/pdf');
 
-        $response = $this->postJson(
-            route('books.file', ['id' => $book->id]),
-            ['book_file' => $file],
-        );
+        $response = $this
+            ->withToken($this->adminToken)
+            ->postJson(
+                route('admin.books.file', ['id' => $book->id]),
+                ['book_file' => $file],
+            );
 
         $filePath = $response->json('file_path');
 
         Queue::assertPushed(
             ParseBookFileJob::class,
-            static fn ($job) => $job->filePath === $filePath,
+            static fn($job) => $job->filePath === $filePath,
         );
     }
 
@@ -120,10 +136,12 @@ final class UploadBookFileIntegrationTest extends TestCase
         $book = BookModel::factory()->create();
         $file = UploadedFile::fake()->create('my-book.pdf', 100, 'application/pdf');
 
-        $response = $this->postJson(
-            route('books.file', ['id' => $book->id]),
-            ['book_file' => $file],
-        );
+        $response = $this
+            ->withToken($this->adminToken)
+            ->postJson(
+                route('admin.books.file', ['id' => $book->id]),
+                ['book_file' => $file],
+            );
 
         $filePath = $response->json('file_path');
 
