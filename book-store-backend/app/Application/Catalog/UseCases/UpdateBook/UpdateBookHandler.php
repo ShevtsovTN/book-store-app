@@ -6,7 +6,6 @@ namespace App\Application\Catalog\UseCases\UpdateBook;
 
 use App\Application\Catalog\Interfaces\BookSearchIndexInterface;
 use App\Domain\Catalog\Entities\Book;
-use App\Domain\Catalog\Enums\AccessTypeEnum;
 use App\Domain\Catalog\Exceptions\BookNotFoundException;
 use App\Domain\Catalog\Interfaces\BookRepositoryInterface;
 use App\Domain\Shared\ValueObjects\Currency;

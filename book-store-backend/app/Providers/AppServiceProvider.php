@@ -9,6 +9,7 @@ use App\Application\Catalog\Interfaces\BookSearchIndexInterface;
 use App\Application\Identity\Interfaces\PasswordHasherInterface;
 use App\Application\Shared\Interfaces\EventDispatcherInterface;
 use App\Application\Shared\Interfaces\SlugGeneratorInterface;
+use App\Domain\Catalog\Interfaces\BookPopularityRepositoryInterface;
 use App\Domain\Catalog\Interfaces\BookRepositoryInterface;
 use App\Domain\Catalog\Interfaces\BookTagRepositoryInterface;
 use App\Domain\Catalog\Interfaces\TagRepositoryInterface;
@@ -25,6 +26,7 @@ use App\Infrastructure\Cache\RedisReadingProgressCacheRepository;
 use App\Infrastructure\Parser\BookFileParserRouter;
 use App\Infrastructure\Persistence\Repositories\EloquentBookChapterRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentBookPageRepository;
+use App\Infrastructure\Persistence\Repositories\EloquentBookPopularityRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentBookRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentBookTagRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentReadingSessionRepository;
@@ -90,6 +92,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(BookPageRepositoryInterface::class, EloquentBookPageRepository::class);
         $this->app->bind(TagRepositoryInterface::class,     EloquentTagRepository::class);
         $this->app->bind(BookTagRepositoryInterface::class,  EloquentBookTagRepository::class);
+        $this->app->bind(BookPopularityRepositoryInterface::class, EloquentBookPopularityRepository::class);
     }
 
     /**

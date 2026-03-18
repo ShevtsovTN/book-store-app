@@ -7,6 +7,7 @@ use App\Presentation\Http\Controllers\BookFileController;
 use App\Presentation\Http\Controllers\BookPageController;
 use App\Presentation\Http\Controllers\BookSearchController;
 use App\Presentation\Http\Controllers\BookTagController;
+use App\Presentation\Http\Controllers\PopularBooksController;
 use App\Presentation\Http\Controllers\ReaderAuthController;
 use App\Presentation\Http\Controllers\ReadingHistoryController;
 use App\Presentation\Http\Controllers\ReadingProgressController;
@@ -16,6 +17,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
     Route::get('books/search', BookSearchController::class)->name('books.search');
+    Route::get('/books/popular', PopularBooksController::class)->name('books.popular');
     Route::get('books',        [BookController::class, 'index'])->name('books.index');
     Route::get('books/{id}',   [BookController::class, 'show'])->name('books.show');
     Route::get('tags',         [TagController::class, 'index'])->name('tags.index');

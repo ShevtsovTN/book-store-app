@@ -12,10 +12,6 @@ use Tests\Fakes\FakeMeilisearchBookIndex;
 
 final class SearchBooksTest extends TestCase
 {
-    // ──────────────────────────────────────────────────────────────
-    // SearchBooksHandler
-    // ──────────────────────────────────────────────────────────────
-
     public function test_handler_delegates_search_to_index(): void
     {
         $index   = new FakeMeilisearchBookIndex();
@@ -52,10 +48,6 @@ final class SearchBooksTest extends TestCase
 
         $this->assertSame($expected, $result);
     }
-
-    // ──────────────────────────────────────────────────────────────
-    // SearchBooksCommand::fromArray
-    // ──────────────────────────────────────────────────────────────
 
     public function test_from_array_maps_query(): void
     {
@@ -132,10 +124,6 @@ final class SearchBooksTest extends TestCase
         $this->assertNull($command->accessType);
         $this->assertNull($command->language);
     }
-
-    // ──────────────────────────────────────────────────────────────
-    // SearchBooksCommand::toQuery
-    // ──────────────────────────────────────────────────────────────
 
     public function test_to_query_maps_all_fields(): void
     {

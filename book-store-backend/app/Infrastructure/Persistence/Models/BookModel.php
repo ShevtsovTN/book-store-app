@@ -72,7 +72,7 @@ final class BookModel extends Model
     protected $casts = [
         'price'        => 'integer',
         'pages_count'  => 'integer',
-        'published_at' => 'datetime',
+        'published_at' => 'immutable_datetime',
         'status' => BookStatusEnum::class,
         'access_type' => AccessTypeEnum::class,
     ];
