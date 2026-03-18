@@ -10,6 +10,7 @@ use App\Presentation\Http\Controllers\BookTagController;
 use App\Presentation\Http\Controllers\PopularBooksController;
 use App\Presentation\Http\Controllers\ReaderAuthController;
 use App\Presentation\Http\Controllers\ReadingHistoryController;
+use App\Presentation\Http\Controllers\ReadingListController;
 use App\Presentation\Http\Controllers\ReadingProgressController;
 use App\Presentation\Http\Controllers\ReadingSessionController;
 use App\Presentation\Http\Controllers\TagController;
@@ -49,6 +50,14 @@ Route::prefix('v1')->group(function () {
                 ->name('reading.history');
 
             Route::post('auth/logout', [ReaderAuthController::class, 'logout'])->name('auth.logout');
+
+            Route::prefix('reading-list')->name('reading-list.')->group(static function (): void {
+                Route::get('/', [ReadingListController::class, 'index'])->name('index');
+                Route::post('/', [ReadingListController::class, 'store'])->name('store');
+                Route::patch('/{bookId}/start', [ReadingListController::class, 'start'])->name('start');
+                Route::patch('/{bookId}/progress', [ReadingListController::class, 'progress'])->name('progress');
+                Route::delete('/{bookId}', [ReadingListController::class, 'destroy'])->name('destroy');
+            });
         });
 
     Route::middleware(['auth:sanctum', 'role:admin'])

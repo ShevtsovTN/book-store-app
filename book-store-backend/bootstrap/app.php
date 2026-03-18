@@ -4,6 +4,9 @@ use App\Domain\Catalog\Exceptions\BookNotFoundException;
 use App\Domain\Catalog\Exceptions\TagNotFoundException;
 use App\Domain\Identity\Exceptions\InvalidCredentialsException;
 use App\Domain\Identity\Exceptions\ReaderAlreadyExistsException;
+use App\Domain\Reading\Exceptions\InvalidReadingStatusTransitionException;
+use App\Domain\Reading\Exceptions\ReadingEntryAlreadyExistsException;
+use App\Domain\Reading\Exceptions\ReadingEntryNotFoundException;
 use App\Presentation\Console\Commands\Search\ConfigureSearchIndexCommand;
 use App\Presentation\Console\Commands\Search\ReindexBooksCommand;
 use App\Presentation\Http\Middleware\RequireRoleMiddleware;
@@ -33,16 +36,28 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->render(function (Throwable $e) {
             return match (true) {
                 $e instanceof BookNotFoundException,
-                $e instanceof TagNotFoundException => response()->json([
+                    $e instanceof TagNotFoundException => response()->json([
                     'message' => $e->getMessage(),
                 ], Response::HTTP_NOT_FOUND),
                 $e instanceof ReaderAlreadyExistsException => response()->json(
                     ['message' => $e->getMessage()],
                     Response::HTTP_CONFLICT,
                 ),
-                $e instanceof InvalidCredentialsException  => response()->json(
+                $e instanceof InvalidCredentialsException => response()->json(
                     ['message' => $e->getMessage()],
                     Response::HTTP_UNAUTHORIZED,
+                ),
+                $e instanceof ReadingEntryNotFoundException => response()->json(
+                    ['message' => $e->getMessage()],
+                    Response::HTTP_NOT_FOUND
+                ),
+                $e instanceof ReadingEntryAlreadyExistsException => response()->json(
+                    ['message' => $e->getMessage()],
+                    Response::HTTP_CONFLICT
+                ),
+                $e instanceof InvalidReadingStatusTransitionException => response()->json(
+                    ['message' => $e->getMessage()],
+                    Response::HTTP_UNPROCESSABLE_ENTITY
                 ),
                 default => null,
             };
