@@ -1,11 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Infrastructure\Queue;
 
 use App\Application\Catalog\Events\BookFileUploaded;
 use App\Application\Catalog\Jobs\ParseBookFileJob;
 use App\Application\Shared\Interfaces\EventDispatcherInterface;
+use App\Domain\Catalog\Events\BookPublished;
 use App\Domain\Identity\Events\UserRegistered;
+use App\Domain\Reading\Events\BookReadingFinished;
+use App\Infrastructure\Notification\Queue\QueueableBookFinishedNotificationJob;
+use App\Infrastructure\Notification\Queue\QueueableBookPublishedNotificationJob;
 use App\Infrastructure\Notification\Queue\QueueableWelcomeNotificationJob;
 
 final class LaravelEventDispatcher implements EventDispatcherInterface
@@ -22,9 +28,22 @@ final class LaravelEventDispatcher implements EventDispatcherInterface
             ),
             $event instanceof UserRegistered => dispatch(
                 new QueueableWelcomeNotificationJob(
-                    $event->userId,
-                    $event->userName,
-                    $event->userEmail,
+                    userId:    $event->userId,
+                    userName:  $event->userName,
+                    userEmail: $event->userEmail,
+                )
+            ),
+            $event instanceof BookReadingFinished => dispatch(
+                new QueueableBookFinishedNotificationJob(
+                    userId:    $event->userId,
+                    bookId:    $event->bookId,
+                    bookTitle: $event->bookTitle,
+                )
+            ),
+            $event instanceof BookPublished => dispatch(
+                new QueueableBookPublishedNotificationJob(
+                    bookId:    $event->bookId,
+                    bookTitle: $event->bookTitle,
                 )
             ),
             default => event($event),
