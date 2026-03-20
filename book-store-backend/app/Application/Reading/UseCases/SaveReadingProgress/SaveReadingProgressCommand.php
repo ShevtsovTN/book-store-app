@@ -14,5 +14,6 @@ final readonly class SaveReadingProgressCommand
         public int $globalPageNumber,
         public int $scrollPosition,
         public int $totalPages,
+        public string $bookTitle
     ) {}
 }

@@ -46,6 +46,7 @@ final class ReadingProgressController extends Controller
                 globalPageNumber: $data['global_page_number'],
                 scrollPosition: $data['scroll_position'],
                 totalPages:     $data['total_pages'],
+                bookTitle:      $data['book_title'],
             )
         );
 

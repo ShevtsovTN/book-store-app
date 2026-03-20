@@ -9,9 +9,11 @@ use App\Application\Catalog\Jobs\ParseBookFileJob;
 use App\Application\Shared\Interfaces\EventDispatcherInterface;
 use App\Domain\Catalog\Events\BookPublished;
 use App\Domain\Identity\Events\UserRegistered;
+use App\Domain\Order\Events\PurchaseCompleted;
 use App\Domain\Reading\Events\BookReadingFinished;
 use App\Infrastructure\Notification\Queue\QueueableBookFinishedNotificationJob;
 use App\Infrastructure\Notification\Queue\QueueableBookPublishedNotificationJob;
+use App\Infrastructure\Notification\Queue\QueueablePurchaseReceiptNotificationJob;
 use App\Infrastructure\Notification\Queue\QueueableWelcomeNotificationJob;
 
 final class LaravelEventDispatcher implements EventDispatcherInterface
@@ -42,6 +44,13 @@ final class LaravelEventDispatcher implements EventDispatcherInterface
             ),
             $event instanceof BookPublished => dispatch(
                 new QueueableBookPublishedNotificationJob(
+                    bookId:    $event->bookId,
+                    bookTitle: $event->bookTitle,
+                )
+            ),
+            $event instanceof PurchaseCompleted => dispatch(
+                new QueueablePurchaseReceiptNotificationJob(
+                    userId:    $event->userId,
                     bookId:    $event->bookId,
                     bookTitle: $event->bookTitle,
                 )
