@@ -29,7 +29,8 @@ final readonly class PublishBookHandler
                 bookId: $saved->id,
                 bookTitle: $saved->title,
                 accessType: $saved->accessType->value,
-            ));
+            ),
+        );
 
         return new PublishBookResult(book: $saved);
     }

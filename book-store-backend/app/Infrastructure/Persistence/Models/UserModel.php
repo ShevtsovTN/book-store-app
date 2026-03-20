@@ -31,7 +31,9 @@ use Laravel\Sanctum\PersonalAccessToken;
 class UserModel extends Authenticatable
 {
     /** @use HasFactory<UserModelFactory> */
-    use HasFactory, Notifiable, HasApiTokens;
+    use HasFactory;
+    use Notifiable;
+    use HasApiTokens;
 
     protected $table = 'users';
 
@@ -57,6 +59,11 @@ class UserModel extends Authenticatable
         'remember_token',
     ];
 
+    protected static function newFactory(): UserModelFactory
+    {
+        return UserModelFactory::new();
+    }
+
     /**
      * Get the attributes that should be cast.
      *
@@ -69,10 +76,5 @@ class UserModel extends Authenticatable
             'password' => 'hashed',
             'role' => RoleEnum::class,
         ];
-    }
-
-    protected static function newFactory(): UserModelFactory
-    {
-        return UserModelFactory::new();
     }
 }

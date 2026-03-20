@@ -23,7 +23,7 @@ final readonly class DeleteBookHandler
     {
         $book = $this->books->findById($command->id);
 
-        if (!$book) {
+        if ( ! $book) {
             throw new BookNotFoundException($command->id);
         }
 

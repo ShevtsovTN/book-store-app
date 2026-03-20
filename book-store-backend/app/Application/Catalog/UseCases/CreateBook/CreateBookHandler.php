@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Application\Catalog\UseCases\CreateBook;
 
-use App\Application\Catalog\Interfaces\BookSearchIndexInterface;
 use App\Application\Shared\Interfaces\SlugGeneratorInterface;
 use App\Domain\Catalog\Entities\Book;
 use App\Domain\Catalog\Enums\BookStatusEnum;

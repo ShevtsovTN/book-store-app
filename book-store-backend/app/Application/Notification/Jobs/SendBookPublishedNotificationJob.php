@@ -24,15 +24,15 @@ final readonly class SendBookPublishedNotificationJob implements NotificationJob
     public function handle(): void
     {
         $this->sender->send(new NotificationDispatchRequest(
-            userId:    $this->userId,
+            userId: $this->userId,
             userEmail: $this->userEmail,
-            content:   new NotificationContent(
-                type:  NotificationTypeEnum::BOOK_PUBLISHED,
+            content: new NotificationContent(
+                type: NotificationTypeEnum::BOOK_PUBLISHED,
                 title: 'New Book Available',
-                body:  "The book \"{$this->bookTitle}\" is now available in the catalog.",
-                data:  ['book_id' => $this->bookId],
+                body: "The book \"{$this->bookTitle}\" is now available in the catalog.",
+                data: ['book_id' => $this->bookId],
             ),
-            channels:  [
+            channels: [
                 NotificationChannelEnum::DATABASE,
                 NotificationChannelEnum::EMAIL,
             ],

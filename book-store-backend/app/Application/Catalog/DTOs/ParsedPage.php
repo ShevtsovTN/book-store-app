@@ -13,6 +13,5 @@ final readonly class ParsedPage
         public string            $content,
         public ContentFormatEnum $contentFormat,
         public int               $wordCount,
-    ) {
-    }
+    ) {}
 }

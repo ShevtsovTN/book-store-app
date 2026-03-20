@@ -8,6 +8,5 @@ final readonly class PublishBookCommand
 {
     public function __construct(
         public int $id,
-    ) {
-    }
+    ) {}
 }

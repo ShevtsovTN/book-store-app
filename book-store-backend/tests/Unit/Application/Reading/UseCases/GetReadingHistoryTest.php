@@ -16,7 +16,9 @@ use Tests\Fakes\FakeUserReadingProgressRepository;
 final class GetReadingHistoryTest extends TestCase
 {
     private FakeReadingSessionRepository      $sessions;
+
     private FakeUserReadingProgressRepository $progressRepo;
+
     private GetReadingHistoryHandler          $handler;
 
     protected function setUp(): void
@@ -58,7 +60,7 @@ final class GetReadingHistoryTest extends TestCase
             chapterId: 1,
             pageId: 20,
             globalPageNumber: 20,
-            scrollPosition: 0
+            scrollPosition: 0,
         );
         $this->progressRepo->save($progress->withPosition($position, 100));
 
@@ -74,14 +76,14 @@ final class GetReadingHistoryTest extends TestCase
         int $duration,
     ): ReadingSession {
         return new ReadingSession(
-            id:              null,
-            userId:          $userId,
-            bookId:          $bookId,
-            startPageId:     1,
-            endPageId:       $pagesRead,
-            startedAt:       new \DateTimeImmutable(),
-            endedAt:         new \DateTimeImmutable(),
-            pagesRead:       $pagesRead,
+            id: null,
+            userId: $userId,
+            bookId: $bookId,
+            startPageId: 1,
+            endPageId: $pagesRead,
+            startedAt: new \DateTimeImmutable(),
+            endedAt: new \DateTimeImmutable(),
+            pagesRead: $pagesRead,
             durationSeconds: $duration,
         );
     }

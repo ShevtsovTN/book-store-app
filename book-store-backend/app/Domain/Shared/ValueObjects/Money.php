@@ -7,6 +7,7 @@ namespace App\Domain\Shared\ValueObjects;
 final readonly class Money
 {
     private const string USD = 'USD';
+
     private const string EUR = 'EUR';
 
     public function __construct(
@@ -31,6 +32,14 @@ final readonly class Money
     public static function ofEur(int $cents): self
     {
         return new self($cents, new Currency(self::EUR));
+    }
+
+    public static function fromArray(array $data): self
+    {
+        return new self(
+            amount: $data['amount'],
+            currency: new Currency($data['currency']),
+        );
     }
 
     public function add(self $other): self
@@ -65,12 +74,13 @@ final readonly class Money
     public function isGreaterThan(self $other): bool
     {
         $this->assertSameCurrency($other);
+
         return $this->amount > $other->amount;
     }
 
     public function isZero(): bool
     {
-        return $this->amount === 0;
+        return 0 === $this->amount;
     }
 
     public function format(): string
@@ -95,19 +105,11 @@ final readonly class Money
         ];
     }
 
-    public static function fromArray(array $data): self
-    {
-        return new self(
-            amount:   $data['amount'],
-            currency: new Currency($data['currency']),
-        );
-    }
-
     private function assertSameCurrency(self $other): void
     {
-        if (!$this->currency->equals($other->currency)) {
+        if ( ! $this->currency->equals($other->currency)) {
             throw new \InvalidArgumentException(
-                "Cannot mix currencies: {$this->currency} and {$other->currency}"
+                "Cannot mix currencies: {$this->currency} and {$other->currency}",
             );
         }
     }

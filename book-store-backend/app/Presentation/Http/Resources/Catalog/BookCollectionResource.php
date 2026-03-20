@@ -15,6 +15,7 @@ final class BookCollectionResource extends JsonResource
     public function withStorage(BookCoverStorageInterface $storage): self
     {
         $this->storage = $storage;
+
         return $this;
     }
 
@@ -25,7 +26,7 @@ final class BookCollectionResource extends JsonResource
 
         return [
             'data' => array_map(
-                fn (Book $book) => new BookResource($book)
+                fn(Book $book) => new BookResource($book)
                     ->withStorage($this->storage)
                     ->toArray($request),
                 $collection->items,

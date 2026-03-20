@@ -103,7 +103,7 @@ final class UploadBookFileTest extends TestCase
         Queue::assertPushed(
             ParseBookFileJob::class,
             static fn($job) => $job->bookId === $book->id
-                && $job->mimeType === 'application/pdf',
+                && 'application/pdf' === $job->mimeType,
         );
     }
 

@@ -19,11 +19,11 @@ final readonly class UpdateProgressHandler
     {
         $entry = $this->entries->findEntry($command->userId, $command->bookId);
 
-        if (!$entry) {
+        if ( ! $entry) {
             throw new ReadingEntryNotFoundException($command->userId, $command->bookId);
         }
 
-        if ($entry->status !== ReadingStatusEnum::READING) {
+        if (ReadingStatusEnum::READING !== $entry->status) {
             throw new InvalidReadingStatusTransitionException($entry->status, ReadingStatusEnum::READING);
         }
 

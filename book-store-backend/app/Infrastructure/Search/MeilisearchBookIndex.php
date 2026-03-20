@@ -35,7 +35,7 @@ final class MeilisearchBookIndex implements BookSearchIndexInterface
                 ->deleteDocument($bookId);
         } catch (ApiException $e) {
             // document_not_found — не ошибка, идемпотентная операция
-            if ($e->errorCode !== 'document_not_found') {
+            if ('document_not_found' !== $e->errorCode) {
                 throw new RuntimeException(
                     "Failed to delete book #{$bookId} from search index: {$e->getMessage()}",
                     previous: $e,
@@ -51,13 +51,13 @@ final class MeilisearchBookIndex implements BookSearchIndexInterface
             ->search($query->query, $this->buildSearchParams($query));
 
         return new BookSearchResult(
-            hits:             array_map(
-                fn (array $hit) => $this->toHit($hit),
+            hits: array_map(
+                fn(array $hit) => $this->toHit($hit),
                 $result->getHits(),
             ),
-            total:            $result->getEstimatedTotalHits() ?? 0,
-            limit:            $result->getLimit()             ?? $query->limit,
-            offset:           $result->getOffset()            ?? $query->offset,
+            total: $result->getEstimatedTotalHits() ?? 0,
+            limit: $result->getLimit()             ?? $query->limit,
+            offset: $result->getOffset()            ?? $query->offset,
             processingTimeMs: $result->getProcessingTimeMs()  ?? 0,
         );
     }
@@ -76,7 +76,7 @@ final class MeilisearchBookIndex implements BookSearchIndexInterface
             $task = $this->client
                 ->index(self::INDEX_NAME)
                 ->addDocuments(
-                    array_map(fn (Book $b) => $this->toDocument($b), $batch)
+                    array_map(fn(Book $b) => $this->toDocument($b), $batch),
                 );
 
             // Собираем taskUid — ждём все после отправки всех батчей,
@@ -102,7 +102,7 @@ final class MeilisearchBookIndex implements BookSearchIndexInterface
         // могут быть удалены вместе со старыми.
         $this->awaiter->wait($task['taskUid']);
 
-        if (!empty($books)) {
+        if ( ! empty($books)) {
             $this->bulkIndex($books);
         }
     }
@@ -123,7 +123,7 @@ final class MeilisearchBookIndex implements BookSearchIndexInterface
         ];
 
         $filters = $this->buildFilters($query);
-        if (!empty($filters)) {
+        if ( ! empty($filters)) {
             // Несколько фильтров — AND-условие.
             // Для OR используй: [['status = published', 'status = archived']]
             $params['filter'] = $filters;
@@ -138,15 +138,15 @@ final class MeilisearchBookIndex implements BookSearchIndexInterface
 
         // Фильтры — строки вида "attribute = value" или "attribute IN [v1, v2]".
         // ВАЖНО: атрибуты должны быть объявлены в filterableAttributes индекса.
-        if ($query->status !== null) {
+        if (null !== $query->status) {
             $filters[] = "status = '{$query->status->value}'";
         }
 
-        if ($query->accessType !== null) {
+        if (null !== $query->accessType) {
             $filters[] = "access_type = '{$query->accessType->value}'";
         }
 
-        if ($query->language !== null) {
+        if (null !== $query->language) {
             // Значения с пробелами/спецсимволами берём в кавычки
             $filters[] = "language = '{$query->language}'";
         }
@@ -179,13 +179,13 @@ final class MeilisearchBookIndex implements BookSearchIndexInterface
         // _rankingScore — float от 0.0 до 1.0, доступен только при showRankingScore=true.
         // _formatted — массив с highlighted-версиями полей.
         return new BookSearchHit(
-            bookId:           $hit['id'],
-            title:            $hit['_formatted']['title']       ?? $hit['title'],
-            slug:             $hit['slug'],
-            description:      $hit['_formatted']['description'] ?? $hit['description'] ?? null,
-            accessType:       $hit['access_type'],
-            status:           $hit['status'],
-            rankingScore:     $hit['_rankingScore'] ?? 0.0,
+            bookId: $hit['id'],
+            title: $hit['_formatted']['title']       ?? $hit['title'],
+            slug: $hit['slug'],
+            description: $hit['_formatted']['description'] ?? $hit['description'] ?? null,
+            accessType: $hit['access_type'],
+            status: $hit['status'],
+            rankingScore: $hit['_rankingScore'] ?? 0.0,
         );
     }
 }

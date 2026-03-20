@@ -59,7 +59,7 @@ final class UploadBookFileIntegrationTest extends TestCase
 
         $this->assertTrue(
             Storage::disk('s3')->exists($filePath),
-            "File {$filePath} not found in MinIO"
+            "File {$filePath} not found in MinIO",
         );
     }
 
@@ -80,7 +80,7 @@ final class UploadBookFileIntegrationTest extends TestCase
 
         $this->assertTrue(
             Storage::disk('s3')->exists($filePath),
-            "File {$filePath} not found in MinIO"
+            "File {$filePath} not found in MinIO",
         );
     }
 
@@ -105,7 +105,7 @@ final class UploadBookFileIntegrationTest extends TestCase
         $this->assertEquals(
             md5($originalContent),
             md5($storedContent),
-            'The content of the file in MinIO does not match the original'
+            'The content of the file in MinIO does not match the original',
         );
     }
 

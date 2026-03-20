@@ -27,7 +27,7 @@ final class ReadingProgressController extends Controller
             new GetReadingProgressCommand(
                 userId: $request->user()->id,
                 bookId: $bookId,
-            )
+            ),
         );
 
         return new JsonResponse(new ReadingProgressResource($result));
@@ -39,15 +39,15 @@ final class ReadingProgressController extends Controller
 
         $result = $this->saveHandler->handle(
             new SaveReadingProgressCommand(
-                userId:         $request->user()->id,
-                bookId:         $bookId,
-                chapterId:      $data['chapter_id'],
-                pageId:         $data['page_id'],
+                userId: $request->user()->id,
+                bookId: $bookId,
+                chapterId: $data['chapter_id'],
+                pageId: $data['page_id'],
                 globalPageNumber: $data['global_page_number'],
                 scrollPosition: $data['scroll_position'],
-                totalPages:     $data['total_pages'],
-                bookTitle:      $data['book_title'],
-            )
+                totalPages: $data['total_pages'],
+                bookTitle: $data['book_title'],
+            ),
         );
 
         return new JsonResponse([

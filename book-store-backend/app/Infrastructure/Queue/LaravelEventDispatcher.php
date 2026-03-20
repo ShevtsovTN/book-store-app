@@ -26,34 +26,34 @@ final class LaravelEventDispatcher implements EventDispatcherInterface
                     bookId: $event->bookId,
                     filePath: $event->filePath,
                     mimeType: $event->mimeType,
-                )
+                ),
             ),
             $event instanceof UserRegistered => dispatch(
                 new QueueableWelcomeNotificationJob(
-                    userId:    $event->userId,
-                    userName:  $event->userName,
+                    userId: $event->userId,
+                    userName: $event->userName,
                     userEmail: $event->userEmail,
-                )
+                ),
             ),
             $event instanceof BookReadingFinished => dispatch(
                 new QueueableBookFinishedNotificationJob(
-                    userId:    $event->userId,
-                    bookId:    $event->bookId,
+                    userId: $event->userId,
+                    bookId: $event->bookId,
                     bookTitle: $event->bookTitle,
-                )
+                ),
             ),
             $event instanceof BookPublished => dispatch(
                 new QueueableBookPublishedNotificationJob(
-                    bookId:    $event->bookId,
+                    bookId: $event->bookId,
                     bookTitle: $event->bookTitle,
-                )
+                ),
             ),
             $event instanceof PurchaseCompleted => dispatch(
                 new QueueablePurchaseReceiptNotificationJob(
-                    userId:    $event->userId,
-                    bookId:    $event->bookId,
+                    userId: $event->userId,
+                    bookId: $event->bookId,
                     bookTitle: $event->bookTitle,
-                )
+                ),
             ),
             default => event($event),
         };

@@ -40,7 +40,7 @@ final class ReadingEntryModel extends Model
 
     public function progressPercentage(): ?float
     {
-        if ($this->total_pages === null || $this->total_pages === 0) {
+        if (null === $this->total_pages || 0 === $this->total_pages) {
             return null;
         }
 

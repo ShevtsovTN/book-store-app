@@ -14,17 +14,17 @@ final readonly class SaveReadingProgressHandler
     public function __construct(
         private UserReadingProgressRepositoryInterface $progressRepository,
         private ReadingProgressCacheRepositoryInterface $cache,
-        private EventDispatcherInterface                $dispatcher
+        private EventDispatcherInterface                $dispatcher,
     ) {}
 
     public function handle(SaveReadingProgressCommand $command): SaveReadingProgressResult
     {
         $position = new ReadingPosition(
-            bookId:           $command->bookId,
-            chapterId:        $command->chapterId,
-            pageId:           $command->pageId,
+            bookId: $command->bookId,
+            chapterId: $command->chapterId,
+            pageId: $command->pageId,
             globalPageNumber: $command->globalPageNumber,
-            scrollPosition:   $command->scrollPosition,
+            scrollPosition: $command->scrollPosition,
         );
 
         $progress = $this->progressRepository
@@ -37,17 +37,17 @@ final readonly class SaveReadingProgressHandler
         $this->progressRepository->save($updated);
         $this->cache->set($command->userId, $position);
 
-        if ($updated->isFinished && !$wasFinished) {
+        if ($updated->isFinished && ! $wasFinished) {
             $this->dispatcher->dispatch(new BookReadingFinished(
-                userId:    $command->userId,
-                bookId:    $command->bookId,
+                userId: $command->userId,
+                bookId: $command->bookId,
                 bookTitle: $command->bookTitle,
             ));
         }
 
         return new SaveReadingProgressResult(
             completionPercentage: $updated->completionPercentage,
-            isFinished:           $updated->isFinished,
+            isFinished: $updated->isFinished,
         );
     }
 }

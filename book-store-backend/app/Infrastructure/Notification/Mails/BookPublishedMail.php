@@ -14,7 +14,8 @@ use Illuminate\Queue\SerializesModels;
 
 final class BookPublishedMail extends Mailable implements ShouldQueue
 {
-    use Queueable, SerializesModels;
+    use Queueable;
+    use SerializesModels;
 
     public $queue = 'notifications';
 

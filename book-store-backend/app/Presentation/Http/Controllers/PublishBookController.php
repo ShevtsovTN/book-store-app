@@ -20,7 +20,7 @@ final class PublishBookController extends Controller
         $result = $this->handler->handle(
             new PublishBookCommand(
                 id: $bookId,
-            )
+            ),
         );
 
         return new JsonResponse(new PublishBookResource($result));

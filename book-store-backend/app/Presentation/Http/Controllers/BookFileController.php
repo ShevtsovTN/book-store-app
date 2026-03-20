@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 final class BookFileController extends Controller
 {
     public function __construct(
-        private readonly UploadBookFileHandler $uploadFileHandler
+        private readonly UploadBookFileHandler $uploadFileHandler,
     ) {}
 
     public function __invoke(UploadBookFileRequest $request, int $id): JsonResponse
@@ -25,7 +25,7 @@ final class BookFileController extends Controller
                 tempPath: $file->getRealPath(),
                 filename: $file->getClientOriginalName(),
                 mimeType: $file->getMimeType(),
-            )
+            ),
         );
 
         return new JsonResponse([

@@ -17,7 +17,11 @@ final readonly class User
         private Email          $email,
         private HashedPassword $password,
         private RoleEnum       $role,
-    ) {
+    ) {}
+
+    public static function register(string $name, Email $email, HashedPassword $password): self
+    {
+        return new self(id: null, name: $name, email: $email, password: $password, role: RoleEnum::READER);
     }
 
     public function getId(): ?UserId
@@ -47,11 +51,6 @@ final readonly class User
 
     public function isAdmin(): bool
     {
-        return $this->role === RoleEnum::ADMIN;
-    }
-
-    public static function register(string $name, Email $email, HashedPassword $password): self
-    {
-        return new self(id: null, name: $name, email: $email, password: $password, role: RoleEnum::READER);
+        return RoleEnum::ADMIN === $this->role;
     }
 }

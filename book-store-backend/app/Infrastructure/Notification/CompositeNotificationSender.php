@@ -26,10 +26,10 @@ final readonly class CompositeNotificationSender implements NotificationSenderIn
             foreach ($this->senders as $sender) {
                 if ($sender->supports($channel)) {
                     $sender->send(new NotificationDispatchRequest(
-                        userId:    $request->userId,
+                        userId: $request->userId,
                         userEmail: $request->userEmail,
-                        content:   $request->content,
-                        channels:  [$channel],
+                        content: $request->content,
+                        channels: [$channel],
                     ));
                 }
             }

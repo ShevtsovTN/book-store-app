@@ -53,7 +53,7 @@ final class BookSearchTest extends TestCase
     public function test_search_returns_hits_with_expected_fields(): void
     {
         $this->searchIndex->pushResult(
-            $this->makeSearchResult([$this->makeHit(bookId: 1, title: 'PHP 8 in Depth')])
+            $this->makeSearchResult([$this->makeHit(bookId: 1, title: 'PHP 8 in Depth')]),
         );
 
         $response = $this->getJson(route('books.search', ['q' => 'php']));
@@ -138,12 +138,12 @@ final class BookSearchTest extends TestCase
     {
         $this->searchIndex->pushResult(
             new BookSearchResult(
-                hits:             [],
-                total:            42,
-                limit:            10,
-                offset:           20,
+                hits: [],
+                total: 42,
+                limit: 10,
+                offset: 20,
                 processingTimeMs: 5,
-            )
+            ),
         );
 
         $response = $this->getJson(route('books.search', ['q' => 'php']));
@@ -228,10 +228,10 @@ final class BookSearchTest extends TestCase
     private function makeSearchResult(array $hits = []): BookSearchResult
     {
         return new BookSearchResult(
-            hits:             $hits,
-            total:            count($hits),
-            limit:            20,
-            offset:           0,
+            hits: $hits,
+            total: count($hits),
+            limit: 20,
+            offset: 0,
             processingTimeMs: 1,
         );
     }
@@ -239,12 +239,12 @@ final class BookSearchTest extends TestCase
     private function makeHit(int $bookId = 1, string $title = 'Test Book'): BookSearchHit
     {
         return new BookSearchHit(
-            bookId:       $bookId,
-            title:        $title,
-            slug:         'test-book',
-            description:  null,
-            accessType:   AccessTypeEnum::FREE->value,
-            status:       BookStatusEnum::PUBLISHED->value,
+            bookId: $bookId,
+            title: $title,
+            slug: 'test-book',
+            description: null,
+            accessType: AccessTypeEnum::FREE->value,
+            status: BookStatusEnum::PUBLISHED->value,
             rankingScore: 1.0,
         );
     }

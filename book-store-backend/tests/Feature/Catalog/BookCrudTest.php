@@ -23,8 +23,11 @@ final class BookCrudTest extends TestCase
     use DatabaseTransactions;
 
     private string $adminToken;
+
     private string $readerToken;
+
     private FakeBookCoverStorage $coverStorage;
+
     private FakeBookFileStorage $fileStorage;
 
     protected function setUp(): void
@@ -36,7 +39,7 @@ final class BookCrudTest extends TestCase
 
         $this->instance(BookCoverStorageInterface::class, $this->coverStorage);
         $this->instance(BookFileStorageInterface::class, $this->fileStorage);
-        $this->instance(BookSearchIndexInterface::class,   new FakeMeilisearchBookIndex());
+        $this->instance(BookSearchIndexInterface::class, new FakeMeilisearchBookIndex());
 
         /** @var UserModel $admin */
         $admin  = UserModel::factory()->create(['role' => RoleEnum::ADMIN]);
@@ -52,9 +55,9 @@ final class BookCrudTest extends TestCase
         $response = $this
             ->withToken($this->adminToken)
             ->postJson(route('admin.books.store'), $this->validPayload([
-            'description' => 'A classic novel about love and romance.',
-            'language'    => 'en'
-        ]));
+                'description' => 'A classic novel about love and romance.',
+                'language'    => 'en',
+            ]));
 
         $response->assertStatus(201)
             ->assertJsonStructure([
@@ -70,7 +73,7 @@ final class BookCrudTest extends TestCase
             ->postJson(route('admin.books.store'), $this->validPayload([
                 'title' => 'Wars and Peace',
                 'description' => 'A classic novel about love and romance.',
-                'language' => 'en'
+                'language' => 'en',
             ]));
 
         $this->assertDatabaseHas('books', ['title' => 'Wars and Peace']);
@@ -83,7 +86,7 @@ final class BookCrudTest extends TestCase
             ->postJson(route('admin.books.store'), $this->validPayload([
                 'title' => null,
                 'description' => 'A classic novel about love and romance.',
-                'language' => 'en'
+                'language' => 'en',
             ]));
 
         $response->assertStatus(422)
@@ -97,7 +100,7 @@ final class BookCrudTest extends TestCase
             ->postJson(route('admin.books.store'), $this->validPayload([
                 'access_type' => 'invalid',
                 'description' => 'A classic novel about love and romance.',
-                'language' => 'en'
+                'language' => 'en',
             ]));
 
         $response->assertStatus(422)
@@ -111,7 +114,7 @@ final class BookCrudTest extends TestCase
             ->postJson(route('admin.books.store'), $this->validPayload([
                 'currency' => 'XXX',
                 'description' => 'A classic novel about love and romance.',
-                'language' => 'en'
+                'language' => 'en',
             ]));
 
         $response->assertStatus(422)
@@ -126,7 +129,7 @@ final class BookCrudTest extends TestCase
         $response = $this->getJson(
             route('books.show', [
                 'id' => $model->id,
-            ])
+            ]),
         );
 
         $response->assertStatus(200)
@@ -199,7 +202,7 @@ final class BookCrudTest extends TestCase
         $response = $this->getJson(
             route('books.show', [
                 'id' => 99999,
-            ])
+            ]),
         );
 
         $response->assertStatus(404);
@@ -226,11 +229,13 @@ final class BookCrudTest extends TestCase
         BookModel::factory()->create(['status' => BookStatusEnum::DRAFT]);
 
         $response = $this->getJson(
-            route('books.index',
+            route(
+                'books.index',
                 [
                     'status' => BookStatusEnum::PUBLISHED->value,
-                ]
-            ));
+                ],
+            ),
+        );
 
         $response->assertStatus(200);
         $this->assertEquals(1, $response->json('meta.total'));
@@ -242,11 +247,13 @@ final class BookCrudTest extends TestCase
         BookModel::factory()->create(['access_type' => AccessTypeEnum::SUBSCRIPTION]);
 
         $response = $this->getJson(
-            route('books.index',
+            route(
+                'books.index',
                 [
                     'access_type' => AccessTypeEnum::FREE->value,
-                ]
-            ));
+                ],
+            ),
+        );
 
         $response->assertStatus(200);
         $this->assertEquals(1, $response->json('meta.total'));
@@ -260,15 +267,16 @@ final class BookCrudTest extends TestCase
         $response = $this
             ->withToken($this->adminToken)
             ->putJson(
-                route('admin.books.update',
+                route(
+                    'admin.books.update',
                     [
                         'id' => $model->id,
-                    ]
+                    ],
                 ),
                 $this->validPayload([
                     'title' => 'Updated Title',
                     'language' => 'en',
-                ])
+                ]),
             );
 
         $response->assertStatus(200)
@@ -283,15 +291,16 @@ final class BookCrudTest extends TestCase
         $this
             ->withToken($this->adminToken)
             ->putJson(
-                route('admin.books.update',
+                route(
+                    'admin.books.update',
                     [
                         'id' => $model->id,
-                    ]
+                    ],
                 ),
                 $this->validPayload([
                     'title' => 'New Title',
                     'language' => 'en',
-                ])
+                ]),
             );
 
         $this->assertDatabaseHas('books', [
@@ -305,15 +314,17 @@ final class BookCrudTest extends TestCase
         $response = $this
             ->withToken($this->adminToken)
             ->putJson(
-                route('admin.books.update',
+                route(
+                    'admin.books.update',
                     [
                         'id' => 999999,
-                    ]
+                    ],
                 ),
                 $this->validPayload([
                     'title' => 'New Title',
                     'language' => 'en',
-                ]));
+                ]),
+            );
 
         $response->assertStatus(404);
     }

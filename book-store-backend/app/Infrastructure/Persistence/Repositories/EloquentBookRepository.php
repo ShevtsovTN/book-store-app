@@ -15,12 +15,14 @@ final class EloquentBookRepository implements BookRepositoryInterface
     public function findById(int $id): ?Book
     {
         $model = BookModel::query()->find($id);
+
         return $model ? $this->toDomain($model) : null;
     }
 
     public function findBySlug(string $slug): ?Book
     {
         $model = BookModel::query()->where('slug', $slug)->first();
+
         return $model ? $this->toDomain($model) : null;
     }
 
@@ -42,16 +44,16 @@ final class EloquentBookRepository implements BookRepositoryInterface
 
         $paginator = $query->paginate(
             perPage: $filter->perPage,
-            page:    $filter->page,
+            page: $filter->page,
         );
 
         return new BookCollection(
-            items:       array_map(
-                fn (BookModel $model) => $this->toDomain($model),
-                $paginator->items()
+            items: array_map(
+                fn(BookModel $model) => $this->toDomain($model),
+                $paginator->items(),
             ),
-            total:       $paginator->total(),
-            perPage:     $paginator->perPage(),
+            total: $paginator->total(),
+            perPage: $paginator->perPage(),
             currentPage: $paginator->currentPage(),
         );
     }
@@ -74,9 +76,9 @@ final class EloquentBookRepository implements BookRepositoryInterface
             'currency'       => $book->price->currency->code,
             'status'         => $book->status->value,
             'published_at'   => $book->publishedAt,
-            'file_path'      => $book->filePath
+            'file_path'      => $book->filePath,
         ];
-        if ($book->id === null) {
+        if (null === $book->id) {
             $model = BookModel::create($bookData);
         } else {
             $model = BookModel::findOrFail($book->id);
@@ -89,6 +91,13 @@ final class EloquentBookRepository implements BookRepositoryInterface
     public function delete(int $id): void
     {
         BookModel::findOrFail($id)->delete();
+    }
+
+    public function cursor(): \Generator
+    {
+        foreach (BookModel::query()->lazyById(chunkSize: 500) as $model) {
+            yield $this->toDomain($model);
+        }
     }
 
     private function toDomain(BookModel $model): Book
@@ -109,14 +118,7 @@ final class EloquentBookRepository implements BookRepositoryInterface
             filePath: $model->file_path,
             publisher: $model->publisher,
             publishedYear: $model->published_year,
-            id: $model->id
+            id: $model->id,
         );
-    }
-
-    public function cursor(): \Generator
-    {
-        foreach (BookModel::query()->lazyById(chunkSize: 500) as $model) {
-            yield $this->toDomain($model);
-        }
     }
 }

@@ -42,22 +42,22 @@ final class FakeMeilisearchBookIndex implements BookSearchIndexInterface
         $this->lastQuery = $query;
 
         // Если подготовлен результат — возвращаем его
-        if (!empty($this->results)) {
+        if ( ! empty($this->results)) {
             return array_shift($this->results);
         }
 
         // Иначе — простая in-memory фильтрация по title
         $hits = array_filter(
             $this->indexed,
-            static fn ($doc) => $query->query === ''
-                || str_contains(strtolower($doc['title']), strtolower($query->query))
+            static fn($doc) => '' === $query->query
+                || str_contains(mb_strtolower($doc['title']), mb_strtolower($query->query)),
         );
 
         return new BookSearchResult(
-            hits:             [],
-            total:            count($hits),
-            limit:            $query->limit,
-            offset:           $query->offset,
+            hits: [],
+            total: count($hits),
+            limit: $query->limit,
+            offset: $query->offset,
             processingTimeMs: 0,
         );
     }

@@ -14,7 +14,7 @@ final class EloquentReadingSessionRepository implements ReadingSessionRepository
     {
         $data = $this->toArray($session);
 
-        if ($session->id === null) {
+        if (null === $session->id) {
             $model = ReadingSessionModel::query()->create($data);
         } else {
             $model = ReadingSessionModel::query()->findOrFail($session->id);
@@ -50,21 +50,21 @@ final class EloquentReadingSessionRepository implements ReadingSessionRepository
             ->forUser($userId)
             ->recentFirst()
             ->get()
-            ->map(fn ($model) => $this->toDomain($model))
+            ->map(fn($model) => $this->toDomain($model))
             ->toArray();
     }
 
     private function toDomain(ReadingSessionModel $model): ReadingSession
     {
         return new ReadingSession(
-            id:              $model->id,
-            userId:          $model->user_id,
-            bookId:          $model->book_id,
-            startPageId:     $model->start_page_id,
-            endPageId:       $model->end_page_id,
-            startedAt:       $model->started_at,
-            endedAt:         $model->ended_at,
-            pagesRead:       $model->pages_read,
+            id: $model->id,
+            userId: $model->user_id,
+            bookId: $model->book_id,
+            startPageId: $model->start_page_id,
+            endPageId: $model->end_page_id,
+            startedAt: $model->started_at,
+            endedAt: $model->ended_at,
+            pagesRead: $model->pages_read,
             durationSeconds: $model->duration_seconds,
         );
     }

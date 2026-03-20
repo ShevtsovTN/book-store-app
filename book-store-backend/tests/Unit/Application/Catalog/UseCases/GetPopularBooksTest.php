@@ -11,6 +11,7 @@ use Tests\Fakes\FakeBookPopularityRepository;
 final class GetPopularBooksTest extends TestCase
 {
     private FakeBookPopularityRepository $repo;
+
     private GetPopularBooksHandler       $handler;
 
     protected function setUp(): void
@@ -22,9 +23,9 @@ final class GetPopularBooksTest extends TestCase
     public function test_delegates_to_repository_with_correct_params(): void
     {
         $this->handler->handle(new GetPopularBooksCommand(
-            period:  PopularityPeriodEnum::WEEK,
+            period: PopularityPeriodEnum::WEEK,
             perPage: 10,
-            page:    2,
+            page: 2,
         ));
 
         $this->repo->assertCalledWith(PopularityPeriodEnum::WEEK, 10, 2);

@@ -19,7 +19,9 @@ use App\Domain\Identity\Entities\User;
 final class LoginAdminTest extends TestCase
 {
     private FakeUserRepository        $users;
+
     private FakePasswordHasher        $hasher;
+
     private LoginAdminHandler         $handler;
 
     protected function setUp(): void
@@ -30,18 +32,18 @@ final class LoginAdminTest extends TestCase
         $this->handler = new LoginAdminHandler($this->users, $auth, $this->hasher);
 
         $this->users->save(new User(
-            id:       null,
-            name:     'Admin',
-            email:    new Email('admin@example.com'),
+            id: null,
+            name: 'Admin',
+            email: new Email('admin@example.com'),
             password: new HashedPassword($this->hasher->hash('adminpass')),
-            role:     RoleEnum::ADMIN,
+            role: RoleEnum::ADMIN,
         ));
     }
 
     public function test_returns_token_on_valid_credentials(): void
     {
         $result = $this->handler->handle(
-            new LoginAdminCommand('admin@example.com', 'adminpass')
+            new LoginAdminCommand('admin@example.com', 'adminpass'),
         );
 
         $this->assertStringStartsWith('fake-token-', $result->token->value);
@@ -57,11 +59,11 @@ final class LoginAdminTest extends TestCase
     public function test_throws_when_user_is_reader(): void
     {
         $this->users->save(new User(
-            id:       null,
-            name:     'Reader',
-            email:    new Email('reader@example.com'),
+            id: null,
+            name: 'Reader',
+            email: new Email('reader@example.com'),
             password: new HashedPassword($this->hasher->hash('pass')),
-            role:     RoleEnum::READER,
+            role: RoleEnum::READER,
         ));
 
         $this->expectException(InvalidCredentialsException::class);

@@ -46,7 +46,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 final class BookModel extends Model
 {
-    use SoftDeletes, HasFactory;
+    use SoftDeletes;
+    use HasFactory;
 
     protected $table = 'books';
 
@@ -124,7 +125,7 @@ final class BookModel extends Model
             TagModel::class,
             'book_tag',
             'book_id',
-            'tag_id'
+            'tag_id',
         );
     }
 

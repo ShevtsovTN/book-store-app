@@ -21,7 +21,7 @@ final readonly class RegisterReaderHandler
         private UserRepositoryInterface        $readers,
         private AuthenticationServiceInterface $auth,
         private PasswordHasherInterface        $hasher,
-        private EventDispatcherInterface       $dispatcher
+        private EventDispatcherInterface       $dispatcher,
     ) {}
 
     public function handle(RegisterReaderCommand $command): AuthResult
@@ -34,8 +34,8 @@ final readonly class RegisterReaderHandler
 
         $hashed  = $this->hasher->hash($command->plainPassword);
         $reader  = User::register(
-            name:     $command->name,
-            email:    $email,
+            name: $command->name,
+            email: $email,
             password: new HashedPassword($hashed),
         );
 
@@ -43,8 +43,8 @@ final readonly class RegisterReaderHandler
         $token = $this->auth->issueToken($saved);
 
         $this->dispatcher->dispatch(new UserRegistered(
-            userId:    $saved->getId()->value,
-            userName:  $saved->getName(),
+            userId: $saved->getId()->value,
+            userName: $saved->getName(),
             userEmail: $saved->getEmail()->value,
         ));
 

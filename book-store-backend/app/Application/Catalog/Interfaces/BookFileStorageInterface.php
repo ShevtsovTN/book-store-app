@@ -5,7 +5,9 @@ namespace App\Application\Catalog\Interfaces;
 interface BookFileStorageInterface
 {
     public function upload(int $bookId, string $tempPath, string $filename): string;
+
     public function url(string $path): string;
+
     public function delete(string $path): void;
 
     public function exists(string $path): bool;

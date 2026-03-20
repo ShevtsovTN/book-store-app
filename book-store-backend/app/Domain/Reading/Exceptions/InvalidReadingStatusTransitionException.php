@@ -12,7 +12,7 @@ final class InvalidReadingStatusTransitionException extends DomainException
     {
         parent::__construct(
             "Cannot transition reading status from [{$from->value}] to [{$to->value}]",
-            Response::HTTP_UNPROCESSABLE_ENTITY
+            Response::HTTP_UNPROCESSABLE_ENTITY,
         );
     }
 }

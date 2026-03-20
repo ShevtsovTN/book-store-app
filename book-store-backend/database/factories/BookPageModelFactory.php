@@ -8,7 +8,6 @@ use App\Domain\Reading\Enums\ContentFormatEnum;
 use App\Infrastructure\Persistence\Models\BookChapterModel;
 use App\Infrastructure\Persistence\Models\BookPageModel;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Str;
 
 final class BookPageModelFactory extends Factory
 {

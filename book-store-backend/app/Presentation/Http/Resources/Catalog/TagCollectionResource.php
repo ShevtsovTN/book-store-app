@@ -16,7 +16,7 @@ final class TagCollectionResource extends JsonResource
 
         return [
             'data' => array_map(
-                static fn (Tag $book) => new TagResource($book)->toArray($request),
+                static fn(Tag $book) => new TagResource($book)->toArray($request),
                 $collection->items,
             ),
             'meta' => [

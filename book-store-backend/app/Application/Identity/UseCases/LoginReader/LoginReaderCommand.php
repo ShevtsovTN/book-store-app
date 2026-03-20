@@ -14,7 +14,7 @@ final readonly class LoginReaderCommand
     public static function fromArray(array $data): self
     {
         return new self(
-            email:         $data['email'],
+            email: $data['email'],
             plainPassword: $data['password'],
         );
     }

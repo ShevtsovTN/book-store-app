@@ -19,7 +19,7 @@ final class BookSearchController extends Controller
     public function __invoke(BookSearchRequest $request): JsonResponse
     {
         $result = $this->handler->handle(
-            SearchBooksCommand::fromArray($request->validated())
+            SearchBooksCommand::fromArray($request->validated()),
         );
 
         return new JsonResponse(new BookSearchResource($result));

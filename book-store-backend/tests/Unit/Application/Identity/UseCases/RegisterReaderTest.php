@@ -17,7 +17,9 @@ use Tests\Fakes\FakeUserRepository;
 final class RegisterReaderTest extends TestCase
 {
     private FakeUserRepository       $users;
+
     private FakeAuthenticationService $auth;
+
     private RegisterReaderHandler     $handler;
 
     protected function setUp(): void
@@ -31,8 +33,8 @@ final class RegisterReaderTest extends TestCase
     public function test_saves_user_with_reader_role(): void
     {
         $this->handler->handle(new RegisterReaderCommand(
-            name:          'John Doe',
-            email:         'john@example.com',
+            name: 'John Doe',
+            email: 'john@example.com',
             plainPassword: 'secret123',
         ));
 
@@ -45,8 +47,8 @@ final class RegisterReaderTest extends TestCase
     public function test_hashes_password(): void
     {
         $this->handler->handle(new RegisterReaderCommand(
-            name:          'John Doe',
-            email:         'john@example.com',
+            name: 'John Doe',
+            email: 'john@example.com',
             plainPassword: 'secret123',
         ));
 
@@ -57,8 +59,8 @@ final class RegisterReaderTest extends TestCase
     public function test_issues_token_after_registration(): void
     {
         $result = $this->handler->handle(new RegisterReaderCommand(
-            name:          'John Doe',
-            email:         'john@example.com',
+            name: 'John Doe',
+            email: 'john@example.com',
             plainPassword: 'secret123',
         ));
 
@@ -69,8 +71,8 @@ final class RegisterReaderTest extends TestCase
     public function test_throws_when_email_already_exists(): void
     {
         $command = new RegisterReaderCommand(
-            name:          'John Doe',
-            email:         'john@example.com',
+            name: 'John Doe',
+            email: 'john@example.com',
             plainPassword: 'secret123',
         );
 
@@ -83,8 +85,8 @@ final class RegisterReaderTest extends TestCase
     public function test_does_not_save_user_when_email_already_exists(): void
     {
         $command = new RegisterReaderCommand(
-            name:          'John Doe',
-            email:         'john@example.com',
+            name: 'John Doe',
+            email: 'john@example.com',
             plainPassword: 'secret123',
         );
 
@@ -92,7 +94,8 @@ final class RegisterReaderTest extends TestCase
 
         try {
             $this->handler->handle($command);
-        } catch (ReaderAlreadyExistsException) {}
+        } catch (ReaderAlreadyExistsException) {
+        }
 
         $this->users->assertCount(1);
     }

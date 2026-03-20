@@ -17,11 +17,11 @@ final class TagController extends Controller
     public function index(ListTagsRequest $request): JsonResponse
     {
         $result = $this->listHandler->handle(
-            ListTagsCommand::fromArray($request->validated())
+            ListTagsCommand::fromArray($request->validated()),
         );
 
         return new JsonResponse(
-            new TagCollectionResource($result->collection)
+            new TagCollectionResource($result->collection),
         );
     }
 }

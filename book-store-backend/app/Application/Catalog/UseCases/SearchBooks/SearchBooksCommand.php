@@ -11,6 +11,7 @@ use App\Domain\Catalog\Enums\BookStatusEnum;
 final readonly class SearchBooksCommand
 {
     private const int DEFAULT_LIMIT    = 20;
+
     private const int DEFAULT_OFFSET   = 0;
 
     public function __construct(
@@ -22,31 +23,31 @@ final readonly class SearchBooksCommand
         public int             $offset     = self::DEFAULT_OFFSET,
     ) {}
 
-    public function toQuery(): BookSearchQuery
-    {
-        return new BookSearchQuery(
-            query:      $this->query,
-            status:     $this->status,
-            accessType: $this->accessType,
-            language:   $this->language,
-            limit:      $this->limit,
-            offset:     $this->offset,
-        );
-    }
-
     public static function fromArray(array $validated): self
     {
         return new self(
-            query:      $validated['q'] ?? '',
-            status:     isset($validated['status'])
+            query: $validated['q'] ?? '',
+            status: isset($validated['status'])
                 ? BookStatusEnum::from($validated['status'])
                 : null,
             accessType: isset($validated['access_type'])
                 ? AccessTypeEnum::from($validated['access_type'])
                 : null,
-            language:   $validated['language'] ?? null,
-            limit:      isset($validated['limit'])  ? (int) $validated['limit']  : self::DEFAULT_LIMIT,
-            offset:     isset($validated['offset']) ? (int) $validated['offset'] : self::DEFAULT_OFFSET,
+            language: $validated['language'] ?? null,
+            limit: isset($validated['limit']) ? (int) $validated['limit'] : self::DEFAULT_LIMIT,
+            offset: isset($validated['offset']) ? (int) $validated['offset'] : self::DEFAULT_OFFSET,
+        );
+    }
+
+    public function toQuery(): BookSearchQuery
+    {
+        return new BookSearchQuery(
+            query: $this->query,
+            status: $this->status,
+            accessType: $this->accessType,
+            language: $this->language,
+            limit: $this->limit,
+            offset: $this->offset,
         );
     }
 }

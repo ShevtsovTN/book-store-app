@@ -23,9 +23,9 @@ final readonly class LoginReaderHandler
         $email  = new Email($command->email);
         $user = $this->users->findByEmail($email);
 
-        if ($user === null
-            || $user->getRole() !== RoleEnum::READER
-            || !$this->hasher->verify($command->plainPassword, $user->getPassword()->value)
+        if (null === $user
+            || RoleEnum::READER !== $user->getRole()
+            || ! $this->hasher->verify($command->plainPassword, $user->getPassword()->value)
         ) {
             throw InvalidCredentialsException::create();
         }

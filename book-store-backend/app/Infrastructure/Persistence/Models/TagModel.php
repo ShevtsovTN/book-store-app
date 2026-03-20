@@ -21,8 +21,9 @@ final class TagModel extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     protected $table    = 'tags';
-    public    $timestamps = false;
 
     protected $fillable = ['name', 'slug'];
 

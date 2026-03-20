@@ -20,6 +20,21 @@ final readonly class UserReadingProgress
         public ?\DateTimeImmutable $finishedAt,
     ) {}
 
+    public static function initiate(int $userId, int $bookId, int $totalPages): self
+    {
+        return new self(
+            id: null,
+            userId: $userId,
+            bookId: $bookId,
+            totalPages: $totalPages,
+            position: null,
+            completionPercentage: 0.0,
+            isFinished: false,
+            lastReadAt: null,
+            finishedAt: null,
+        );
+    }
+
     public function withPosition(ReadingPosition $position, int $totalPages): self
     {
         $percentage = $totalPages > 0
@@ -29,32 +44,17 @@ final readonly class UserReadingProgress
         $isFinished = $percentage >= 100.0;
 
         return new self(
-            id:                   $this->id,
-            userId:               $this->userId,
-            bookId:               $this->bookId,
-            totalPages:           $totalPages,
-            position:             $position,
+            id: $this->id,
+            userId: $this->userId,
+            bookId: $this->bookId,
+            totalPages: $totalPages,
+            position: $position,
             completionPercentage: $percentage,
-            isFinished:           $isFinished,
-            lastReadAt:           new \DateTimeImmutable(),
-            finishedAt:           $isFinished && !$this->isFinished
+            isFinished: $isFinished,
+            lastReadAt: new \DateTimeImmutable(),
+            finishedAt: $isFinished && ! $this->isFinished
                 ? new \DateTimeImmutable()
                 : $this->finishedAt,
-        );
-    }
-
-    public static function initiate(int $userId, int $bookId, int $totalPages): self
-    {
-        return new self(
-            id:                   null,
-            userId:               $userId,
-            bookId:               $bookId,
-            totalPages:           $totalPages,
-            position:             null,
-            completionPercentage: 0.0,
-            isFinished:           false,
-            lastReadAt:           null,
-            finishedAt:           null,
         );
     }
 }

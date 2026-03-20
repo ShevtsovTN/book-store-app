@@ -60,13 +60,13 @@ final class PopularBooksTest extends TestCase
         $user    = UserModel::factory()->create();
 
         $this->insertSessions($user->id, $popular->id, count: 5, daysAgo: 3);
-        $this->insertSessions($user->id, $weak->id,    count: 1, daysAgo: 3);
+        $this->insertSessions($user->id, $weak->id, count: 1, daysAgo: 3);
 
         $response = $this->getJson(route('books.popular', ['period' => 'week']));
 
         $response->assertOk();
         $this->assertEquals('Popular Book', $response->json('data.0.title'));
-        $this->assertEquals('Weak Book',    $response->json('data.1.title'));
+        $this->assertEquals('Weak Book', $response->json('data.1.title'));
     }
 
     public function test_excludes_sessions_outside_period(): void

@@ -13,7 +13,7 @@ final readonly class MailNotificationSender implements NotificationSenderInterfa
 {
     public function supports(NotificationChannelEnum $channel): bool
     {
-        return $channel === NotificationChannelEnum::EMAIL;
+        return NotificationChannelEnum::EMAIL === $channel;
     }
 
     public function send(NotificationDispatchRequest $request): void

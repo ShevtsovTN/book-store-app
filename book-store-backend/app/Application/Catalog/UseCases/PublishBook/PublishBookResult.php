@@ -8,7 +8,5 @@ use App\Domain\Catalog\Entities\Book;
 
 final readonly class PublishBookResult
 {
-    public function __construct(public Book $book)
-    {
-    }
+    public function __construct(public Book $book) {}
 }

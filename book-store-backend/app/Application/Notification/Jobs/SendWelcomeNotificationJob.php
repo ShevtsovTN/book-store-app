@@ -23,14 +23,14 @@ final readonly class SendWelcomeNotificationJob implements NotificationJobInterf
     public function handle(): void
     {
         $this->sender->send(new NotificationDispatchRequest(
-            userId:    $this->userId,
+            userId: $this->userId,
             userEmail: $this->userEmail,
-            content:   new NotificationContent(
-                type:  NotificationTypeEnum::WELCOME,
+            content: new NotificationContent(
+                type: NotificationTypeEnum::WELCOME,
                 title: 'Welcome!',
-                body:  "Hello, {$this->userName}! We're glad to see you in our bookstore.",
+                body: "Hello, {$this->userName}! We're glad to see you in our bookstore.",
             ),
-            channels:  [NotificationChannelEnum::EMAIL],
+            channels: [NotificationChannelEnum::EMAIL],
         ));
     }
 }

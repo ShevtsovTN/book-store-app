@@ -15,6 +15,7 @@ use Tests\Fakes\FakeReadingListRepository;
 final class RemoveBookFromListTest extends TestCase
 {
     private FakeReadingListRepository  $entries;
+
     private RemoveBookFromListHandler  $handler;
 
     protected function setUp(): void
@@ -26,7 +27,10 @@ final class RemoveBookFromListTest extends TestCase
     public function test_removes_entry(): void
     {
         $this->entries->save(new ReadingEntry(
-            userId: 1, bookId: 10, status: ReadingStatusEnum::READING, currentPage: 0,
+            userId: 1,
+            bookId: 10,
+            status: ReadingStatusEnum::READING,
+            currentPage: 0,
         ));
 
         $this->handler->handle(new RemoveBookFromListCommand(userId: 1, bookId: 10));

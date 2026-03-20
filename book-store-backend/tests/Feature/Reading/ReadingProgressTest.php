@@ -18,8 +18,11 @@ final class ReadingProgressTest extends TestCase
     use DatabaseTransactions;
 
     private UserModel      $user;
+
     private BookModel $book;
+
     private BookChapterModel $chapter;
+
     private BookPageModel $page;
 
     protected function setUp(): void

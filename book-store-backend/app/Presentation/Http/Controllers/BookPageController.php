@@ -23,7 +23,7 @@ final class BookPageController extends Controller
                 bookId: $bookId,
                 pageId: $pageId,
                 userId: $request->user()->id,
-            )
+            ),
         );
 
         return new JsonResponse(new BookPageResource($result));

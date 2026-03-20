@@ -25,14 +25,14 @@ final readonly class GetReadingHistoryHandler
         }
 
         $items = array_map(
-            static fn ($s) => new ReadingHistoryItem(
-                sessionId:       $s->id,
-                bookId:          $s->bookId,
-                pagesRead:       $s->pagesRead,
+            static fn($s) => new ReadingHistoryItem(
+                sessionId: $s->id,
+                bookId: $s->bookId,
+                pagesRead: $s->pagesRead,
                 durationSeconds: $s->durationSeconds,
-                startedAt:       $s->startedAt,
-                endedAt:         $s->endedAt,
-                completion:      $progressByBook[$s->bookId]?->completionPercentage ?? 0.0,
+                startedAt: $s->startedAt,
+                endedAt: $s->endedAt,
+                completion: $progressByBook[$s->bookId]?->completionPercentage ?? 0.0,
             ),
             $sessions,
         );

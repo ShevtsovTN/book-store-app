@@ -15,7 +15,9 @@ use Tests\Fakes\FakeUserReadingProgressRepository;
 final class GetReadingProgressTest extends TestCase
 {
     private FakeUserReadingProgressRepository  $progressRepo;
+
     private FakeReadingProgressCacheRepository $cache;
+
     private GetReadingProgressHandler          $handler;
 
     protected function setUp(): void

@@ -24,10 +24,10 @@ final class ReadingSessionController extends Controller
     {
         $result = $this->startHandler->handle(
             new StartReadingSessionCommand(
-                userId:        $request->user()->id,
-                bookId:        $bookId,
+                userId: $request->user()->id,
+                bookId: $bookId,
                 currentPageId: $request->validated()['current_page_id'] ?? null,
-            )
+            ),
         );
 
         return new JsonResponse(
@@ -45,10 +45,10 @@ final class ReadingSessionController extends Controller
 
         $result = $this->endHandler->handle(
             new EndReadingSessionCommand(
-                sessionId:       $sessionId,
-                endPageId:       $data['end_page_id'],
+                sessionId: $sessionId,
+                endPageId: $data['end_page_id'],
                 durationSeconds: $data['duration_seconds'],
-            )
+            ),
         );
 
         return new JsonResponse([

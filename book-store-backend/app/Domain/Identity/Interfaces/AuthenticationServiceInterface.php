@@ -11,5 +11,6 @@ use App\Domain\Identity\ValueObjects\UserId;
 interface AuthenticationServiceInterface
 {
     public function issueToken(User $user): AuthToken;
+
     public function revokeCurrentToken(UserId $userId): void;
 }

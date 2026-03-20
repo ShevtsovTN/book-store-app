@@ -10,6 +10,5 @@ final readonly class ListBooksResult
 {
     public function __construct(
         public BookCollection $collection,
-    ) {
-    }
+    ) {}
 }

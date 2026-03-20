@@ -16,12 +16,14 @@ final class EloquentTagRepository implements TagRepositoryInterface
     public function findById(int $id): ?Tag
     {
         $model = TagModel::query()->find($id);
+
         return $model ? $this->toDomain($model) : null;
     }
 
     public function findBySlug(string $slug): ?Tag
     {
         $model = TagModel::bySlug($slug)->first();
+
         return $model ? $this->toDomain($model) : null;
     }
 
@@ -29,10 +31,10 @@ final class EloquentTagRepository implements TagRepositoryInterface
     {
         return TagModel::query()->whereHas(
             'books',
-            static fn (BelongsToMany $q) => $q->where('books.id', $bookId)
+            static fn(BelongsToMany $q) => $q->where('books.id', $bookId),
         )
             ->get()
-            ->map(fn ($model) => $this->toDomain($model))
+            ->map(fn($model) => $this->toDomain($model))
             ->toArray();
     }
 
@@ -40,13 +42,13 @@ final class EloquentTagRepository implements TagRepositoryInterface
     {
         return TagModel::query()->whereIn('id', $ids)
             ->get()
-            ->map(fn ($model) => $this->toDomain($model))
+            ->map(fn($model) => $this->toDomain($model))
             ->toArray();
     }
 
     public function save(Tag $tag): Tag
     {
-        if ($tag->id === null) {
+        if (null === $tag->id) {
             $model = TagModel::query()->create([
                 'name' => $tag->name,
                 'slug' => $tag->slug,
@@ -67,32 +69,32 @@ final class EloquentTagRepository implements TagRepositoryInterface
         TagModel::destroy($id);
     }
 
-    private function toDomain(TagModel $model): Tag
-    {
-        return new Tag(
-            id:   $model->id,
-            name: $model->name,
-            slug: $model->slug,
-        );
-    }
-
     public function findAll(TagFilter $filter): TagCollection
     {
         $query = TagModel::query();
 
         $paginator = $query->paginate(
             perPage: $filter->perPage,
-            page:    $filter->page,
+            page: $filter->page,
         );
 
         return new TagCollection(
-            items:       array_map(
-                fn (TagModel $model) => $this->toDomain($model),
-                $paginator->items()
+            items: array_map(
+                fn(TagModel $model) => $this->toDomain($model),
+                $paginator->items(),
             ),
-            total:       $paginator->total(),
-            perPage:     $paginator->perPage(),
+            total: $paginator->total(),
+            perPage: $paginator->perPage(),
             currentPage: $paginator->currentPage(),
+        );
+    }
+
+    private function toDomain(TagModel $model): Tag
+    {
+        return new Tag(
+            id: $model->id,
+            name: $model->name,
+            slug: $model->slug,
         );
     }
 }

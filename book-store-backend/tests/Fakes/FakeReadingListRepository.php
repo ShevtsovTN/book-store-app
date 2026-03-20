@@ -14,20 +14,21 @@ final class FakeReadingListRepository implements ReadingListRepositoryInterface
 {
     /** @var array<string, ReadingEntry> */
     private array $store  = [];
+
     private int   $nextId = 1;
 
     public function findByUser(int $userId, ?ReadingStatusEnum $status, int $perPage, int $page): ReadingEntryCollection
     {
         $items = array_values(array_filter(
             $this->store,
-            static fn (ReadingEntry $e) => $e->userId === $userId
-                && ($status === null || $e->status === $status),
+            static fn(ReadingEntry $e) => $e->userId === $userId
+                && (null === $status || $e->status === $status),
         ));
 
         return new ReadingEntryCollection(
-            items:       $items,
-            total:       count($items),
-            perPage:     $perPage,
+            items: $items,
+            total: count($items),
+            perPage: $perPage,
             currentPage: $page,
         );
     }
@@ -40,14 +41,14 @@ final class FakeReadingListRepository implements ReadingListRepositoryInterface
     public function save(ReadingEntry $entry): ReadingEntry
     {
         $saved = new ReadingEntry(
-            userId:      $entry->userId,
-            bookId:      $entry->bookId,
-            status:      $entry->status,
+            userId: $entry->userId,
+            bookId: $entry->bookId,
+            status: $entry->status,
             currentPage: $entry->currentPage,
-            totalPages:  $entry->totalPages,
-            startedAt:   $entry->startedAt,
-            finishedAt:  $entry->finishedAt,
-            id:          $entry->id ?? $this->nextId++,
+            totalPages: $entry->totalPages,
+            startedAt: $entry->startedAt,
+            finishedAt: $entry->finishedAt,
+            id: $entry->id ?? $this->nextId++,
         );
 
         $this->store[$this->key($entry->userId, $entry->bookId)] = $saved;

@@ -24,7 +24,7 @@ final class IdentityServiceProvider extends ServiceProvider
                 return new SanctumAuthenticationService(
                     request: $this->app->make(Request::class),
                 );
-            }
+            },
         );
     }
 }

@@ -13,7 +13,7 @@ final readonly class DatabaseNotificationSender implements NotificationSenderInt
 {
     public function supports(NotificationChannelEnum $channel): bool
     {
-        return $channel === NotificationChannelEnum::DATABASE;
+        return NotificationChannelEnum::DATABASE === $channel;
     }
 
     public function send(NotificationDispatchRequest $request): void

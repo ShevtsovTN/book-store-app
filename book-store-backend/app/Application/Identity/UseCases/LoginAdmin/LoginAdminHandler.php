@@ -25,9 +25,9 @@ final readonly class LoginAdminHandler
         $email  = new Email($command->email);
         $user = $this->users->findByEmail($email);
 
-        if ($user === null
-            || $user->getRole() !== RoleEnum::ADMIN
-            || !$this->hasher->verify($command->plainPassword, $user->getPassword()->value)
+        if (null === $user
+            || RoleEnum::ADMIN !== $user->getRole()
+            || ! $this->hasher->verify($command->plainPassword, $user->getPassword()->value)
         ) {
             throw InvalidCredentialsException::create();
         }

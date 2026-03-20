@@ -17,7 +17,7 @@ final class NotificationServiceProvider extends ServiceProvider
     {
         $this->app->singleton(
             NotificationSenderInterface::class,
-            fn (Application $app) => new CompositeNotificationSender([
+            fn(Application $app) => new CompositeNotificationSender([
                 $app->make(DatabaseNotificationSender::class),
                 $app->make(MailNotificationSender::class),
             ]),

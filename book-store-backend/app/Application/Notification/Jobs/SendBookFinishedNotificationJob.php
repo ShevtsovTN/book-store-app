@@ -24,15 +24,15 @@ final readonly class SendBookFinishedNotificationJob implements NotificationJobI
     public function handle(): void
     {
         $this->sender->send(new NotificationDispatchRequest(
-            userId:    $this->userId,
+            userId: $this->userId,
             userEmail: $this->userEmail,
-            content:   new NotificationContent(
-                type:  NotificationTypeEnum::BOOK_FINISHED,
+            content: new NotificationContent(
+                type: NotificationTypeEnum::BOOK_FINISHED,
                 title: 'Book Completed!',
-                body:  "You have finished \"{$this->bookTitle}\". Great job!",
-                data:  ['book_id' => $this->bookId],
+                body: "You have finished \"{$this->bookTitle}\". Great job!",
+                data: ['book_id' => $this->bookId],
             ),
-            channels:  [
+            channels: [
                 NotificationChannelEnum::DATABASE,
                 NotificationChannelEnum::EMAIL,
             ],

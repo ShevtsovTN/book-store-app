@@ -15,9 +15,9 @@ final readonly class GetPopularBooksHandler
     public function handle(GetPopularBooksCommand $command): GetPopularBooksResult
     {
         $collection = $this->popularity->findPopular(
-            period:  $command->period,
+            period: $command->period,
             perPage: $command->perPage,
-            page:    $command->page,
+            page: $command->page,
         );
 
         return new GetPopularBooksResult(collection: $collection);

@@ -15,7 +15,9 @@ final class QueueableBookPublishedNotificationJob implements ShouldQueue
     use Queueable;
 
     public int    $tries  = 3;
+
     public int    $backoff = 30;
+
     public $queue  = 'notifications';
 
     public function __construct(
@@ -30,11 +32,11 @@ final class QueueableBookPublishedNotificationJob implements ShouldQueue
             ->chunkById(500, function (iterable $users) use ($sender): void {
                 foreach ($users as $user) {
                     new SendBookPublishedNotificationJob(
-                        userId:    $user->id,
+                        userId: $user->id,
                         userEmail: $user->email,
-                        bookId:    $this->bookId,
+                        bookId: $this->bookId,
                         bookTitle: $this->bookTitle,
-                        sender:    $sender,
+                        sender: $sender,
                     )->handle();
                 }
             });

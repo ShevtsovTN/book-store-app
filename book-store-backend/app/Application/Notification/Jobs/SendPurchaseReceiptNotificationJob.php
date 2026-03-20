@@ -24,15 +24,15 @@ final readonly class SendPurchaseReceiptNotificationJob implements NotificationJ
     public function handle(): void
     {
         $this->sender->send(new NotificationDispatchRequest(
-            userId:    $this->userId,
+            userId: $this->userId,
             userEmail: $this->userEmail,
-            content:   new NotificationContent(
-                type:  NotificationTypeEnum::PURCHASE_RECEIPT,
+            content: new NotificationContent(
+                type: NotificationTypeEnum::PURCHASE_RECEIPT,
                 title: 'Purchase Completed',
-                body:  "The book \"{$this->bookTitle}\" has been added to your library.",
-                data:  ['book_id' => $this->bookId],
+                body: "The book \"{$this->bookTitle}\" has been added to your library.",
+                data: ['book_id' => $this->bookId],
             ),
-            channels:  [
+            channels: [
                 NotificationChannelEnum::DATABASE,
                 NotificationChannelEnum::EMAIL,
             ],

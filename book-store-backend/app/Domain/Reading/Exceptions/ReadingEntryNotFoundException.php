@@ -11,7 +11,7 @@ final class ReadingEntryNotFoundException extends DomainException
     {
         parent::__construct(
             "Reading entry for user={$userId} book={$bookId} not found",
-            Response::HTTP_NOT_FOUND
+            Response::HTTP_NOT_FOUND,
         );
     }
 }

@@ -15,7 +15,9 @@ final class QueueablePurchaseReceiptNotificationJob implements ShouldQueue
     use Queueable;
 
     public int    $tries  = 3;
+
     public int    $backoff = 30;
+
     public $queue  = 'notifications';
 
     public function __construct(
@@ -28,16 +30,16 @@ final class QueueablePurchaseReceiptNotificationJob implements ShouldQueue
     {
         $user = UserModel::query()->find($this->userId);
 
-        if ($user === null) {
+        if (null === $user) {
             return;
         }
 
         new SendPurchaseReceiptNotificationJob(
-            userId:    $this->userId,
+            userId: $this->userId,
             userEmail: $user->email,
-            bookId:    $this->bookId,
+            bookId: $this->bookId,
             bookTitle: $this->bookTitle,
-            sender:    $sender,
+            sender: $sender,
         )->handle();
     }
 }

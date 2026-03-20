@@ -22,7 +22,7 @@ final readonly class UpdateBookHandler
     {
         $book = $this->books->findById($command->id);
 
-        if (!$book) {
+        if ( ! $book) {
             throw new BookNotFoundException($command->id);
         }
 

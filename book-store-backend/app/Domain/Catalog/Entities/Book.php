@@ -28,19 +28,18 @@ final readonly class Book
         public ?string            $publisher = null,
         public ?int               $publishedYear = null,
         public ?int               $id = null,
-    ) {
-    }
+    ) {}
 
     public function isPublished(): bool
     {
-        return $this->status === BookStatusEnum::PUBLISHED
+        return BookStatusEnum::PUBLISHED === $this->status
             && $this->publishedAt <= new DateTimeImmutable();
     }
 
     public function isFree(): bool
     {
-        return $this->accessType === AccessTypeEnum::FREE
-            || $this->price->amount === 0;
+        return AccessTypeEnum::FREE === $this->accessType
+            || 0 === $this->price->amount;
     }
 
     public function publish(): self
