@@ -8,12 +8,12 @@ final readonly class GetNotificationsCommand
 {
     private const int DEFAULT_PER_PAGE = 20;
 
-    private const int DEFAULT_PAGE     = 1;
+    private const int DEFAULT_PAGE = 1;
 
     public function __construct(
         public int  $userId,
-        public ?int $perPage = null,
-        public ?int $page = null,
+        public int $perPage = self::DEFAULT_PER_PAGE,
+        public int $page = self::DEFAULT_PAGE,
     ) {}
 
     public static function fromArray(array $data): self

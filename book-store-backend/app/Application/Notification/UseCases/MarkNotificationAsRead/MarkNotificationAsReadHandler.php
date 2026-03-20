@@ -14,11 +14,11 @@ final readonly class MarkNotificationAsReadHandler
     public function handle(MarkNotificationAsReadCommand $command): void
     {
         $notification = $this->notifications->findByIdAndUser(
-            id:     $command->notificationId,
+            id: $command->notificationId,
             userId: $command->userId,
         );
 
-        if ($notification === null) {
+        if (null === $notification) {
             throw new NotificationNotFoundException($command->notificationId);
         }
 

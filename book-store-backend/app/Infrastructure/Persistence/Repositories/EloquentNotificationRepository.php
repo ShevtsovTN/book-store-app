@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Persistence\Repositories;
 
 use App\Domain\Notification\Entities\UserNotification;
+use App\Domain\Notification\Exceptions\NotificationNotFoundException;
 use App\Domain\Notification\Interfaces\NotificationRepositoryInterface;
 use App\Domain\Notification\ValueObjects\NotificationCollection;
 use App\Infrastructure\Persistence\Models\NotificationModel;
@@ -29,13 +30,14 @@ final class EloquentNotificationRepository implements NotificationRepositoryInte
 
         return new NotificationCollection(
             items: array_map(
-            /**
-             * @throws DateMalformedStringException
-             */ fn (NotificationModel $model) => $this->toDomain($model),
+                /**
+                 * @throws DateMalformedStringException
+                 */
+                fn(NotificationModel $model) => $this->toDomain($model),
                 $paginator->items(),
             ),
-            total:       $paginator->total(),
-            perPage:     $paginator->perPage(),
+            total: $paginator->total(),
+            perPage: $paginator->perPage(),
             currentPage: $paginator->currentPage(),
             unreadCount: $unread,
         );
@@ -46,6 +48,10 @@ final class EloquentNotificationRepository implements NotificationRepositoryInte
      */
     public function findByIdAndUser(string $id, int $userId): ?UserNotification
     {
+        if ( ! $this->isValidUuid($id)) {
+            return null;
+        }
+
         $model = NotificationModel::query()
             ->forUser($userId)
             ->find($id);
@@ -55,6 +61,10 @@ final class EloquentNotificationRepository implements NotificationRepositoryInte
 
     public function markAsRead(string $id): void
     {
+        if ( ! $this->isValidUuid($id)) {
+            throw new NotificationNotFoundException($id);
+        }
+
         NotificationModel::query()
             ->findOrFail($id)
             ->markAsRead();
@@ -82,18 +92,26 @@ final class EloquentNotificationRepository implements NotificationRepositoryInte
     private function toDomain(NotificationModel $model): UserNotification
     {
         return new UserNotification(
-            id:        $model->id,
-            userId:    $model->notifiable_id,
-            content:   new NotificationContent(
-                type:  NotificationTypeEnum::from($model->data['type']),
+            id: $model->id,
+            userId: $model->notifiable_id,
+            content: new NotificationContent(
+                type: NotificationTypeEnum::from($model->data['type']),
                 title: $model->data['title'],
-                body:  $model->data['body'],
-                data:  $model->data['data'] ?? [],
+                body: $model->data['body'],
+                data: $model->data['data'] ?? [],
             ),
-            readAt:    $model->read_at
+            readAt: $model->read_at
                 ? new DateTimeImmutable($model->read_at->toISOString())
                 : null,
             createdAt: new DateTimeImmutable($model->created_at->toISOString()),
+        );
+    }
+
+    private function isValidUuid(string $id): bool
+    {
+        return (bool) preg_match(
+            '/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i',
+            $id,
         );
     }
 }

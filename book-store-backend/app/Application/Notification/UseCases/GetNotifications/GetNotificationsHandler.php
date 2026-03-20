@@ -16,9 +16,9 @@ final readonly class GetNotificationsHandler
     {
         return new GetNotificationsResult(
             collection: $this->notifications->findByUser(
-                userId:  $command->userId,
+                userId: $command->userId,
                 perPage: $command->perPage,
-                page:    $command->page,
+                page: $command->page,
             ),
         );
     }

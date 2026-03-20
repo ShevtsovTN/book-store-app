@@ -32,7 +32,7 @@ final class NotificationController extends Controller
             GetNotificationsCommand::fromArray([
                 'user_id' => $request->user()->id,
                 ...$request->validated(),
-            ])
+            ]),
         );
 
         return new JsonResponse(
@@ -53,7 +53,7 @@ final class NotificationController extends Controller
     {
         $this->markAsReadHandler->handle(
             new MarkNotificationAsReadCommand(
-                userId:         $request->user()->id,
+                userId: $request->user()->id,
                 notificationId: $id,
             ),
         );

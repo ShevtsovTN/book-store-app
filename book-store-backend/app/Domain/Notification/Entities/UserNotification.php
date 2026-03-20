@@ -19,6 +19,6 @@ final readonly class UserNotification
 
     public function isRead(): bool
     {
-        return $this->readAt !== null;
+        return null !== $this->readAt;
     }
 }

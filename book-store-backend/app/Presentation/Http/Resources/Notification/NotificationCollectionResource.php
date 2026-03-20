@@ -18,7 +18,7 @@ final class NotificationCollectionResource extends JsonResource
 
         return [
             'data' => array_map(
-                static fn (UserNotification $n) => new NotificationResource($n)->toArray($request),
+                static fn(UserNotification $n) => new NotificationResource($n)->toArray($request),
                 $collection->items,
             ),
             'meta' => [
