@@ -7,6 +7,7 @@ namespace Tests\Unit\Application\Reading\UseCases;
 use App\Application\Reading\UseCases\SaveReadingProgress\SaveReadingProgressCommand;
 use App\Application\Reading\UseCases\SaveReadingProgress\SaveReadingProgressHandler;
 use PHPUnit\Framework\TestCase;
+use Tests\Fakes\FakeEventDispatcher;
 use Tests\Fakes\FakeReadingProgressCacheRepository;
 use Tests\Fakes\FakeUserReadingProgressRepository;
 
@@ -21,8 +22,9 @@ final class SaveReadingProgressTest extends TestCase
     protected function setUp(): void
     {
         $this->progressRepo = new FakeUserReadingProgressRepository();
-        $this->cache        = new FakeReadingProgressCacheRepository();
-        $this->handler      = new SaveReadingProgressHandler($this->progressRepo, $this->cache);
+        $this->cache = new FakeReadingProgressCacheRepository();
+        $eventDispatcher = new FakeEventDispatcher();
+        $this->handler = new SaveReadingProgressHandler($this->progressRepo, $this->cache, $eventDispatcher);
     }
 
     public function test_saves_new_progress_when_none_exists(): void

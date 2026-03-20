@@ -11,6 +11,7 @@ use App\Domain\Identity\Exceptions\ReaderAlreadyExistsException;
 use App\Domain\Identity\ValueObjects\Email;
 use PHPUnit\Framework\TestCase;
 use Tests\Fakes\FakeAuthenticationService;
+use Tests\Fakes\FakeEventDispatcher;
 use Tests\Fakes\FakePasswordHasher;
 use Tests\Fakes\FakeUserRepository;
 
@@ -27,7 +28,8 @@ final class RegisterReaderTest extends TestCase
         $this->users   = new FakeUserRepository();
         $this->auth    = new FakeAuthenticationService();
         $hasher = new FakePasswordHasher();
-        $this->handler = new RegisterReaderHandler($this->users, $this->auth, $hasher);
+        $eventDispatcher = new FakeEventDispatcher();
+        $this->handler = new RegisterReaderHandler($this->users, $this->auth, $hasher, $eventDispatcher);
     }
 
     public function test_saves_user_with_reader_role(): void

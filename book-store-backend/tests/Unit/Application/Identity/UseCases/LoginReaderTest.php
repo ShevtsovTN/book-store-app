@@ -15,6 +15,7 @@ use App\Domain\Identity\ValueObjects\Email;
 use App\Domain\Identity\ValueObjects\HashedPassword;
 use PHPUnit\Framework\TestCase;
 use Tests\Fakes\FakeAuthenticationService;
+use Tests\Fakes\FakeEventDispatcher;
 use Tests\Fakes\FakePasswordHasher;
 use Tests\Fakes\FakeUserRepository;
 
@@ -32,8 +33,8 @@ final class LoginReaderTest extends TestCase
         $auth = new FakeAuthenticationService();
         $this->hasher  = new FakePasswordHasher();
         $this->handler = new LoginReaderHandler($this->users, $auth, $this->hasher);
-
-        new RegisterReaderHandler($this->users, $auth, $this->hasher)
+        $eventDispatcher = new FakeEventDispatcher();
+        new RegisterReaderHandler($this->users, $auth, $this->hasher, $eventDispatcher)
             ->handle(new RegisterReaderCommand('John', 'john@example.com', 'secret123'));
     }
 

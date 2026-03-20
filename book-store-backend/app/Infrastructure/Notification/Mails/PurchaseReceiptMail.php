@@ -17,9 +17,12 @@ final class PurchaseReceiptMail extends Mailable implements ShouldQueue
     use Queueable;
     use SerializesModels;
 
-    public $queue = 'notifications';
+    private const string QUEUE = 'notifications';
 
-    public function __construct(private readonly NotificationContent $content) {}
+    public function __construct(private readonly NotificationContent $content)
+    {
+        $this->onQueue(self::QUEUE);
+    }
 
     public function envelope(): Envelope
     {

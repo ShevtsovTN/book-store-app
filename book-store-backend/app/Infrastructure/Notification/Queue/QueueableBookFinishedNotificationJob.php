@@ -14,17 +14,19 @@ final class QueueableBookFinishedNotificationJob implements ShouldQueue
 {
     use Queueable;
 
+    private const string QUEUE = 'notifications';
+
     public int    $tries  = 3;
 
     public int    $backoff = 30;
-
-    public $queue  = 'notifications';
 
     public function __construct(
         private readonly int    $userId,
         private readonly int    $bookId,
         private readonly string $bookTitle,
-    ) {}
+    ) {
+        $this->onQueue(self::QUEUE);
+    }
 
     public function handle(NotificationSenderInterface $sender): void
     {

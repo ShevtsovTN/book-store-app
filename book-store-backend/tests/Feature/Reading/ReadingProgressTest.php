@@ -17,7 +17,7 @@ final class ReadingProgressTest extends TestCase
 {
     use DatabaseTransactions;
 
-    private UserModel      $user;
+    private UserModel $user;
 
     private BookModel $book;
 
@@ -48,8 +48,6 @@ final class ReadingProgressTest extends TestCase
         );
     }
 
-    // ── GET progress ──────────────────────────────────────────────
-
     public function test_get_progress_returns_200(): void
     {
         $this->actingAs($this->user, 'sanctum')
@@ -77,17 +75,16 @@ final class ReadingProgressTest extends TestCase
             ->assertStatus(401);
     }
 
-    // ── POST save progress ────────────────────────────────────────
-
     public function test_save_progress_returns_200(): void
     {
         $this->actingAs($this->user, 'sanctum')
             ->postJson(route('reading.progress.save', ['bookId' => $this->book->id]), [
-                'chapter_id'      => $this->chapter->id,
-                'page_id'         => $this->page->id,
+                'chapter_id' => $this->chapter->id,
+                'page_id' => $this->page->id,
                 'global_page_number' => $this->page->global_number,
                 'scroll_position' => 40,
-                'total_pages'     => 100,
+                'total_pages' => 100,
+                'book_title' => $this->book->title,
             ])
             ->assertStatus(200)
             ->assertJsonStructure(['completion_percentage', 'is_finished']);
@@ -97,11 +94,12 @@ final class ReadingProgressTest extends TestCase
     {
         $this->actingAs($this->user, 'sanctum')
             ->postJson(route('reading.progress.save', ['bookId' => $this->book->id]), [
-                'chapter_id'      => $this->chapter->id,
-                'page_id'         => $this->page->id,
+                'chapter_id' => $this->chapter->id,
+                'page_id' => $this->page->id,
                 'global_page_number' => $this->page->global_number,
                 'scroll_position' => 0,
-                'total_pages'     => 100,
+                'total_pages' => 100,
+                'book_title' => $this->book->title,
             ]);
 
         $this->assertDatabaseHas('user_reading_progress', [
@@ -115,18 +113,19 @@ final class ReadingProgressTest extends TestCase
     {
         /** @var BookPageModel $page50 */
         $page50 = BookPageModel::factory()->create([
-            'chapter_id'    => $this->chapter->id,
-            'number'        => 50,
+            'chapter_id' => $this->chapter->id,
+            'number' => 50,
             'global_number' => 50,
         ]);
 
         $this->actingAs($this->user, 'sanctum')
             ->postJson(route('reading.progress.save', ['bookId' => $this->book->id]), [
-                'chapter_id'         => $this->chapter->id,
-                'page_id'            => $page50->id,
+                'chapter_id' => $this->chapter->id,
+                'page_id' => $page50->id,
                 'global_page_number' => $page50->global_number,
-                'scroll_position'    => 0,
-                'total_pages'        => 100,
+                'scroll_position' => 0,
+                'total_pages' => 100,
+                'book_title' => $this->book->title,
             ])
             ->assertJsonFragment(['completion_percentage' => 50.0]);
     }
@@ -143,17 +142,18 @@ final class ReadingProgressTest extends TestCase
 
         $this->actingAs($this->user, 'sanctum')
             ->postJson(route('reading.progress.save', ['bookId' => $this->book->id]), [
-                'chapter_id'         => $this->chapter->id,
-                'page_id'            => $lastPage->id,
+                'chapter_id' => $this->chapter->id,
+                'page_id' => $lastPage->id,
                 'global_page_number' => $lastPage->global_number,
-                'scroll_position'    => 100,
-                'total_pages'        => 100,
+                'scroll_position' => 100,
+                'total_pages' => 100,
+                'book_title' => $this->book->title,
             ])
             ->assertJsonFragment(['is_finished' => true]);
 
         $this->assertDatabaseHas('user_reading_progress', [
-            'user_id'     => $this->user->id,
-            'book_id'     => $this->book->id,
+            'user_id' => $this->user->id,
+            'book_id' => $this->book->id,
             'is_finished' => true,
         ]);
     }
@@ -170,10 +170,10 @@ final class ReadingProgressTest extends TestCase
     {
         $this->actingAs($this->user, 'sanctum')
             ->postJson(route('reading.progress.save', ['bookId' => $this->book->id]), [
-                'chapter_id'      => 1,
-                'page_id'         => 1,
+                'chapter_id' => 1,
+                'page_id' => 1,
                 'scroll_position' => 150,
-                'total_pages'     => 100,
+                'total_pages' => 100,
             ])
             ->assertStatus(422)
             ->assertJsonValidationErrors(['scroll_position']);
