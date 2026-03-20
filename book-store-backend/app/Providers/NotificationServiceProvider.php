@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace App\Providers;
 
 use App\Application\Notification\Interfaces\NotificationSenderInterface;
+use App\Domain\Notification\Interfaces\NotificationRepositoryInterface;
 use App\Infrastructure\Notification\CompositeNotificationSender;
 use App\Infrastructure\Notification\DatabaseNotificationSender;
 use App\Infrastructure\Notification\MailNotificationSender;
+use App\Infrastructure\Persistence\Repositories\EloquentNotificationRepository;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\ServiceProvider;
 
@@ -22,5 +24,7 @@ final class NotificationServiceProvider extends ServiceProvider
                 $app->make(MailNotificationSender::class),
             ]),
         );
+
+        $this->app->bind(NotificationRepositoryInterface::class, EloquentNotificationRepository::class);
     }
 }

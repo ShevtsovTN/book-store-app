@@ -7,6 +7,7 @@ use App\Presentation\Http\Controllers\BookFileController;
 use App\Presentation\Http\Controllers\BookPageController;
 use App\Presentation\Http\Controllers\BookSearchController;
 use App\Presentation\Http\Controllers\BookTagController;
+use App\Presentation\Http\Controllers\NotificationController;
 use App\Presentation\Http\Controllers\PopularBooksController;
 use App\Presentation\Http\Controllers\ReaderAuthController;
 use App\Presentation\Http\Controllers\ReadingHistoryController;
@@ -57,6 +58,13 @@ Route::prefix('v1')->group(function (): void {
                 Route::patch('/{bookId}/start', [ReadingListController::class, 'start'])->name('start');
                 Route::patch('/{bookId}/progress', [ReadingListController::class, 'progress'])->name('progress');
                 Route::delete('/{bookId}', [ReadingListController::class, 'destroy'])->name('destroy');
+            });
+
+            Route::prefix('notifications')->name('notifications.')->group(static function (): void {
+                Route::get('/', [NotificationController::class, 'index'])->name('index');
+                Route::get('/unread-count', [NotificationController::class, 'unreadCount'])->name('unread-count');
+                Route::post('/read-all', [NotificationController::class, 'markAllAsRead'])->name('read-all');
+                Route::patch('/{id}/read', [NotificationController::class, 'markAsRead'])->name('read');
             });
         });
 
