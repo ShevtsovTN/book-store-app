@@ -30,23 +30,25 @@ Route::prefix('v1')->group(function (): void {
     Route::post('auth/login', [ReaderAuthController::class, 'login'])->name('auth.login');
     Route::post('admin/auth/login', [AdminAuthController::class, 'login'])->name('admin.auth.login');
 
-    Route::middleware(['auth:sanctum', 'role:reader', 'book.access'])
+    Route::middleware(['auth:sanctum', 'role:reader'])
         ->group(static function (): void {
             Route::prefix('books/{bookId}')
                 ->group(static function (): void {
 
-                    Route::get('pages/{pageId}', BookPageController::class)
-                        ->name('reading.page');
-
                     Route::get('progress', [ReadingProgressController::class, 'show'])
                         ->name('reading.progress.show');
-                    Route::post('progress', [ReadingProgressController::class, 'save'])
-                        ->name('reading.progress.save');
 
-                    Route::post('sessions', [ReadingSessionController::class, 'start'])
-                        ->name('reading.session.start');
-                    Route::patch('sessions/{sessionId}', [ReadingSessionController::class, 'end'])
-                        ->name('reading.session.end');
+                    Route::middleware('book.access')
+                        ->group(static function (): void {
+                            Route::get('pages/{pageId}', BookPageController::class)
+                                ->name('reading.page');
+                            Route::post('progress', [ReadingProgressController::class, 'save'])
+                                ->name('reading.progress.save');
+                            Route::post('sessions', [ReadingSessionController::class, 'start'])
+                                ->name('reading.session.start');
+                            Route::patch('sessions/{sessionId}', [ReadingSessionController::class, 'end'])
+                                ->name('reading.session.end');
+                        });
                 });
 
             Route::get('reading/history', ReadingHistoryController::class)

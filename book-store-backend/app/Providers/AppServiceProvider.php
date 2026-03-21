@@ -12,6 +12,8 @@ use App\Application\Catalog\Interfaces\BookSearchIndexInterface;
 use App\Application\Shared\Interfaces\EventDispatcherInterface;
 use App\Application\Shared\Interfaces\SlugGeneratorInterface;
 use App\Domain\Access\Interfaces\BookAccessCheckerInterface;
+use App\Domain\Access\Interfaces\UserBookAccessRepositoryInterface;
+use App\Domain\Access\Interfaces\UserSubscriptionRepositoryInterface;
 use App\Domain\Cart\Interfaces\CartItemPriceResolverInterface;
 use App\Domain\Cart\Interfaces\CartRepositoryInterface;
 use App\Domain\Catalog\Interfaces\BookPopularityRepositoryInterface;
@@ -36,7 +38,9 @@ use App\Infrastructure\Persistence\Repositories\EloquentCartRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentReadingListRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentReadingSessionRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentTagRepository;
+use App\Infrastructure\Persistence\Repositories\EloquentUserBookAccessRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentUserReadingProgressRepository;
+use App\Infrastructure\Persistence\Repositories\EloquentUserSubscriptionRepository;
 use App\Infrastructure\Queue\LaravelEventDispatcher;
 use App\Infrastructure\Search\MeilisearchBookIndex;
 use App\Infrastructure\Search\MeilisearchIndexConfigurator;
@@ -115,6 +119,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(CartItemPriceResolverInterface::class, CartItemPriceResolver::class);
         $this->app->bind(PaymentGatewayInterface::class, StripePaymentGateway::class);
         $this->app->bind(BookAccessCheckerInterface::class, BookAccessChecker::class);
+        $this->app->bind(UserBookAccessRepositoryInterface::class, EloquentUserBookAccessRepository::class);
+        $this->app->bind(UserSubscriptionRepositoryInterface::class, EloquentUserSubscriptionRepository::class);
     }
 
     /**

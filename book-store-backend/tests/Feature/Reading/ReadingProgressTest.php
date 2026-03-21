@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Reading;
 
+use App\Domain\Catalog\Enums\AccessTypeEnum;
 use App\Domain\Reading\Interfaces\ReadingProgressCacheRepositoryInterface;
 use App\Infrastructure\Persistence\Models\BookChapterModel;
 use App\Infrastructure\Persistence\Models\BookModel;
@@ -19,6 +20,8 @@ final class ReadingProgressTest extends TestCase
 
     private UserModel $user;
 
+    private string $token;
+
     private BookModel $book;
 
     private BookChapterModel $chapter;
@@ -30,7 +33,11 @@ final class ReadingProgressTest extends TestCase
         parent::setUp();
 
         $this->user = UserModel::factory()->create();
-        $this->book = BookModel::factory()->create(['pages_count' => 100]);
+        $this->token = $this->user->createToken('reader-token')->plainTextToken;
+        $this->book = BookModel::factory()->create([
+            'pages_count' => 100,
+            'access_type' => AccessTypeEnum::FREE,
+        ]);
         $this->chapter = BookChapterModel::factory()
             ->for($this->book, 'book')
             ->create(['number' => 1,]);
@@ -50,7 +57,7 @@ final class ReadingProgressTest extends TestCase
 
     public function test_get_progress_returns_200(): void
     {
-        $this->actingAs($this->user, 'sanctum')
+        $this->withToken($this->token)
             ->getJson(route('reading.progress.show', ['bookId' => $this->book->id]))
             ->assertStatus(200)
             ->assertJsonStructure([
@@ -62,7 +69,7 @@ final class ReadingProgressTest extends TestCase
 
     public function test_get_progress_returns_zeros_for_new_reader(): void
     {
-        $this->actingAs($this->user, 'sanctum')
+        $this->withToken($this->token)
             ->getJson(route('reading.progress.show', ['bookId' => $this->book->id]))
             ->assertStatus(200)
             ->assertJsonFragment(['percentage' => 0.0, 'is_finished' => false])
@@ -77,7 +84,7 @@ final class ReadingProgressTest extends TestCase
 
     public function test_save_progress_returns_200(): void
     {
-        $this->actingAs($this->user, 'sanctum')
+        $this->withToken($this->token)
             ->postJson(route('reading.progress.save', ['bookId' => $this->book->id]), [
                 'chapter_id' => $this->chapter->id,
                 'page_id' => $this->page->id,
@@ -92,7 +99,7 @@ final class ReadingProgressTest extends TestCase
 
     public function test_save_progress_persists_to_database(): void
     {
-        $this->actingAs($this->user, 'sanctum')
+        $this->withToken($this->token)
             ->postJson(route('reading.progress.save', ['bookId' => $this->book->id]), [
                 'chapter_id' => $this->chapter->id,
                 'page_id' => $this->page->id,
@@ -118,7 +125,7 @@ final class ReadingProgressTest extends TestCase
             'global_number' => 50,
         ]);
 
-        $this->actingAs($this->user, 'sanctum')
+        $this->withToken($this->token)
             ->postJson(route('reading.progress.save', ['bookId' => $this->book->id]), [
                 'chapter_id' => $this->chapter->id,
                 'page_id' => $page50->id,
@@ -140,7 +147,7 @@ final class ReadingProgressTest extends TestCase
                 'global_number' => 100,
             ]);
 
-        $this->actingAs($this->user, 'sanctum')
+        $this->withToken($this->token)
             ->postJson(route('reading.progress.save', ['bookId' => $this->book->id]), [
                 'chapter_id' => $this->chapter->id,
                 'page_id' => $lastPage->id,
@@ -160,7 +167,7 @@ final class ReadingProgressTest extends TestCase
 
     public function test_save_progress_validates_required_fields(): void
     {
-        $this->actingAs($this->user, 'sanctum')
+        $this->withToken($this->token)
             ->postJson(route('reading.progress.save', ['bookId' => $this->book->id]), [])
             ->assertStatus(422)
             ->assertJsonValidationErrors(['chapter_id', 'page_id', 'scroll_position', 'total_pages']);
@@ -168,7 +175,7 @@ final class ReadingProgressTest extends TestCase
 
     public function test_save_progress_validates_scroll_position_range(): void
     {
-        $this->actingAs($this->user, 'sanctum')
+        $this->withToken($this->token)
             ->postJson(route('reading.progress.save', ['bookId' => $this->book->id]), [
                 'chapter_id' => 1,
                 'page_id' => 1,
