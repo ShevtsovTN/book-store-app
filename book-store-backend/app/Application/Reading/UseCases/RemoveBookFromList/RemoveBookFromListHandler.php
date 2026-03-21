@@ -15,7 +15,7 @@ final readonly class RemoveBookFromListHandler
     {
         $entry = $this->entries->findEntry($command->userId, $command->bookId);
 
-        if (!$entry) {
+        if ( ! $entry) {
             throw new ReadingEntryNotFoundException($command->userId, $command->bookId);
         }
 

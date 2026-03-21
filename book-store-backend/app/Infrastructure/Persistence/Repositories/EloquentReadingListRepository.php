@@ -17,17 +17,17 @@ final class EloquentReadingListRepository implements ReadingListRepositoryInterf
         $paginator = ReadingEntryModel::query()
             ->with('book')
             ->where('user_id', $userId)
-            ->when($status, fn ($q) => $q->where('status', $status))
+            ->when($status, fn($q) => $q->where('status', $status))
             ->orderByDesc('updated_at')
             ->paginate(perPage: $perPage, page: $page);
 
         return new ReadingEntryCollection(
-            items:       array_map(
-                fn (ReadingEntryModel $model) => $this->toDomain($model),
-                $paginator->items()
+            items: array_map(
+                fn(ReadingEntryModel $model) => $this->toDomain($model),
+                $paginator->items(),
             ),
-            total:       $paginator->total(),
-            perPage:     $paginator->perPage(),
+            total: $paginator->total(),
+            perPage: $paginator->perPage(),
             currentPage: $paginator->currentPage(),
         );
     }
@@ -54,7 +54,7 @@ final class EloquentReadingListRepository implements ReadingListRepositoryInterf
             'finished_at' => $entry->finishedAt,
         ];
 
-        if ($entry->id === null) {
+        if (null === $entry->id) {
             $model = ReadingEntryModel::query()->create($data);
         } else {
             $model = ReadingEntryModel::query()->findOrFail($entry->id);
@@ -84,14 +84,14 @@ final class EloquentReadingListRepository implements ReadingListRepositoryInterf
     private function toDomain(ReadingEntryModel $model): ReadingEntry
     {
         return new ReadingEntry(
-            userId:      $model->user_id,
-            bookId:      $model->book_id,
-            status:      $model->status,
+            userId: $model->user_id,
+            bookId: $model->book_id,
+            status: $model->status,
             currentPage: $model->current_page,
-            totalPages:  $model->total_pages,
-            startedAt:   $model->started_at,
-            finishedAt:  $model->finished_at,
-            id:          $model->id,
+            totalPages: $model->total_pages,
+            startedAt: $model->started_at,
+            finishedAt: $model->finished_at,
+            id: $model->id,
         );
     }
 }

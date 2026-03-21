@@ -13,12 +13,14 @@ use PHPUnit\Framework\Assert;
 final class FakeAuthenticationService implements AuthenticationServiceInterface
 {
     private array $issuedTokens  = [];
+
     private array $revokedTokens = [];
 
     public function issueToken(User $user): AuthToken
     {
         $token = new AuthToken('fake-token-' . $user->getId()->value);
         $this->issuedTokens[$user->getId()->value] = $token;
+
         return $token;
     }
 
@@ -32,7 +34,7 @@ final class FakeAuthenticationService implements AuthenticationServiceInterface
         Assert::assertArrayHasKey(
             $userId,
             $this->issuedTokens,
-            "Expected token to be issued for user {$userId}."
+            "Expected token to be issued for user {$userId}.",
         );
     }
 
@@ -41,7 +43,7 @@ final class FakeAuthenticationService implements AuthenticationServiceInterface
         Assert::assertContains(
             $userId,
             $this->revokedTokens,
-            "Expected token to be revoked for user {$userId}."
+            "Expected token to be revoked for user {$userId}.",
         );
     }
 }

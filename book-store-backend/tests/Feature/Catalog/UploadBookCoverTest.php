@@ -17,6 +17,7 @@ use Tests\TestCase;
 final class UploadBookCoverTest extends TestCase
 {
     use DatabaseTransactions;
+
     private string $adminToken;
 
     protected function setUp(): void

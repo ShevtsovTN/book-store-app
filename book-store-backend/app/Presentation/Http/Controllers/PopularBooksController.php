@@ -19,13 +19,13 @@ final class PopularBooksController extends Controller
     public function __invoke(PopularBooksRequest $request): JsonResponse
     {
         $result = $this->handler->handle(
-            GetPopularBooksCommand::fromArray($request->validated())
+            GetPopularBooksCommand::fromArray($request->validated()),
         );
 
         return new JsonResponse(
             new BookCollectionResource($result->collection)
                 ->withStorage($this->storage)
-                ->toArray($request)
+                ->toArray($request),
         );
     }
 }

@@ -9,6 +9,7 @@ use App\Domain\Reading\Enums\ReadingStatusEnum;
 final readonly class GetReadingListCommand
 {
     private const int DEFAULT_PER_PAGE = 20;
+
     private const int DEFAULT_PAGE     = 1;
 
     public function __construct(
@@ -21,10 +22,10 @@ final readonly class GetReadingListCommand
     public static function fromArray(int $userId, array $data): self
     {
         return new self(
-            userId:  $userId,
-            status:  !empty($data['status']) ? ReadingStatusEnum::from($data['status']) : null,
-            perPage: !empty($data['per_page']) ? (int) $data['per_page'] : self::DEFAULT_PER_PAGE,
-            page:    !empty($data['page'])     ? (int) $data['page']     : self::DEFAULT_PAGE,
+            userId: $userId,
+            status: ! empty($data['status']) ? ReadingStatusEnum::from($data['status']) : null,
+            perPage: ! empty($data['per_page']) ? (int) $data['per_page'] : self::DEFAULT_PER_PAGE,
+            page: ! empty($data['page']) ? (int) $data['page'] : self::DEFAULT_PAGE,
         );
     }
 }

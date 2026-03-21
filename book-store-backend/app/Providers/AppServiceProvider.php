@@ -48,7 +48,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->singleton(Client::class, function () {
             return new Client(
-                url:    config('services.meilisearch.host'),
+                url: config('services.meilisearch.host'),
                 apiKey: config('services.meilisearch.key'),
             );
         });
@@ -57,9 +57,9 @@ class AppServiceProvider extends ServiceProvider
             MeilisearchTaskAwaiter::class,
             fn() => new MeilisearchTaskAwaiter(
                 client: app(Client::class),
-                timeoutMs: (int)config('services.meilisearch.timeout_ms', 5000),
-                intervalMs: (int)config('services.meilisearch.interval_ms', 50),
-            )
+                timeoutMs: (int) config('services.meilisearch.timeout_ms', 5000),
+                intervalMs: (int) config('services.meilisearch.interval_ms', 50),
+            ),
         );
         $this->app->singleton(MeilisearchIndexConfigurator::class);
 
@@ -87,8 +87,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(BookFileStorageInterface::class, S3BookFileStorage::class);
         $this->app->bind(BookChapterRepositoryInterface::class, EloquentBookChapterRepository::class);
         $this->app->bind(BookPageRepositoryInterface::class, EloquentBookPageRepository::class);
-        $this->app->bind(TagRepositoryInterface::class,     EloquentTagRepository::class);
-        $this->app->bind(BookTagRepositoryInterface::class,  EloquentBookTagRepository::class);
+        $this->app->bind(TagRepositoryInterface::class, EloquentTagRepository::class);
+        $this->app->bind(BookTagRepositoryInterface::class, EloquentBookTagRepository::class);
         $this->app->bind(BookPopularityRepositoryInterface::class, EloquentBookPopularityRepository::class);
         $this->app->bind(ReadingListRepositoryInterface::class, EloquentReadingListRepository::class);
     }
@@ -96,8 +96,5 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Bootstrap any application services.
      */
-    public function boot(): void
-    {
-        //
-    }
+    public function boot(): void {}
 }

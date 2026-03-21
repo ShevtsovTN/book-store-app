@@ -25,7 +25,7 @@ final class EloquentUserReadingProgressRepository implements UserReadingProgress
     {
         $data = $this->toArray($progress);
 
-        if ($progress->id === null) {
+        if (null === $progress->id) {
             $model = UserReadingProgressModel::query()->create($data);
         } else {
             $model = UserReadingProgressModel::query()->findOrFail($progress->id);
@@ -40,32 +40,32 @@ final class EloquentUserReadingProgressRepository implements UserReadingProgress
     {
         return UserReadingProgressModel::forUser($userId)
             ->get()
-            ->map(fn ($model) => $this->toDomain($model))
+            ->map(fn($model) => $this->toDomain($model))
             ->toArray();
     }
 
     private function toDomain(UserReadingProgressModel $model): UserReadingProgress
     {
-        $position = ($model->page_id !== null && $model->chapter_id !== null)
+        $position = (null !== $model->page_id && null !== $model->chapter_id)
             ? new ReadingPosition(
-                bookId:           $model->book_id,
-                chapterId:        $model->chapter_id,
-                pageId:           $model->page_id,
+                bookId: $model->book_id,
+                chapterId: $model->chapter_id,
+                pageId: $model->page_id,
                 globalPageNumber: $model->global_page_number ?? 0,
-                scrollPosition:   $model->scroll_position,
+                scrollPosition: $model->scroll_position,
             )
             : null;
 
         return new UserReadingProgress(
-            id:                   $model->id,
-            userId:               $model->user_id,
-            bookId:               $model->book_id,
-            totalPages:           $model->book?->pages_count ?? 0,
-            position:             $position,
+            id: $model->id,
+            userId: $model->user_id,
+            bookId: $model->book_id,
+            totalPages: $model->book?->pages_count ?? 0,
+            position: $position,
             completionPercentage: $model->completion_percentage,
-            isFinished:           $model->is_finished,
-            lastReadAt:           $model->last_read_at,
-            finishedAt:           $model->finished_at,
+            isFinished: $model->is_finished,
+            lastReadAt: $model->last_read_at,
+            finishedAt: $model->finished_at,
         );
     }
 

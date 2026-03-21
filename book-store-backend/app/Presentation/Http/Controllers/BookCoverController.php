@@ -26,7 +26,7 @@ final class BookCoverController extends Controller
                 tempPath: $file->getRealPath(),
                 filename: $file->getClientOriginalName(),
                 mimeType: $file->getMimeType(),
-            )
+            ),
         );
 
         return new JsonResponse(

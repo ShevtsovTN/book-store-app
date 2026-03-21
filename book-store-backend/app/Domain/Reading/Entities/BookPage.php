@@ -16,6 +16,5 @@ final readonly class BookPage
         public string            $content,
         public ContentFormatEnum $contentFormat,
         public int               $wordCount,
-    ) {
-    }
+    ) {}
 }

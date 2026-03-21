@@ -11,7 +11,7 @@ final class ReadingEntryAlreadyExistsException extends DomainException
     {
         parent::__construct(
             "Book with id={$bookId} is already in the reading list",
-            Response::HTTP_CONFLICT
+            Response::HTTP_CONFLICT,
         );
     }
 }

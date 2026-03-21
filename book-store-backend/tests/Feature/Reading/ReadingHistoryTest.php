@@ -30,7 +30,7 @@ final class ReadingHistoryTest extends TestCase
         );
 
         $user = UserModel::factory()->create([
-            'role' => RoleEnum::READER
+            'role' => RoleEnum::READER,
         ]);
         $this->token = $user->createToken('reader-token')->plainTextToken;
     }
@@ -99,7 +99,7 @@ final class ReadingHistoryTest extends TestCase
     {
         /** @var UserModel $otherUser */
         $otherUser = UserModel::factory()->create([
-            'role' => RoleEnum::READER
+            'role' => RoleEnum::READER,
         ]);
         $otherUserToken = $otherUser->createToken('reader-token')->plainTextToken;
         /** @var BookModel $book */

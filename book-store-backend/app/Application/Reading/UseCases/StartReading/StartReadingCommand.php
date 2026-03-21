@@ -15,8 +15,8 @@ final readonly class StartReadingCommand
     public static function fromArray(int $userId, int $bookId, array $data): self
     {
         return new self(
-            userId:     $userId,
-            bookId:     $bookId,
+            userId: $userId,
+            bookId: $bookId,
             totalPages: (int) $data['total_pages'],
         );
     }

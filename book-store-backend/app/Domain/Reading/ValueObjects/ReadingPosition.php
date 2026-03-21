@@ -14,6 +14,17 @@ final readonly class ReadingPosition
         public int $scrollPosition,
     ) {}
 
+    public static function fromArray(array $data): self
+    {
+        return new self(
+            bookId: $data['book_id'],
+            chapterId: $data['chapter_id'],
+            pageId: $data['page_id'],
+            globalPageNumber: $data['global_page_number'],
+            scrollPosition: $data['scroll_position'],
+        );
+    }
+
     public function toArray(): array
     {
         return [
@@ -23,16 +34,5 @@ final readonly class ReadingPosition
             'global_page_number' => $this->globalPageNumber,
             'scroll_position'    => $this->scrollPosition,
         ];
-    }
-
-    public static function fromArray(array $data): self
-    {
-        return new self(
-            bookId:           $data['book_id'],
-            chapterId:        $data['chapter_id'],
-            pageId:           $data['page_id'],
-            globalPageNumber: $data['global_page_number'],
-            scrollPosition:   $data['scroll_position'],
-        );
     }
 }

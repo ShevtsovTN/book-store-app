@@ -32,17 +32,17 @@ final readonly class ReadingEntry
 
     public function isFinished(): bool
     {
-        return $this->status === ReadingStatusEnum::FINISHED;
+        return ReadingStatusEnum::FINISHED === $this->status;
     }
 
     public function isReading(): bool
     {
-        return $this->status === ReadingStatusEnum::READING;
+        return ReadingStatusEnum::READING === $this->status;
     }
 
     public function progressPercentage(): ?float
     {
-        if ($this->totalPages === null || $this->totalPages === 0) {
+        if (null === $this->totalPages || 0 === $this->totalPages) {
             return null;
         }
 
@@ -52,44 +52,44 @@ final readonly class ReadingEntry
     public function startReading(int $totalPages): self
     {
         return new self(
-            userId:      $this->userId,
-            bookId:      $this->bookId,
-            status:      ReadingStatusEnum::READING,
+            userId: $this->userId,
+            bookId: $this->bookId,
+            status: ReadingStatusEnum::READING,
             currentPage: 0,
-            totalPages:  $totalPages,
-            startedAt:   new DateTimeImmutable(),
-            finishedAt:  $this->finishedAt,
-            id:          $this->id,
+            totalPages: $totalPages,
+            startedAt: new DateTimeImmutable(),
+            finishedAt: $this->finishedAt,
+            id: $this->id,
         );
     }
 
     public function updateProgress(int $currentPage): self
     {
-        $isCompleted = $this->totalPages !== null && $currentPage >= $this->totalPages;
+        $isCompleted = null !== $this->totalPages && $currentPage >= $this->totalPages;
 
         return new self(
-            userId:      $this->userId,
-            bookId:      $this->bookId,
-            status:      $isCompleted ? ReadingStatusEnum::FINISHED : $this->status,
+            userId: $this->userId,
+            bookId: $this->bookId,
+            status: $isCompleted ? ReadingStatusEnum::FINISHED : $this->status,
             currentPage: $currentPage,
-            totalPages:  $this->totalPages,
-            startedAt:   $this->startedAt,
-            finishedAt:  $isCompleted ? new DateTimeImmutable() : $this->finishedAt,
-            id:          $this->id,
+            totalPages: $this->totalPages,
+            startedAt: $this->startedAt,
+            finishedAt: $isCompleted ? new DateTimeImmutable() : $this->finishedAt,
+            id: $this->id,
         );
     }
 
     public function drop(): self
     {
         return new self(
-            userId:      $this->userId,
-            bookId:      $this->bookId,
-            status:      ReadingStatusEnum::DROPPED,
+            userId: $this->userId,
+            bookId: $this->bookId,
+            status: ReadingStatusEnum::DROPPED,
             currentPage: $this->currentPage,
-            totalPages:  $this->totalPages,
-            startedAt:   $this->startedAt,
-            finishedAt:  $this->finishedAt,
-            id:          $this->id,
+            totalPages: $this->totalPages,
+            startedAt: $this->startedAt,
+            finishedAt: $this->finishedAt,
+            id: $this->id,
         );
     }
 }

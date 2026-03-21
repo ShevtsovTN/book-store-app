@@ -18,7 +18,7 @@ final class ReadingEntryCollectionResource extends JsonResource
 
         return [
             'data' => array_map(
-                static fn (ReadingEntry $entry) => new ReadingEntryResource($entry)->toArray($request),
+                static fn(ReadingEntry $entry) => new ReadingEntryResource($entry)->toArray($request),
                 $collection->items,
             ),
             'meta' => [

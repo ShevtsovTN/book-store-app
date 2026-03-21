@@ -7,7 +7,6 @@ use App\Infrastructure\Persistence\Models\BookModel;
 
 final class EloquentBookTagRepository implements BookTagRepositoryInterface
 {
-
     public function sync(int $bookId, array $tagIds): void
     {
         BookModel::findOrFail($bookId)->tags()->sync($tagIds);

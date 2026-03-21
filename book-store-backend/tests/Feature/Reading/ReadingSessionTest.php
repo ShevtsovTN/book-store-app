@@ -18,7 +18,9 @@ final class ReadingSessionTest extends TestCase
     use DatabaseTransactions;
 
     private UserModel $user;
+
     private BookModel $book;
+
     private BookPageModel $page;
 
     protected function setUp(): void

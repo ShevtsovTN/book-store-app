@@ -12,7 +12,9 @@ use PHPUnit\Framework\Assert;
 final class FakeBookPopularityRepository implements BookPopularityRepositoryInterface
 {
     private ?PopularityPeriodEnum $calledPeriod = null;
+
     private ?int $calledPerPage = null;
+
     private ?int $calledPage = null;
 
     public function findPopular(PopularityPeriodEnum $period, int $perPage, int $page): BookCollection

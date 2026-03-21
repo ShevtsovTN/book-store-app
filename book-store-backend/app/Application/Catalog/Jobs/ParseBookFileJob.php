@@ -21,6 +21,7 @@ class ParseBookFileJob implements ShouldQueue, ShouldBeUnique
     use Queueable;
 
     public int $tries   = 3;
+
     public int $backoff = 60;
 
     public function __construct(
@@ -43,11 +44,11 @@ class ParseBookFileJob implements ShouldQueue, ShouldBeUnique
         BookChapterRepositoryInterface $chapters,
         BookPageRepositoryInterface    $pages,
         SlugGeneratorInterface         $slugger,
-    ): void
-    {
+    ): void {
         $parsed = $parser->parse($this->bookId, $this->filePath, $this->mimeType);
 
         DB::beginTransaction();
+
         try {
             $pages->deleteByBookId($this->bookId);
             $chapters->deleteByBookId($this->bookId);
@@ -63,20 +64,20 @@ class ParseBookFileJob implements ShouldQueue, ShouldBeUnique
                         number: $parsedChapter->number,
                         title: $parsedChapter->title,
                         slug: $slugger->generate($parsedChapter->title),
-                        readingTimeMinutes: (int)ceil(count($parsedChapter->pages) * 300 / 200),
+                        readingTimeMinutes: (int) ceil(count($parsedChapter->pages) * 300 / 200),
                         isPublished: false,
-                    )
+                    ),
                 );
 
                 foreach ($parsedChapter->pages as $parsedPage) {
                     $pages->save(new BookPage(
-                        id:            null,
-                        chapterId:     $chapter->id,
-                        number:        $parsedPage->number,
-                        globalNumber:  $globalPageNumber++,
-                        content:       $parsedPage->content,
+                        id: null,
+                        chapterId: $chapter->id,
+                        number: $parsedPage->number,
+                        globalNumber: $globalPageNumber++,
+                        content: $parsedPage->content,
                         contentFormat: $parsedPage->contentFormat,
-                        wordCount:     $parsedPage->wordCount,
+                        wordCount: $parsedPage->wordCount,
                     ));
                 }
             }
@@ -84,7 +85,7 @@ class ParseBookFileJob implements ShouldQueue, ShouldBeUnique
             $book = $books->findById($this->bookId);
             $books->save(
                 $book->withPagesCount($parsed->totalPages)
-                    ->withFilePath($this->filePath)
+                    ->withFilePath($this->filePath),
             );
 
             DB::commit();
@@ -107,6 +108,7 @@ class ParseBookFileJob implements ShouldQueue, ShouldBeUnique
                 ]);
 
                 $this->fail($e);
+
                 return;
             }
 

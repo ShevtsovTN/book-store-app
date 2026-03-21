@@ -15,10 +15,10 @@ final readonly class GetReadingListHandler
     public function handle(GetReadingListCommand $command): GetReadingListResult
     {
         $collection = $this->entries->findByUser(
-            userId:  $command->userId,
-            status:  $command->status,
+            userId: $command->userId,
+            status: $command->status,
             perPage: $command->perPage,
-            page:    $command->page,
+            page: $command->page,
         );
 
         return new GetReadingListResult(collection: $collection);

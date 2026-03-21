@@ -22,9 +22,9 @@ final readonly class AddBookToListHandler
         }
 
         $entry = new ReadingEntry(
-            userId:      $command->userId,
-            bookId:      $command->bookId,
-            status:      ReadingStatusEnum::WANT_TO_READ,
+            userId: $command->userId,
+            bookId: $command->bookId,
+            status: ReadingStatusEnum::WANT_TO_READ,
             currentPage: 0,
         );
 

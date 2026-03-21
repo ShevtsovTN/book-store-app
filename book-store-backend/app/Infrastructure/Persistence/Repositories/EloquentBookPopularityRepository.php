@@ -25,12 +25,12 @@ final class EloquentBookPopularityRepository implements BookPopularityRepository
             ->paginate(perPage: $perPage, page: $page);
 
         return new BookCollection(
-            items:       array_map(
-                fn (BookModel $model) => $this->toDomain($model),
+            items: array_map(
+                fn(BookModel $model) => $this->toDomain($model),
                 $paginator->items(),
             ),
-            total:       $paginator->total(),
-            perPage:     $paginator->perPage(),
+            total: $paginator->total(),
+            perPage: $paginator->perPage(),
             currentPage: $paginator->currentPage(),
         );
     }
@@ -38,22 +38,22 @@ final class EloquentBookPopularityRepository implements BookPopularityRepository
     private function toDomain(BookModel $model): Book
     {
         return new Book(
-            title:         $model->title,
-            slug:          $model->slug,
-            language:      $model->language,
-            edition:       $model->edition,
-            pagesCount:    $model->pages_count,
-            accessType:    $model->access_type,
-            price:         new Money($model->price, new Currency($model->currency)),
-            status:        $model->status,
-            description:   $model->description,
-            isbn:          $model->isbn,
-            publishedAt:   $model->published_at,
-            coverPath:     $model->cover_path,
-            filePath:      $model->file_path,
-            publisher:     $model->publisher,
+            title: $model->title,
+            slug: $model->slug,
+            language: $model->language,
+            edition: $model->edition,
+            pagesCount: $model->pages_count,
+            accessType: $model->access_type,
+            price: new Money($model->price, new Currency($model->currency)),
+            status: $model->status,
+            description: $model->description,
+            isbn: $model->isbn,
+            publishedAt: $model->published_at,
+            coverPath: $model->cover_path,
+            filePath: $model->file_path,
+            publisher: $model->publisher,
             publishedYear: $model->published_year,
-            id:            $model->id,
+            id: $model->id,
         );
     }
 }

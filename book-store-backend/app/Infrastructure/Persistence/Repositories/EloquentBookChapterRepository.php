@@ -11,6 +11,7 @@ final class EloquentBookChapterRepository implements BookChapterRepositoryInterf
     public function findById(int $id): ?BookChapter
     {
         $model = BookChapterModel::find($id);
+
         return $model ? $this->toDomain($model) : null;
     }
 
@@ -28,7 +29,7 @@ final class EloquentBookChapterRepository implements BookChapterRepositoryInterf
         return BookChapterModel::byBook($bookId)
             ->ordered()
             ->get()
-            ->map(fn ($model) => $this->toDomain($model))
+            ->map(fn($model) => $this->toDomain($model))
             ->toArray();
     }
 
@@ -38,13 +39,13 @@ final class EloquentBookChapterRepository implements BookChapterRepositoryInterf
             ->published()
             ->ordered()
             ->get()
-            ->map(fn ($model) => $this->toDomain($model))
+            ->map(fn($model) => $this->toDomain($model))
             ->toArray();
     }
 
     public function save(BookChapter $chapter): BookChapter
     {
-        if ($chapter->id === null) {
+        if (null === $chapter->id) {
             $model = BookChapterModel::create($this->toArray($chapter));
         } else {
             $model = BookChapterModel::findOrFail($chapter->id);
@@ -87,14 +88,14 @@ final class EloquentBookChapterRepository implements BookChapterRepositoryInterf
     private function toDomain(BookChapterModel $model): BookChapter
     {
         return new BookChapter(
-            id:                   $model->id,
-            bookId:               $model->book_id,
-            volumeId:             $model->volume_id,
-            number:               $model->number,
-            title:                $model->title,
-            slug:                 $model->slug,
-            readingTimeMinutes:   $model->reading_time_minutes,
-            isPublished:          $model->is_published,
+            id: $model->id,
+            bookId: $model->book_id,
+            volumeId: $model->volume_id,
+            number: $model->number,
+            title: $model->title,
+            slug: $model->slug,
+            readingTimeMinutes: $model->reading_time_minutes,
+            isPublished: $model->is_published,
         );
     }
 }

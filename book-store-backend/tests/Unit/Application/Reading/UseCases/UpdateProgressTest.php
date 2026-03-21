@@ -16,6 +16,7 @@ use Tests\Fakes\FakeReadingListRepository;
 final class UpdateProgressTest extends TestCase
 {
     private FakeReadingListRepository $entries;
+
     private UpdateProgressHandler     $handler;
 
     protected function setUp(): void
@@ -63,8 +64,11 @@ final class UpdateProgressTest extends TestCase
     private function seedEntry(int $userId, int $bookId, ReadingStatusEnum $status, int $totalPages = 0): void
     {
         $this->entries->save(new ReadingEntry(
-            userId: $userId, bookId: $bookId, status: $status,
-            currentPage: 0, totalPages: $totalPages ?: null,
+            userId: $userId,
+            bookId: $bookId,
+            status: $status,
+            currentPage: 0,
+            totalPages: $totalPages ?: null,
         ));
     }
 }

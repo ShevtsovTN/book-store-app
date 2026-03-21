@@ -27,13 +27,13 @@ final readonly class GetBookPageHandler
             ->findByUserAndBook($command->userId, $command->bookId);
 
         $progress = new ReadingProgress(
-            bookId:     $command->bookId,
+            bookId: $command->bookId,
             totalPages: $progressRecord?->totalPages ?? 0,
-            readPages:  $progressRecord?->position?->pageId ?? 0,
+            readPages: $progressRecord?->position?->pageId ?? 0,
         );
 
         return new GetBookPageResult(
-            page:     $page,
+            page: $page,
             adjacent: $adjacent,
             progress: $progress,
         );

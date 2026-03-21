@@ -19,39 +19,39 @@ final readonly class ReadingSettings
     public static function default(): self
     {
         return new self(
-            fontSize:       16,
-            fontFamily:     'Georgia',
-            lineHeight:     1.6,
-            theme:          'light',
-            pageWidth:      70,
+            fontSize: 16,
+            fontFamily: 'Georgia',
+            lineHeight: 1.6,
+            theme: 'light',
+            pageWidth: 70,
             paginationMode: 'page',
-            wordsPerPage:   300,
+            wordsPerPage: 300,
         );
     }
 
     public function withTheme(string $theme): self
     {
         return new self(
-            fontSize:       $this->fontSize,
-            fontFamily:     $this->fontFamily,
-            lineHeight:     $this->lineHeight,
-            theme:          $theme,
-            pageWidth:      $this->pageWidth,
+            fontSize: $this->fontSize,
+            fontFamily: $this->fontFamily,
+            lineHeight: $this->lineHeight,
+            theme: $theme,
+            pageWidth: $this->pageWidth,
             paginationMode: $this->paginationMode,
-            wordsPerPage:   $this->wordsPerPage,
+            wordsPerPage: $this->wordsPerPage,
         );
     }
 
     public function withFontSize(int $fontSize): self
     {
         return new self(
-            fontSize:       $fontSize,
-            fontFamily:     $this->fontFamily,
-            lineHeight:     $this->lineHeight,
-            theme:          $this->theme,
-            pageWidth:      $this->pageWidth,
+            fontSize: $fontSize,
+            fontFamily: $this->fontFamily,
+            lineHeight: $this->lineHeight,
+            theme: $this->theme,
+            pageWidth: $this->pageWidth,
             paginationMode: $this->paginationMode,
-            wordsPerPage:   $this->wordsPerPage,
+            wordsPerPage: $this->wordsPerPage,
         );
     }
 
@@ -74,11 +74,11 @@ final readonly class ReadingSettings
             throw new \InvalidArgumentException('fontSize must be from 12 to 24');
         }
 
-        if (!in_array($this->theme, ['light', 'dark', 'sepia'])) {
+        if ( ! in_array($this->theme, ['light', 'dark', 'sepia'])) {
             throw new \InvalidArgumentException('Invalid theme: ' . $this->theme);
         }
 
-        if (!in_array($this->paginationMode, ['page', 'scroll'])) {
+        if ( ! in_array($this->paginationMode, ['page', 'scroll'])) {
             throw new \InvalidArgumentException('Invalid pagination mode: ' . $this->paginationMode);
         }
 

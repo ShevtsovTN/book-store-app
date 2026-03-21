@@ -15,13 +15,16 @@ use App\Domain\Identity\ValueObjects\Email;
 use App\Domain\Identity\ValueObjects\HashedPassword;
 use PHPUnit\Framework\TestCase;
 use Tests\Fakes\FakeAuthenticationService;
+use Tests\Fakes\FakeEventDispatcher;
 use Tests\Fakes\FakePasswordHasher;
 use Tests\Fakes\FakeUserRepository;
 
 final class LoginReaderTest extends TestCase
 {
     private FakeUserRepository        $users;
+
     private FakePasswordHasher        $hasher;
+
     private LoginReaderHandler        $handler;
 
     protected function setUp(): void
@@ -30,15 +33,15 @@ final class LoginReaderTest extends TestCase
         $auth = new FakeAuthenticationService();
         $this->hasher  = new FakePasswordHasher();
         $this->handler = new LoginReaderHandler($this->users, $auth, $this->hasher);
-
-        new RegisterReaderHandler($this->users, $auth, $this->hasher)
+        $eventDispatcher = new FakeEventDispatcher();
+        new RegisterReaderHandler($this->users, $auth, $this->hasher, $eventDispatcher)
             ->handle(new RegisterReaderCommand('John', 'john@example.com', 'secret123'));
     }
 
     public function test_returns_token_on_valid_credentials(): void
     {
         $result = $this->handler->handle(
-            new LoginReaderCommand('john@example.com', 'secret123')
+            new LoginReaderCommand('john@example.com', 'secret123'),
         );
 
         $this->assertStringStartsWith('fake-token-', $result->token->value);
@@ -49,7 +52,7 @@ final class LoginReaderTest extends TestCase
         $this->expectException(InvalidCredentialsException::class);
 
         $this->handler->handle(
-            new LoginReaderCommand('john@example.com', 'wrong')
+            new LoginReaderCommand('john@example.com', 'wrong'),
         );
     }
 
@@ -58,7 +61,7 @@ final class LoginReaderTest extends TestCase
         $this->expectException(InvalidCredentialsException::class);
 
         $this->handler->handle(
-            new LoginReaderCommand('unknown@example.com', 'secret123')
+            new LoginReaderCommand('unknown@example.com', 'secret123'),
         );
     }
 
@@ -72,18 +75,18 @@ final class LoginReaderTest extends TestCase
         );
         $adminWithRole = new \ReflectionClass($admin);
         $admin = new User(
-            id:       null,
-            name:     'Admin',
-            email:    new Email('admin@example.com'),
+            id: null,
+            name: 'Admin',
+            email: new Email('admin@example.com'),
             password: new HashedPassword($this->hasher->hash('adminpass')),
-            role:     RoleEnum::ADMIN,
+            role: RoleEnum::ADMIN,
         );
         $this->users->save($admin);
 
         $this->expectException(InvalidCredentialsException::class);
 
         $this->handler->handle(
-            new LoginReaderCommand('admin@example.com', 'adminpass')
+            new LoginReaderCommand('admin@example.com', 'adminpass'),
         );
     }
 }

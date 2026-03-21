@@ -18,7 +18,7 @@ final class BookSearchResource extends JsonResource
 
         return [
             'data' => array_map(
-                static fn (BookSearchHit $hit) => [
+                static fn(BookSearchHit $hit) => [
                     'id'            => $hit->bookId,
                     'title'         => $hit->title,
                     'slug'          => $hit->slug,

@@ -14,6 +14,7 @@ final class EloquentBookPageRepository implements BookPageRepositoryInterface
     public function findById(int $id): ?BookPage
     {
         $model = BookPageModel::find($id);
+
         return $model ? $this->toDomain($model) : null;
     }
 
@@ -21,7 +22,7 @@ final class EloquentBookPageRepository implements BookPageRepositoryInterface
     {
         $model = BookPageModel::whereHas(
             'chapter',
-            static fn ($q) => $q->where('book_id', $bookId)
+            static fn($q) => $q->where('book_id', $bookId),
         )
             ->where('global_number', $globalNumber)
             ->first();
@@ -34,7 +35,7 @@ final class EloquentBookPageRepository implements BookPageRepositoryInterface
         return BookPageModel::where('chapter_id', $chapterId)
             ->orderBy('number')
             ->get()
-            ->map(fn ($model) => $this->toDomain($model))
+            ->map(fn($model) => $this->toDomain($model))
             ->toArray();
     }
 
@@ -44,27 +45,27 @@ final class EloquentBookPageRepository implements BookPageRepositoryInterface
 
         $prev = BookPageModel::whereHas(
             'chapter',
-            static fn ($q) => $q->where('book_id', $current->chapter->book_id)
+            static fn($q) => $q->where('book_id', $current->chapter->book_id),
         )
             ->where('global_number', $current->global_number - 1)
             ->first();
 
         $next = BookPageModel::whereHas(
             'chapter',
-            static fn ($q) => $q->where('book_id', $current->chapter->book_id)
+            static fn($q) => $q->where('book_id', $current->chapter->book_id),
         )
             ->where('global_number', $current->global_number + 1)
             ->first();
 
         return new AdjacentPages(
             previous: $prev ? $this->toDomain($prev) : null,
-            next:     $next ? $this->toDomain($next) : null,
+            next: $next ? $this->toDomain($next) : null,
         );
     }
 
     public function save(BookPage $page): BookPage
     {
-        if ($page->id === null) {
+        if (null === $page->id) {
             $model = BookPageModel::create([
                 'chapter_id'     => $page->chapterId,
                 'number'         => $page->number,
@@ -98,19 +99,6 @@ final class EloquentBookPageRepository implements BookPageRepositoryInterface
         BookPageModel::where('chapter_id', $chapterId)->delete();
     }
 
-    private function toDomain(BookPageModel $model): BookPage
-    {
-        return new BookPage(
-            id:            $model->id,
-            chapterId:     $model->chapter_id,
-            number:        $model->number,
-            globalNumber:  $model->global_number,
-            content:       $model->content,
-            contentFormat: ContentFormatEnum::from($model->content_format),
-            wordCount:     $model->word_count,
-        );
-    }
-
     public function findByChapterAndNumber(int $chapterId, int $number): ?BookPage
     {
         $model = BookPageModel::where('chapter_id', $chapterId)
@@ -126,13 +114,13 @@ final class EloquentBookPageRepository implements BookPageRepositoryInterface
 
         foreach ($chunks as $chunk) {
             BookPageModel::insert(
-                array_map(fn (BookPage $page) => array_merge(
+                array_map(fn(BookPage $page) => array_merge(
                     $this->toArray($page),
                     [
                         'created_at' => now(),
                         'updated_at' => now(),
-                    ]
-                ), $chunk)
+                    ],
+                ), $chunk),
             );
         }
     }
@@ -141,7 +129,7 @@ final class EloquentBookPageRepository implements BookPageRepositoryInterface
     {
         BookPageModel::whereHas(
             'chapter',
-            static fn (BelongsTo $q) => $q->where('book_id', $bookId)
+            static fn(BelongsTo $q) => $q->where('book_id', $bookId),
         )->delete();
     }
 
@@ -149,8 +137,21 @@ final class EloquentBookPageRepository implements BookPageRepositoryInterface
     {
         return BookPageModel::whereHas(
             'chapter',
-            static fn (BelongsTo $q) => $q->where('book_id', $bookId)
+            static fn(BelongsTo $q) => $q->where('book_id', $bookId),
         )->count();
+    }
+
+    private function toDomain(BookPageModel $model): BookPage
+    {
+        return new BookPage(
+            id: $model->id,
+            chapterId: $model->chapter_id,
+            number: $model->number,
+            globalNumber: $model->global_number,
+            content: $model->content,
+            contentFormat: ContentFormatEnum::from($model->content_format),
+            wordCount: $model->word_count,
+        );
     }
 
     private function toArray(BookPage $page): array

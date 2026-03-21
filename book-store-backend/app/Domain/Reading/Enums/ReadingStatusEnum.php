@@ -17,7 +17,7 @@ enum ReadingStatusEnum: string
             self::WANT_TO_READ => in_array($next, [self::READING, self::DROPPED], true),
             self::READING    => in_array($next, [self::FINISHED, self::DROPPED], true),
             self::FINISHED   => false,
-            self::DROPPED    => $next === self::READING,
+            self::DROPPED    => self::READING === $next,
         };
     }
 }

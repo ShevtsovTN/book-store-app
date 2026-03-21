@@ -27,7 +27,7 @@ final class ReaderAuthController extends Controller
     public function register(RegisterReaderRequest $request): JsonResponse
     {
         $result = $this->registerHandler->handle(
-            RegisterReaderCommand::fromArray($request->validated())
+            RegisterReaderCommand::fromArray($request->validated()),
         );
 
         return new JsonResponse(new AuthResultResource($result), Response::HTTP_CREATED);
@@ -36,7 +36,7 @@ final class ReaderAuthController extends Controller
     public function login(LoginRequest $request): JsonResponse
     {
         $result = $this->loginHandler->handle(
-            LoginReaderCommand::fromArray($request->validated())
+            LoginReaderCommand::fromArray($request->validated()),
         );
 
         return new JsonResponse(new AuthResultResource($result));
@@ -46,8 +46,8 @@ final class ReaderAuthController extends Controller
     {
         $this->logoutHandler->handle(
             new LogoutCommand(
-                new UserId($request->user()->id)
-            )
+                new UserId($request->user()->id),
+            ),
         );
 
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);

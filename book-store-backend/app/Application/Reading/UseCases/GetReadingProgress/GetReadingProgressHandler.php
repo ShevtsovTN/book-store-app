@@ -28,10 +28,10 @@ final readonly class GetReadingProgressHandler
             : new ReadingProgress($command->bookId, 0, 0);
 
         return new GetReadingProgressResult(
-            progress:        $progress,
-            lastPosition:    $cachedPosition ?? $record?->position,
-            isFinished:      $record?->isFinished ?? false,
-            lastReadAt:      $record?->lastReadAt,
+            progress: $progress,
+            lastPosition: $cachedPosition ?? $record?->position,
+            isFinished: $record?->isFinished ?? false,
+            lastReadAt: $record?->lastReadAt,
         );
     }
 }

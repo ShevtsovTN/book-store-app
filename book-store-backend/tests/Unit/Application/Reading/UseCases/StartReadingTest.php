@@ -16,6 +16,7 @@ use Tests\Fakes\FakeReadingListRepository;
 final class StartReadingTest extends TestCase
 {
     private FakeReadingListRepository $entries;
+
     private StartReadingHandler       $handler;
 
     protected function setUp(): void
@@ -64,7 +65,10 @@ final class StartReadingTest extends TestCase
     private function seedEntry(int $userId, int $bookId, ReadingStatusEnum $status): void
     {
         $this->entries->save(new ReadingEntry(
-            userId: $userId, bookId: $bookId, status: $status, currentPage: 0,
+            userId: $userId,
+            bookId: $bookId,
+            status: $status,
+            currentPage: 0,
         ));
     }
 }

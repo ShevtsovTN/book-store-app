@@ -9,13 +9,16 @@ use App\Application\Catalog\Interfaces\BookFileStorageInterface;
 final class FakeBookFileStorage implements BookFileStorageInterface
 {
     private array $uploaded = [];
+
     private array $deleted  = [];
+
     private array $existing = [];
 
     public function upload(int $bookId, string $tempPath, string $filename): string
     {
         $path = "books/{$bookId}/{$filename}";
         $this->uploaded[$path] = $tempPath;
+
         return $path;
     }
 
@@ -59,7 +62,7 @@ final class FakeBookFileStorage implements BookFileStorageInterface
 
         return array_values(array_filter(
             $all,
-            static fn (string $path) => str_starts_with($path, $directory),
+            static fn(string $path) => str_starts_with($path, $directory),
         ));
     }
 
@@ -72,13 +75,13 @@ final class FakeBookFileStorage implements BookFileStorageInterface
     {
         $this->uploaded = array_filter(
             $this->uploaded,
-            static fn (string $path) => !str_starts_with($path, $directory),
+            static fn(string $path) => ! str_starts_with($path, $directory),
             ARRAY_FILTER_USE_KEY,
         );
 
         $this->existing = array_filter(
             $this->existing,
-            static fn (string $path) => !str_starts_with($path, $directory),
+            static fn(string $path) => ! str_starts_with($path, $directory),
             ARRAY_FILTER_USE_KEY,
         );
 

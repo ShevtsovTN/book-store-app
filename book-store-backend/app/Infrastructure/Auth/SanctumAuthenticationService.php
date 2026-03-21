@@ -30,7 +30,7 @@ final readonly class SanctumAuthenticationService implements AuthenticationServi
         };
 
         return new AuthToken(
-            $model->createToken($tokenName)->plainTextToken
+            $model->createToken($tokenName)->plainTextToken,
         );
     }
 
@@ -38,7 +38,7 @@ final readonly class SanctumAuthenticationService implements AuthenticationServi
     {
         $bearerToken = $this->request->bearerToken();
 
-        if ($bearerToken === null) {
+        if (null === $bearerToken) {
             return;
         }
 

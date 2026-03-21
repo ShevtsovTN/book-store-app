@@ -14,6 +14,7 @@ use Tests\Fakes\FakeReadingListRepository;
 final class AddBookToListTest extends TestCase
 {
     private FakeReadingListRepository $entries;
+
     private AddBookToListHandler      $handler;
 
     protected function setUp(): void

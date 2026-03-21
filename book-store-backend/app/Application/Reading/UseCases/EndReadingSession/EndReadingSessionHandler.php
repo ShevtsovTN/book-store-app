@@ -20,7 +20,7 @@ final readonly class EndReadingSessionHandler
         $this->sessions->save($closed);
 
         return new EndReadingSessionResult(
-            pagesRead:       $closed->pagesRead,
+            pagesRead: $closed->pagesRead,
             durationSeconds: $closed->durationSeconds,
         );
     }

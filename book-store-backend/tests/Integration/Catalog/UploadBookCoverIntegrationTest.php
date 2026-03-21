@@ -58,7 +58,7 @@ final class UploadBookCoverIntegrationTest extends TestCase
 
         $this->assertTrue(
             Storage::disk('s3')->exists($coverPath),
-            "File {$coverPath} not found in MinIO"
+            "File {$coverPath} not found in MinIO",
         );
     }
 
@@ -111,7 +111,7 @@ final class UploadBookCoverIntegrationTest extends TestCase
 
         $this->assertFalse(
             Storage::disk('s3')->exists($firstCoverPath),
-            "The old cover {$firstCoverPath} must be deleted from MinIO"
+            "The old cover {$firstCoverPath} must be deleted from MinIO",
         );
     }
 
@@ -136,7 +136,7 @@ final class UploadBookCoverIntegrationTest extends TestCase
         $this->assertEquals(
             md5($originalContent),
             md5($storedContent),
-            'The content of the uploaded file does not match the original'
+            'The content of the uploaded file does not match the original',
         );
     }
 

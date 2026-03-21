@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Requests\Catalog;
 
-use App\Application\Catalog\UseCases\SearchBooks\SearchBooksCommand;
 use App\Domain\Catalog\Enums\AccessTypeEnum;
 use App\Domain\Catalog\Enums\BookStatusEnum;
 use Illuminate\Foundation\Http\FormRequest;
@@ -13,8 +12,11 @@ use Illuminate\Validation\Rule;
 final class BookSearchRequest extends FormRequest
 {
     private const int MIN_QUERY_LENGTH = 1;
+
     private const int MAX_QUERY_LENGTH = 100;
+
     private const int MIN_LIMIT        = 1;
+
     private const int MAX_LIMIT        = 100;
 
     public function authorize(): bool

@@ -22,13 +22,13 @@ final readonly class AttachBookTagHandler
     {
         $book = $this->books->findById($command->bookId);
 
-        if (!$book) {
+        if ( ! $book) {
             throw new BookNotFoundException($command->bookId);
         }
 
         $tag = $this->tags->findById($command->tagId);
 
-        if (!$tag) {
+        if ( ! $tag) {
             throw new TagNotFoundException([$command->tagId]);
         }
 

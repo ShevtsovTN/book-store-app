@@ -15,6 +15,7 @@ final class ReadingListTest extends TestCase
     use DatabaseTransactions;
 
     private UserModel $user;
+
     private string    $token;
 
     protected function setUp(): void

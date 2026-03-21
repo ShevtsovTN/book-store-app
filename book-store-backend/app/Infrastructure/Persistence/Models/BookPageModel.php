@@ -44,21 +44,21 @@ final class BookPageModel extends Model
         return $this->belongsTo(BookChapterModel::class, 'chapter_id');
     }
 
-//    public function annotations(): HasMany
-//    {
-//        return $this->hasMany(AnnotationModel::class, 'page_id');
-//    }
-//
-//    public function bookmarks(): HasMany
-//    {
-//        return $this->hasMany(BookmarkModel::class, 'page_id');
-//    }
+    //    public function annotations(): HasMany
+    //    {
+    //        return $this->hasMany(AnnotationModel::class, 'page_id');
+    //    }
+    //
+    //    public function bookmarks(): HasMany
+    //    {
+    //        return $this->hasMany(BookmarkModel::class, 'page_id');
+    //    }
 
     public function scopeByBook(Builder $query, int $bookId): Builder
     {
         return $query->whereHas(
             'chapter',
-            fn (BelongsTo $q) => $q->where('book_id', $bookId)
+            fn(BelongsTo $q) => $q->where('book_id', $bookId),
         );
     }
 

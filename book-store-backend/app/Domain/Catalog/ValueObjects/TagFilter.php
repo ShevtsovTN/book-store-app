@@ -9,6 +9,5 @@ final readonly class TagFilter
     public function __construct(
         public int             $perPage = 20,
         public int             $page = 1,
-    ) {
-    }
+    ) {}
 }

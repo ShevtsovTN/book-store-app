@@ -12,6 +12,7 @@ use Tests\Fakes\FakeReadingSessionRepository;
 final class StartReadingSessionTest extends TestCase
 {
     private FakeReadingSessionRepository $sessions;
+
     private StartReadingSessionHandler   $handler;
 
     protected function setUp(): void
@@ -23,7 +24,7 @@ final class StartReadingSessionTest extends TestCase
     public function test_creates_new_session(): void
     {
         $result = $this->handler->handle(
-            new StartReadingSessionCommand(userId: 1, bookId: 10, currentPageId: 5)
+            new StartReadingSessionCommand(userId: 1, bookId: 10, currentPageId: 5),
         );
 
         $this->assertFalse($result->isResumed);
@@ -33,11 +34,11 @@ final class StartReadingSessionTest extends TestCase
     public function test_resumes_existing_active_session(): void
     {
         $first = $this->handler->handle(
-            new StartReadingSessionCommand(userId: 1, bookId: 10, currentPageId: 5)
+            new StartReadingSessionCommand(userId: 1, bookId: 10, currentPageId: 5),
         );
 
         $second = $this->handler->handle(
-            new StartReadingSessionCommand(userId: 1, bookId: 10, currentPageId: 12)
+            new StartReadingSessionCommand(userId: 1, bookId: 10, currentPageId: 12),
         );
 
         $this->assertTrue($second->isResumed);

@@ -18,7 +18,7 @@ final class ReadingHistoryResource extends JsonResource
 
         return [
             'data' => array_map(
-                static fn (ReadingHistoryItem $item) => [
+                static fn(ReadingHistoryItem $item) => [
                     'session_id'       => $item->sessionId,
                     'book_id'          => $item->bookId,
                     'pages_read'       => $item->pagesRead,

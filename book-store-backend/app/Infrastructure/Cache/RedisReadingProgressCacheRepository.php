@@ -24,7 +24,7 @@ final class RedisReadingProgressCacheRepository implements ReadingProgressCacheR
     {
         $raw = $this->connection()->get($this->key($userId, $bookId));
 
-        if ($raw === null || $raw === false) {
+        if (null === $raw || false === $raw) {
             return null;
         }
 

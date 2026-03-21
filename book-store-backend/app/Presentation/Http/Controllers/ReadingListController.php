@@ -36,7 +36,7 @@ final class ReadingListController extends Controller
     public function index(ListReadingListRequest $request): JsonResponse
     {
         $result = $this->listHandler->handle(
-            GetReadingListCommand::fromArray($request->user()->id, $request->validated())
+            GetReadingListCommand::fromArray($request->user()->id, $request->validated()),
         );
 
         return new JsonResponse(new ReadingEntryCollectionResource($result->collection));
@@ -51,14 +51,14 @@ final class ReadingListController extends Controller
 
         return new JsonResponse(
             new ReadingEntryResource($result->entry),
-            Response::HTTP_CREATED
+            Response::HTTP_CREATED,
         );
     }
 
     public function start(StartReadingRequest $request, int $bookId): JsonResponse
     {
         $result = $this->startHandler->handle(
-            StartReadingCommand::fromArray($request->user()->id, $bookId, $request->validated())
+            StartReadingCommand::fromArray($request->user()->id, $bookId, $request->validated()),
         );
 
         return new JsonResponse(new ReadingEntryResource($result->entry));
@@ -67,7 +67,7 @@ final class ReadingListController extends Controller
     public function progress(UpdateProgressRequest $request, int $bookId): JsonResponse
     {
         $result = $this->progressHandler->handle(
-            UpdateProgressCommand::fromArray($request->user()->id, $bookId, $request->validated())
+            UpdateProgressCommand::fromArray($request->user()->id, $bookId, $request->validated()),
         );
 
         return new JsonResponse(new ReadingEntryResource($result->entry));

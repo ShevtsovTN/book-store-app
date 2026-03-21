@@ -19,11 +19,11 @@ final readonly class StartReadingHandler
     {
         $entry = $this->entries->findEntry($command->userId, $command->bookId);
 
-        if (!$entry) {
+        if ( ! $entry) {
             throw new ReadingEntryNotFoundException($command->userId, $command->bookId);
         }
 
-        if (!$entry->status->canTransitionTo(ReadingStatusEnum::READING)) {
+        if ( ! $entry->status->canTransitionTo(ReadingStatusEnum::READING)) {
             throw new InvalidReadingStatusTransitionException($entry->status, ReadingStatusEnum::READING);
         }
 

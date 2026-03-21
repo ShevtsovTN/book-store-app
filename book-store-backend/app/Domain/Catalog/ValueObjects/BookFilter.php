@@ -15,6 +15,5 @@ final readonly class BookFilter
         public ?string         $language = null,
         public int             $perPage = 20,
         public int             $page = 1,
-    ) {
-    }
+    ) {}
 }

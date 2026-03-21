@@ -11,17 +11,20 @@ use Illuminate\Http\Resources\Json\JsonResource;
 final class BookResource extends JsonResource
 {
     private BookCoverStorageInterface $storage;
+
     private array $fileLinks = [];
 
     public function withStorage(BookCoverStorageInterface $storage): self
     {
         $this->storage = $storage;
+
         return $this;
     }
 
     public function withFileLinks(array $fileLinks): self
     {
         $this->fileLinks = $fileLinks;
+
         return $this;
     }
 
@@ -44,7 +47,7 @@ final class BookResource extends JsonResource
                 ? $this->storage->url($book->coverPath)
                 : null,
             'file_links'     => array_map(
-                static fn (BookFileLink $link) => [
+                static fn(BookFileLink $link) => [
                     'mime_type' => $link->mimeType,
                     'url'       => $link->url,
                     'label'     => $link->label,

@@ -15,7 +15,7 @@ final class RequireRoleMiddleware
         /** @var UserModel|null $user */
         $user = $request->user();
 
-        if ($user === null) {
+        if (null === $user) {
             return response()->json(
                 ['message' => 'Unauthenticated.'],
                 Response::HTTP_UNAUTHORIZED,

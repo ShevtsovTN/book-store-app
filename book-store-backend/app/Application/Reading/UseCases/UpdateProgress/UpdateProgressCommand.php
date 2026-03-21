@@ -15,8 +15,8 @@ final readonly class UpdateProgressCommand
     public static function fromArray(int $userId, int $bookId, array $data): self
     {
         return new self(
-            userId:      $userId,
-            bookId:      $bookId,
+            userId: $userId,
+            bookId: $bookId,
             currentPage: (int) $data['current_page'],
         );
     }
