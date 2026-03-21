@@ -2,12 +2,16 @@
 
 namespace App\Providers;
 
+use App\Application\Cart\Interfaces\PaymentGatewayInterface;
+use App\Application\Cart\Services\CartItemPriceResolver;
 use App\Application\Catalog\Interfaces\BookCoverStorageInterface;
 use App\Application\Catalog\Interfaces\BookFileParserInterface;
 use App\Application\Catalog\Interfaces\BookFileStorageInterface;
 use App\Application\Catalog\Interfaces\BookSearchIndexInterface;
 use App\Application\Shared\Interfaces\EventDispatcherInterface;
 use App\Application\Shared\Interfaces\SlugGeneratorInterface;
+use App\Domain\Cart\Interfaces\CartItemPriceResolverInterface;
+use App\Domain\Cart\Interfaces\CartRepositoryInterface;
 use App\Domain\Catalog\Interfaces\BookPopularityRepositoryInterface;
 use App\Domain\Catalog\Interfaces\BookRepositoryInterface;
 use App\Domain\Catalog\Interfaces\BookTagRepositoryInterface;
@@ -20,11 +24,13 @@ use App\Domain\Reading\Interfaces\ReadingSessionRepositoryInterface;
 use App\Domain\Reading\Interfaces\UserReadingProgressRepositoryInterface;
 use App\Infrastructure\Cache\RedisReadingProgressCacheRepository;
 use App\Infrastructure\Parser\BookFileParserRouter;
+use App\Infrastructure\Payment\StripePaymentGateway;
 use App\Infrastructure\Persistence\Repositories\EloquentBookChapterRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentBookPageRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentBookPopularityRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentBookRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentBookTagRepository;
+use App\Infrastructure\Persistence\Repositories\EloquentCartRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentReadingListRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentReadingSessionRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentTagRepository;
@@ -91,6 +97,9 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(BookTagRepositoryInterface::class, EloquentBookTagRepository::class);
         $this->app->bind(BookPopularityRepositoryInterface::class, EloquentBookPopularityRepository::class);
         $this->app->bind(ReadingListRepositoryInterface::class, EloquentReadingListRepository::class);
+        $this->app->bind(CartRepositoryInterface::class, EloquentCartRepository::class);
+        $this->app->bind(CartItemPriceResolverInterface::class, CartItemPriceResolver::class);
+        $this->app->bind(PaymentGatewayInterface::class, StripePaymentGateway::class);
     }
 
     /**
