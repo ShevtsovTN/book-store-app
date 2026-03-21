@@ -1,5 +1,9 @@
 <?php
 
+use App\Domain\Cart\Exceptions\CartAlreadyCheckedOutException;
+use App\Domain\Cart\Exceptions\CartItemAlreadyExistsException;
+use App\Domain\Cart\Exceptions\CartItemNotFoundException;
+use App\Domain\Cart\Exceptions\CartNotFoundException;
 use App\Domain\Catalog\Exceptions\BookNotFoundException;
 use App\Domain\Catalog\Exceptions\TagNotFoundException;
 use App\Domain\Identity\Exceptions\InvalidCredentialsException;
@@ -36,12 +40,15 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->dontReportDuplicates();
         $exceptions->render(function (Throwable $e) {
             return match (true) {
+                $e instanceof CartNotFoundException,
+                $e instanceof CartItemNotFoundException,
                 $e instanceof BookNotFoundException,
                 $e instanceof NotificationNotFoundException,
                 $e instanceof ReadingEntryNotFoundException,
                 $e instanceof TagNotFoundException => response()->json([
                     'message' => $e->getMessage(),
                 ], Response::HTTP_NOT_FOUND),
+                $e instanceof CartItemAlreadyExistsException,
                 $e instanceof ReaderAlreadyExistsException,
                 $e instanceof ReadingEntryAlreadyExistsException => response()->json(
                     ['message' => $e->getMessage()],
@@ -51,7 +58,8 @@ return Application::configure(basePath: dirname(__DIR__))
                     ['message' => $e->getMessage()],
                     Response::HTTP_UNAUTHORIZED,
                 ),
-                $e instanceof InvalidReadingStatusTransitionException => response()->json(
+                $e instanceof InvalidReadingStatusTransitionException,
+                $e instanceof CartAlreadyCheckedOutException => response()->json(
                     ['message' => $e->getMessage()],
                     Response::HTTP_UNPROCESSABLE_ENTITY,
                 ),
