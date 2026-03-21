@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Application\Access\Services\BookAccessChecker;
 use App\Application\Cart\Interfaces\PaymentGatewayInterface;
 use App\Application\Cart\Services\CartItemPriceResolver;
 use App\Application\Catalog\Interfaces\BookCoverStorageInterface;
@@ -10,6 +11,7 @@ use App\Application\Catalog\Interfaces\BookFileStorageInterface;
 use App\Application\Catalog\Interfaces\BookSearchIndexInterface;
 use App\Application\Shared\Interfaces\EventDispatcherInterface;
 use App\Application\Shared\Interfaces\SlugGeneratorInterface;
+use App\Domain\Access\Interfaces\BookAccessCheckerInterface;
 use App\Domain\Cart\Interfaces\CartItemPriceResolverInterface;
 use App\Domain\Cart\Interfaces\CartRepositoryInterface;
 use App\Domain\Catalog\Interfaces\BookPopularityRepositoryInterface;
@@ -44,6 +46,7 @@ use App\Infrastructure\Storage\S3BookCoverStorage;
 use App\Infrastructure\Storage\S3BookFileStorage;
 use Illuminate\Support\ServiceProvider;
 use Meilisearch\Client;
+use Stripe\StripeClient;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -84,6 +87,17 @@ class AppServiceProvider extends ServiceProvider
             RedisReadingProgressCacheRepository::class,
         );
 
+        $this->app->singleton(StripeClient::class, fn() => new StripeClient(
+            config('services.stripe.secret'),
+        ));
+
+        $this->app->bind(PaymentGatewayInterface::class, fn($app) => new StripePaymentGateway(
+            stripe:        $app->make(StripeClient::class),
+            webhookSecret: config('services.stripe.webhook_secret'),
+            successUrl:    config('app.url') . '/payment/success',
+            cancelUrl:     config('app.url') . '/payment/cancel',
+        ));
+
         $this->app->bind(BookRepositoryInterface::class, EloquentBookRepository::class);
         $this->app->bind(BookFileParserInterface::class, BookFileParserRouter::class);
         $this->app->bind(SlugGeneratorInterface::class, LaravelSlugGenerator::class);
@@ -100,6 +114,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(CartRepositoryInterface::class, EloquentCartRepository::class);
         $this->app->bind(CartItemPriceResolverInterface::class, CartItemPriceResolver::class);
         $this->app->bind(PaymentGatewayInterface::class, StripePaymentGateway::class);
+        $this->app->bind(BookAccessCheckerInterface::class, BookAccessChecker::class);
     }
 
     /**
