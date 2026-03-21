@@ -14,6 +14,7 @@ use App\Domain\Reading\Exceptions\ReadingEntryAlreadyExistsException;
 use App\Domain\Reading\Exceptions\ReadingEntryNotFoundException;
 use App\Presentation\Console\Commands\Search\ConfigureSearchIndexCommand;
 use App\Presentation\Console\Commands\Search\ReindexBooksCommand;
+use App\Presentation\Http\Middleware\RequireBookAccessMiddleware;
 use App\Presentation\Http\Middleware\RequireRoleMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -30,6 +31,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'role' => RequireRoleMiddleware::class,
+            'book.access' => RequireBookAccessMiddleware::class,
         ]);
     })
     ->withCommands([

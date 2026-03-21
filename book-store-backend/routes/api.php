@@ -15,6 +15,7 @@ use App\Presentation\Http\Controllers\ReadingHistoryController;
 use App\Presentation\Http\Controllers\ReadingListController;
 use App\Presentation\Http\Controllers\ReadingProgressController;
 use App\Presentation\Http\Controllers\ReadingSessionController;
+use App\Presentation\Http\Controllers\StripeWebhookController;
 use App\Presentation\Http\Controllers\TagController;
 use Illuminate\Support\Facades\Route;
 
@@ -29,7 +30,7 @@ Route::prefix('v1')->group(function (): void {
     Route::post('auth/login', [ReaderAuthController::class, 'login'])->name('auth.login');
     Route::post('admin/auth/login', [AdminAuthController::class, 'login'])->name('admin.auth.login');
 
-    Route::middleware(['auth:sanctum', 'role:reader'])
+    Route::middleware(['auth:sanctum', 'role:reader', 'book.access'])
         ->group(static function (): void {
             Route::prefix('books/{bookId}')
                 ->group(static function (): void {
@@ -97,4 +98,7 @@ Route::prefix('v1')->group(function (): void {
 
             Route::post('auth/logout', [AdminAuthController::class, 'logout'])->name('auth.logout');
         });
+
+    Route::post('webhooks/stripe', StripeWebhookController::class)
+        ->name('webhooks.stripe');
 });
