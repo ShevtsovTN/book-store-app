@@ -15,6 +15,8 @@ use App\Presentation\Http\Controllers\ReadingHistoryController;
 use App\Presentation\Http\Controllers\ReadingListController;
 use App\Presentation\Http\Controllers\ReadingProgressController;
 use App\Presentation\Http\Controllers\ReadingSessionController;
+use App\Presentation\Http\Controllers\StripeWebhookController;
+use App\Presentation\Http\Controllers\SubscriptionCheckoutController;
 use App\Presentation\Http\Controllers\TagController;
 use Illuminate\Support\Facades\Route;
 
@@ -34,18 +36,20 @@ Route::prefix('v1')->group(function (): void {
             Route::prefix('books/{bookId}')
                 ->group(static function (): void {
 
-                    Route::get('pages/{pageId}', BookPageController::class)
-                        ->name('reading.page');
-
                     Route::get('progress', [ReadingProgressController::class, 'show'])
                         ->name('reading.progress.show');
-                    Route::post('progress', [ReadingProgressController::class, 'save'])
-                        ->name('reading.progress.save');
 
-                    Route::post('sessions', [ReadingSessionController::class, 'start'])
-                        ->name('reading.session.start');
-                    Route::patch('sessions/{sessionId}', [ReadingSessionController::class, 'end'])
-                        ->name('reading.session.end');
+                    Route::middleware('book.access')
+                        ->group(static function (): void {
+                            Route::get('pages/{pageId}', BookPageController::class)
+                                ->name('reading.page');
+                            Route::post('progress', [ReadingProgressController::class, 'save'])
+                                ->name('reading.progress.save');
+                            Route::post('sessions', [ReadingSessionController::class, 'start'])
+                                ->name('reading.session.start');
+                            Route::patch('sessions/{sessionId}', [ReadingSessionController::class, 'end'])
+                                ->name('reading.session.end');
+                        });
                 });
 
             Route::get('reading/history', ReadingHistoryController::class)
@@ -78,6 +82,11 @@ Route::prefix('v1')->group(function (): void {
                 Route::post('/checkout', [CartController::class, 'checkout'])
                     ->name('checkout');
             });
+
+            Route::prefix('subscriptions')->name('subscriptions.')->group(static function (): void {
+                Route::post('/checkout', SubscriptionCheckoutController::class)
+                    ->name('checkout');
+            });
         });
 
     Route::middleware(['auth:sanctum', 'role:admin'])
@@ -97,4 +106,7 @@ Route::prefix('v1')->group(function (): void {
 
             Route::post('auth/logout', [AdminAuthController::class, 'logout'])->name('auth.logout');
         });
+
+    Route::post('webhooks/stripe', StripeWebhookController::class)
+        ->name('webhooks.stripe');
 });

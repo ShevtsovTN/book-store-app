@@ -1,5 +1,6 @@
 <?php
 
+use App\Domain\Access\Exceptions\SubscriptionAlreadyActiveException;
 use App\Domain\Cart\Exceptions\CartAlreadyCheckedOutException;
 use App\Domain\Cart\Exceptions\CartItemAlreadyExistsException;
 use App\Domain\Cart\Exceptions\CartItemNotFoundException;
@@ -14,6 +15,7 @@ use App\Domain\Reading\Exceptions\ReadingEntryAlreadyExistsException;
 use App\Domain\Reading\Exceptions\ReadingEntryNotFoundException;
 use App\Presentation\Console\Commands\Search\ConfigureSearchIndexCommand;
 use App\Presentation\Console\Commands\Search\ReindexBooksCommand;
+use App\Presentation\Http\Middleware\RequireBookAccessMiddleware;
 use App\Presentation\Http\Middleware\RequireRoleMiddleware;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -30,6 +32,7 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'role' => RequireRoleMiddleware::class,
+            'book.access' => RequireBookAccessMiddleware::class,
         ]);
     })
     ->withCommands([
@@ -50,6 +53,7 @@ return Application::configure(basePath: dirname(__DIR__))
                 ], Response::HTTP_NOT_FOUND),
                 $e instanceof CartItemAlreadyExistsException,
                 $e instanceof ReaderAlreadyExistsException,
+                $e instanceof SubscriptionAlreadyActiveException,
                 $e instanceof ReadingEntryAlreadyExistsException => response()->json(
                     ['message' => $e->getMessage()],
                     Response::HTTP_CONFLICT,
