@@ -32,6 +32,34 @@ final class BookController extends Controller
         private readonly BookCoverStorageInterface $storage,
     ) {}
 
+    /**
+     * @response array{
+     *     data: array<int, array{
+     *         id: int,
+     *         title: string,
+     *         slug: string,
+     *         description: string|null,
+     *         isbn: string|null,
+     *         language: string,
+     *         publisher: string|null,
+     *         published_year: int|null,
+     *         pages_count: int,
+     *         cover_url: string|null,
+     *         file_links: array<int, array{mime_type: string, url: string, label: string}>,
+     *         access_type: string,
+     *         price: array{currency: string, amount: int, formatted: string},
+     *         status: string,
+     *         is_free: bool,
+     *         published_at: string|null
+     *     }>,
+     *     meta: array{
+     *         total: int,
+     *         per_page: int,
+     *         current_page: int,
+     *         total_pages: int
+     *     }
+     * }
+     */
     public function index(ListBooksRequest $request): JsonResponse
     {
         $result = $this->listHandler->handle(
