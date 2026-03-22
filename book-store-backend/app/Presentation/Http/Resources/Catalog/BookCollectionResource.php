@@ -10,7 +10,6 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 /**
  * @property BookCollection $resource
- * @property BookResource[] $data
  * @property int $total
  * @property int $perPage
  * @property int $currentPage

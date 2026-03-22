@@ -11,13 +11,6 @@ use Illuminate\Http\Request;
 
 /**
  * @property Cart $resource
- * @property string $currency
- * @property CartStatusEnum $status
- * @property array<CartItem> $items
- * @property int $total
- * @property int $itemsCount
- * @property string $createdAt
- *
  */
 final class CartResource extends JsonResource
 {

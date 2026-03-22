@@ -16,6 +16,25 @@ final class BookSearchController extends Controller
         private readonly SearchBooksHandler $handler,
     ) {}
 
+    /**
+     * @response array{
+     *     data: array<int, array{
+     *         id: int,
+     *         title: string,
+     *         slug: string,
+     *         description: string|null,
+     *         access_type: string,
+     *         status: string,
+     *         ranking_score: float
+     *     }>,
+     *     meta: array{
+     *         total: int,
+     *         limit: int,
+     *         offset: int,
+     *         processing_time_ms: int
+     *     }
+     * }
+     */
     public function __invoke(BookSearchRequest $request): JsonResponse
     {
         $result = $this->handler->handle(

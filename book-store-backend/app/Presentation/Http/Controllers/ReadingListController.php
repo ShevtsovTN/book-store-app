@@ -33,6 +33,26 @@ final class ReadingListController extends Controller
         private readonly RemoveBookFromListHandler $removeHandler,
     ) {}
 
+    /**
+     * @response array{
+     *     data: array<int, array{
+     *         id: int|null,
+     *         book_id: int,
+     *         status: \App\Domain\Reading\Enums\ReadingStatusEnum,
+     *         current_page: int,
+     *         total_pages: int|null,
+     *         progress_percentage: float|null,
+     *         started_at: string|null,
+     *         finished_at: string|null
+     *     }>,
+     *     meta: array{
+     *         total: int,
+     *         per_page: int,
+     *         current_page: int,
+     *         total_pages: int
+     *     }
+     * }
+     */
     public function index(ListReadingListRequest $request): JsonResponse
     {
         $result = $this->listHandler->handle(
