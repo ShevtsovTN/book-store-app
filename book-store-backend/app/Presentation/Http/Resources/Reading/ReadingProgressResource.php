@@ -8,7 +8,10 @@ use App\Application\Reading\UseCases\GetReadingProgress\GetReadingProgressResult
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-/** @property GetReadingProgressResult $resource */
+/**
+ * @property GetReadingProgressResult $resource
+ *
+ */
 final class ReadingProgressResource extends JsonResource
 {
     public function toArray(Request $request): array
@@ -25,9 +28,9 @@ final class ReadingProgressResource extends JsonResource
             ],
             'last_position' => $result->lastPosition
                 ? [
-                    'chapter_id'      => $result->lastPosition->chapterId,
-                    'page_id'         => $result->lastPosition->pageId,
-                    'scroll_position' => $result->lastPosition->scrollPosition,
+                    'chapter_id'      => (int) $result->lastPosition->chapterId,
+                    'page_id'         => (int) $result->lastPosition->pageId,
+                    'scroll_position' => (int) $result->lastPosition->scrollPosition,
                 ]
                 : null,
             'last_read_at' => $result->lastReadAt?->format(\DateTimeInterface::ATOM),
