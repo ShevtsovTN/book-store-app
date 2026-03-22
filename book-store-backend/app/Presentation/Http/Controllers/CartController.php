@@ -29,6 +29,29 @@ final class CartController extends Controller
         private readonly CheckoutHandler           $checkoutHandler,
     ) {}
 
+    /**
+     * @response array{
+     *     id: string|null,
+     *     status: \App\Domain\Cart\Enums\CartStatusEnum,
+     *     items: array<int, array{
+     *         type: \App\Domain\Cart\Enums\CartItemTypeEnum,
+     *         reference_id: int,
+     *         title: string,
+     *         price: array{
+     *             amount: int,
+     *             currency: string,
+     *             formatted: string
+     *         }
+     *     }>,
+     *     total: array{
+     *         amount: int,
+     *         currency: string,
+     *         formatted: string
+     *     },
+     *     items_count: int,
+     *     created_at: string
+     * }
+     */
     public function show(Request $request): JsonResponse
     {
         $cart = $this->getHandler->handle(

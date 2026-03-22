@@ -46,9 +46,9 @@ final class BookController extends Controller
      *         pages_count: int,
      *         cover_url: string|null,
      *         file_links: array<int, array{mime_type: string, url: string, label: string}>,
-     *         access_type: string,
+     *         access_type: App\Domain\Catalog\Enums\AccessTypeEnum,
      *         price: array{currency: string, amount: int, formatted: string},
-     *         status: string,
+     *         status: App\Domain\Catalog\Enums\BookStatusEnum,
      *         is_free: bool,
      *         published_at: string|null
      *     }>,

@@ -26,6 +26,27 @@ final class NotificationController extends Controller
         private readonly MarkAllNotificationsAsReadHandler $markAllAsReadHandler,
     ) {}
 
+    /**
+     * @response array{
+     *     data: array<int, array{
+     *         id: string,
+     *         type: App\Domain\Notification\Enums\NotificationTypeEnum,
+     *         title: string,
+     *         body: string,
+     *         data: array<string, mixed>,
+     *         is_read: bool,
+     *         read_at: string|null,
+     *         created_at: string
+     *     }>,
+     *     meta: array{
+     *         total: int,
+     *         per_page: int,
+     *         current_page: int,
+     *         total_pages: int,
+     *         unread_count: int
+     *     }
+     * }
+     */
     public function index(ListNotificationsRequest $request): JsonResponse
     {
         $result = $this->getHandler->handle(
