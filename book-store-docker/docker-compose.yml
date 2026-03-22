@@ -127,6 +127,18 @@ services:
     networks:
       - backend
 
+  stripe-cli:
+    image: stripe/stripe-cli:latest
+    command: >
+      listen
+      --forward-to http://nginx/api/v1/webhooks/stripe
+    environment:
+      STRIPE_API_KEY: ${STRIPE_SECRET_KEY}
+    depends_on:
+      - nginx
+    networks:
+      - backend
+
 volumes:
   postgres_data:
   redis_data:
