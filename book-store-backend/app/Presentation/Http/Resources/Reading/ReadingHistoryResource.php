@@ -9,11 +9,17 @@ use App\Application\Reading\UseCases\GetReadingHistory\ReadingHistoryItem;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @property GetReadingHistoryResult $resource
+ * @property int $total
+ * @property int $perPage
+ * @property int $currentPage
+ * @property int $totalPages
+ */
 final class ReadingHistoryResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
-        /** @var GetReadingHistoryResult $result */
         $result = $this->resource;
 
         return [

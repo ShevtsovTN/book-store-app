@@ -8,11 +8,11 @@ use App\Domain\Reading\Entities\ReadingEntry;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @property ReadingEntry $resource */
 final class ReadingEntryResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
-        /** @var ReadingEntry $entry */
         $entry = $this->resource;
 
         return [

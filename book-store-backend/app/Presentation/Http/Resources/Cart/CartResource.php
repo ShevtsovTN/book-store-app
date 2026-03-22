@@ -4,10 +4,21 @@ namespace App\Presentation\Http\Resources\Cart;
 
 use App\Domain\Cart\Entities\Cart;
 use App\Domain\Cart\Entities\CartItem;
+use App\Domain\Cart\Enums\CartStatusEnum;
 use App\Domain\Shared\ValueObjects\Currency;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Request;
 
+/**
+ * @property Cart $resource
+ * @property string $currency
+ * @property CartStatusEnum $status
+ * @property array<CartItem> $items
+ * @property int $total
+ * @property int $itemsCount
+ * @property string $createdAt
+ *
+ */
 final class CartResource extends JsonResource
 {
     private string $currency;
@@ -21,8 +32,7 @@ final class CartResource extends JsonResource
 
     public function toArray(Request $request): array
     {
-        /** @var Cart $cart */
-        $cart     = $this->resource;
+        $cart = $this->resource;
         $currency = new Currency($this->currency ?? 'EUR');
 
         return [

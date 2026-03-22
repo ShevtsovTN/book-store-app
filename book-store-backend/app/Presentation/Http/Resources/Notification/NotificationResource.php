@@ -9,11 +9,11 @@ use DateTimeInterface;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @property UserNotification $resource */
 final class NotificationResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
-        /** @var UserNotification $n */
         $n = $this->resource;
 
         return [

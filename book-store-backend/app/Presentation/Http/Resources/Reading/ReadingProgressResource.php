@@ -8,11 +8,11 @@ use App\Application\Reading\UseCases\GetReadingProgress\GetReadingProgressResult
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @property GetReadingProgressResult $resource */
 final class ReadingProgressResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
-        /** @var GetReadingProgressResult $result */
         $result = $this->resource;
 
         return [

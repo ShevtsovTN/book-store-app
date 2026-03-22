@@ -13,7 +13,9 @@ final class SubscriptionCheckoutTest extends TestCase
     use DatabaseTransactions;
 
     private FakePaymentGateway $gateway;
+
     private UserModel          $user;
+
     private string             $token;
 
     protected function setUp(): void
@@ -46,9 +48,9 @@ final class SubscriptionCheckoutTest extends TestCase
     {
         $this->gateway->pushWebhookEvent(
             FakePaymentGateway::makeSubscriptionEvent(
-                userId:                $this->user->id,
-                stripeSubscriptionId:  'sub_exists',
-                currentPeriodEnd:      now()->addMonth()->timestamp,
+                userId: $this->user->id,
+                stripeSubscriptionId: 'sub_exists',
+                currentPeriodEnd: now()->addMonth()->timestamp,
             ),
         );
         $this->postJson(route('webhooks.stripe'));

@@ -14,6 +14,14 @@ use App\Domain\Shared\ValueObjects\Currency;
 use App\Domain\Shared\ValueObjects\Money;
 use DateTimeImmutable;
 
+/**
+ * @property CartId $id
+ * @property int $user_id
+ * @property CartStatusEnum $status
+ * @property CartItem[] $items
+ * @property DateTimeImmutable $created_at
+ * @property DateTimeImmutable|null $checked_out_at
+ */
 final readonly class Cart
 {
     /** @param CartItem[] $items */

@@ -6,11 +6,11 @@ use App\Domain\Catalog\Entities\Tag;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/** @property Tag $resource */
 final class TagResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
-        /** @var Tag $tag */
         $tag = $this->resource;
 
         return [

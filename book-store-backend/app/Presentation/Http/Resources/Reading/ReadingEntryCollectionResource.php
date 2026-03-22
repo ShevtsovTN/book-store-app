@@ -9,11 +9,17 @@ use App\Domain\Reading\ValueObjects\ReadingEntryCollection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @property ReadingEntryCollection $resource
+ * @property int $total
+ * @property int $perPage
+ * @property int $currentPage
+ * @property int $totalPages
+ */
 final class ReadingEntryCollectionResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
-        /** @var ReadingEntryCollection $collection */
         $collection = $this->resource;
 
         return [

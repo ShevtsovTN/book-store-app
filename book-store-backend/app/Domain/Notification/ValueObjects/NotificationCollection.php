@@ -6,6 +6,13 @@ namespace App\Domain\Notification\ValueObjects;
 
 use App\Domain\Notification\Entities\UserNotification;
 
+/**
+ * @property UserNotification[] $items
+ * @property int $total
+ * @property int $perPage
+ * @property int $currentPage
+ * @property int $unreadCount
+ */
 final readonly class NotificationCollection
 {
     public function __construct(
