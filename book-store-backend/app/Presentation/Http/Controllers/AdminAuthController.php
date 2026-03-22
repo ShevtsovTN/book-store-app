@@ -20,6 +20,17 @@ final class AdminAuthController extends Controller
         private readonly LogoutHandler         $logoutHandler,
     ) {}
 
+    /**
+     * @response array{
+     *     token: string,
+     *     user: array{
+     *         id: int,
+     *         name: string,
+     *         email: string,
+     *         role: \App\Domain\Identity\Enums\RoleEnum
+     *     }
+     * }
+     */
     public function login(LoginRequest $request): JsonResponse
     {
         $result = $this->loginHandler->handle(

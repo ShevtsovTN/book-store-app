@@ -24,6 +24,17 @@ final class ReaderAuthController extends Controller
         private readonly LogoutHandler         $logoutHandler,
     ) {}
 
+    /**
+     * @response array{
+     *     token: string,
+     *     user: array{
+     *         id: int,
+     *         name: string,
+     *         email: string,
+     *         role: \App\Domain\Identity\Enums\RoleEnum
+     *     }
+     * }
+     */
     public function register(RegisterReaderRequest $request): JsonResponse
     {
         $result = $this->registerHandler->handle(
@@ -33,6 +44,17 @@ final class ReaderAuthController extends Controller
         return new JsonResponse(new AuthResultResource($result), Response::HTTP_CREATED);
     }
 
+    /**
+     * @response array{
+     *     token: string,
+     *     user: array{
+     *         id: int,
+     *         name: string,
+     *         email: string,
+     *         role: \App\Domain\Identity\Enums\RoleEnum
+     *     }
+     * }
+     */
     public function login(LoginRequest $request): JsonResponse
     {
         $result = $this->loginHandler->handle(

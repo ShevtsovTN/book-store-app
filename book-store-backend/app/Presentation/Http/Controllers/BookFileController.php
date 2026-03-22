@@ -15,6 +15,17 @@ final class BookFileController extends Controller
         private readonly UploadBookFileHandler $uploadFileHandler,
     ) {}
 
+    /**
+     * @param UploadBookFileRequest $request
+     * @param int $id
+     * @return JsonResponse
+     *
+     * @response array{
+     *     book_id: int,
+     *     file_path: string,
+     *     status: App\Domain\Catalog\Enums\BookUploadStatusEnum
+     * }
+     */
     public function __invoke(UploadBookFileRequest $request, int $id): JsonResponse
     {
         $file = $request->file('book_file');
