@@ -28,6 +28,7 @@ final class FakeUserBookAccessRepository implements UserBookAccessRepositoryInte
             stripePaymentIntentId: $access->stripePaymentIntentId,
         );
         $this->store[$this->key($access->userId, $access->bookId)] = $saved;
+
         return $saved;
     }
 

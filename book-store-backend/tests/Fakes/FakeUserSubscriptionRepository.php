@@ -32,6 +32,7 @@ final class FakeUserSubscriptionRepository implements UserSubscriptionRepository
             stripeSubscriptionId: $subscription->stripeSubscriptionId,
         );
         $this->store[] = $saved;
+
         return $saved;
     }
 

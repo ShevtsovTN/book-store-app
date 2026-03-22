@@ -13,6 +13,7 @@ use Tests\Fakes\FakeUserSubscriptionRepository;
 final class GrantSubscriptionHandlerTest extends TestCase
 {
     private FakeUserSubscriptionRepository $repo;
+
     private GrantSubscriptionHandler       $handler;
 
     protected function setUp(): void

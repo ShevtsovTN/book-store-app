@@ -96,10 +96,10 @@ class AppServiceProvider extends ServiceProvider
         ));
 
         $this->app->bind(PaymentGatewayInterface::class, fn($app) => new StripePaymentGateway(
-            stripe:        $app->make(StripeClient::class),
+            stripe: $app->make(StripeClient::class),
             webhookSecret: config('services.stripe.webhook_secret'),
-            successUrl:    config('app.url') . '/payment/success',
-            cancelUrl:     config('app.url') . '/payment/cancel',
+            successUrl: config('app.url') . '/payment/success',
+            cancelUrl: config('app.url') . '/payment/cancel',
         ));
 
         $this->app->bind(BookRepositoryInterface::class, EloquentBookRepository::class);
@@ -117,7 +117,6 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ReadingListRepositoryInterface::class, EloquentReadingListRepository::class);
         $this->app->bind(CartRepositoryInterface::class, EloquentCartRepository::class);
         $this->app->bind(CartItemPriceResolverInterface::class, CartItemPriceResolver::class);
-        $this->app->bind(PaymentGatewayInterface::class, StripePaymentGateway::class);
         $this->app->bind(BookAccessCheckerInterface::class, BookAccessChecker::class);
         $this->app->bind(UserBookAccessRepositoryInterface::class, EloquentUserBookAccessRepository::class);
         $this->app->bind(UserSubscriptionRepositoryInterface::class, EloquentUserSubscriptionRepository::class);

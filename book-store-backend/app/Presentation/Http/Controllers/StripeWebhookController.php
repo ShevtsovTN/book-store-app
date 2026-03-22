@@ -9,13 +9,16 @@ use App\Application\Access\UseCases\GrantBookAccess\GrantBookAccessHandler;
 use App\Application\Access\UseCases\GrantSubscription\GrantSubscriptionCommand;
 use App\Application\Access\UseCases\GrantSubscription\GrantSubscriptionHandler;
 use App\Application\Cart\Interfaces\PaymentGatewayInterface;
+use App\Application\Shared\Interfaces\EventDispatcherInterface;
+use App\Domain\Cart\Enums\CartItemTypeEnum;
+use App\Domain\Cart\Interfaces\CartRepositoryInterface;
+use App\Domain\Order\Events\PurchaseCompleted;
 use DateMalformedStringException;
 use DateTimeImmutable;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Stripe\Exception\SignatureVerificationException;
-use Symfony\Component\HttpFoundation\Response;
 
 final class StripeWebhookController extends Controller
 {
@@ -23,24 +26,22 @@ final class StripeWebhookController extends Controller
         private readonly PaymentGatewayInterface  $gateway,
         private readonly GrantBookAccessHandler   $grantBookAccess,
         private readonly GrantSubscriptionHandler $grantSubscription,
-    )
-    {
-    }
+        private readonly CartRepositoryInterface  $carts,
+        private readonly EventDispatcherInterface $dispatcher,
+    ) {}
 
     /**
      * @throws DateMalformedStringException
      */
     public function __invoke(Request $request): JsonResponse
     {
-        $signature = $request->header('Stripe-Signature', '');
-
         try {
             $event = $this->gateway->constructWebhookEvent(
                 $request->getContent(),
-                $signature,
+                $request->header('Stripe-Signature', ''),
             );
         } catch (SignatureVerificationException) {
-            return new JsonResponse(['message' => 'Invalid signature.'], Response::HTTP_BAD_REQUEST);
+            return new JsonResponse(['message' => 'Invalid signature.'], 400);
         }
 
         match ($event->type) {
@@ -55,39 +56,43 @@ final class StripeWebhookController extends Controller
 
     private function handleCheckoutCompleted(object $session): void
     {
-        $metadata = $session->metadata ?? null;
+        $userId = (int) ($session->metadata?->user_id ?? 0);
+        $cartId = (int) ($session->metadata?->cart_id ?? 0);
 
-        if (null === $metadata) {
+        if (0 === $userId || 0 === $cartId) {
+            Log::warning('Stripe webhook: missing metadata', ['session_id' => $session->id]);
+
             return;
         }
 
-        $userId = (int)($metadata->user_id ?? 0);
-        $cartId = (int)($metadata->cart_id ?? 0);
+        $cart = $this->carts->findById($cartId);
 
-        if (0 === $userId || 0 === $cartId) {
-            Log::warning('Stripe webhook: missing metadata', [
-                'session_id' => $session->id,
-                'metadata' => (array)$metadata,
-            ]);
+        if (null === $cart) {
+            Log::warning('Stripe webhook: cart not found', ['cart_id' => $cartId]);
+
             return;
         }
 
         $paymentIntentId = $session->payment_intent ?? null;
 
-        if (!empty($session->line_items?->data)) {
-            foreach ($session->line_items->data as $lineItem) {
-                $bookId = (int)($lineItem->price?->product?->metadata?->book_id ?? 0);
-
-                if ($bookId > 0) {
-                    $this->grantBookAccess->handle(
-                        new GrantBookAccessCommand(
-                            userId: $userId,
-                            bookId: $bookId,
-                            stripePaymentIntentId: $paymentIntentId,
-                        ),
-                    );
-                }
+        foreach ($cart->items as $item) {
+            if (CartItemTypeEnum::BOOK !== $item->type) {
+                continue;
             }
+
+            $this->grantBookAccess->handle(
+                new GrantBookAccessCommand(
+                    userId: $userId,
+                    bookId: $item->referenceId,
+                    stripePaymentIntentId: $paymentIntentId,
+                ),
+            );
+
+            $this->dispatcher->dispatch(new PurchaseCompleted(
+                userId: $userId,
+                bookId: $item->referenceId,
+                bookTitle: $item->title,
+            ));
         }
     }
 
@@ -96,23 +101,20 @@ final class StripeWebhookController extends Controller
      */
     private function handleSubscriptionUpdate(object $subscription): void
     {
-        $userId = (int)($subscription->metadata?->user_id ?? 0);
+        $userId = (int) ($subscription->metadata?->user_id ?? 0);
 
         if (0 === $userId) {
             Log::warning('Stripe webhook: subscription missing user_id', [
                 'subscription_id' => $subscription->id,
             ]);
+
             return;
         }
 
-        $expiresAt = new DateTimeImmutable('@' . $subscription->current_period_end);
-
-        $this->grantSubscription->handle(
-            new GrantSubscriptionCommand(
-                userId: $userId,
-                stripeSubscriptionId: $subscription->id,
-                expiresAt: $expiresAt,
-            ),
-        );
+        $this->grantSubscription->handle(new GrantSubscriptionCommand(
+            userId: $userId,
+            stripeSubscriptionId: $subscription->id,
+            expiresAt: new DateTimeImmutable('@' . $subscription->current_period_end),
+        ));
     }
 }

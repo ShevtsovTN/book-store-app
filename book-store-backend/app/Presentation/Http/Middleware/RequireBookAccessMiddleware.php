@@ -45,7 +45,7 @@ final readonly class RequireBookAccessMiddleware
             );
         }
 
-        if (! $this->checker->canRead($user->id, $bookId)) {
+        if ( ! $this->checker->canRead($user->id, $bookId)) {
             return response()->json(
                 ['message' => 'You do not have access to this book.'],
                 Response::HTTP_FORBIDDEN,

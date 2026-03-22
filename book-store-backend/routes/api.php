@@ -16,6 +16,7 @@ use App\Presentation\Http\Controllers\ReadingListController;
 use App\Presentation\Http\Controllers\ReadingProgressController;
 use App\Presentation\Http\Controllers\ReadingSessionController;
 use App\Presentation\Http\Controllers\StripeWebhookController;
+use App\Presentation\Http\Controllers\SubscriptionCheckoutController;
 use App\Presentation\Http\Controllers\TagController;
 use Illuminate\Support\Facades\Route;
 
@@ -79,6 +80,11 @@ Route::prefix('v1')->group(function (): void {
                 Route::delete('/items/{type}/{referenceId}', [CartController::class, 'removeItem'])
                     ->name('items.remove');
                 Route::post('/checkout', [CartController::class, 'checkout'])
+                    ->name('checkout');
+            });
+
+            Route::prefix('subscriptions')->name('subscriptions.')->group(static function (): void {
+                Route::post('/checkout', SubscriptionCheckoutController::class)
                     ->name('checkout');
             });
         });

@@ -12,6 +12,7 @@ use Tests\Fakes\FakeUserBookAccessRepository;
 final class GrantBookAccessHandlerTest extends TestCase
 {
     private FakeUserBookAccessRepository $repo;
+
     private GrantBookAccessHandler       $handler;
 
     protected function setUp(): void
