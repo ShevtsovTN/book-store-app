@@ -39,11 +39,6 @@ const router = createRouter({
           name: 'search',
           component: () => import('@/views/SearchView.vue'),
         },
-        {
-          path: '/demo/toasts',
-          name: 'toast-demo',
-          component: () => import('@/views/ToastDemoView.vue'),
-        },
       ],
     },
 
@@ -126,17 +121,17 @@ const router = createRouter({
           name: 'admin-books',
           component: () => import('@/views/admin/BooksView.vue'),
         },
-        // {
-        //   path: 'books/create',
-        //   name: 'admin-book-create',
-        //   component: () => import('@/views/admin/BookFormView.vue'),
-        // },
-        // {
-        //   path: 'books/:id/edit',
-        //   name: 'admin-book-edit',
-        //   component: () => import('@/views/admin/BookFormView.vue'),
-        //   props: (route) => ({ id: Number(route.params.id) }),
-        // },
+        {
+          path: 'books/create',
+          name: 'admin-book-create',
+          component: () => import('@/views/admin/BookFormView.vue'),
+        },
+        {
+          path: 'books/:id/edit',
+          name: 'admin-book-edit',
+          component: () => import('@/views/admin/BookFormView.vue'),
+          props: (route) => ({ id: Number(route.params.id) }),
+        },
       ],
     },
 

@@ -10,6 +10,7 @@ use App\Presentation\Http\Controllers\BookTagController;
 use App\Presentation\Http\Controllers\CartController;
 use App\Presentation\Http\Controllers\NotificationController;
 use App\Presentation\Http\Controllers\PopularBooksController;
+use App\Presentation\Http\Controllers\PublishBookController;
 use App\Presentation\Http\Controllers\ReaderAuthController;
 use App\Presentation\Http\Controllers\ReadingHistoryController;
 use App\Presentation\Http\Controllers\ReadingListController;
@@ -95,6 +96,7 @@ Route::prefix('v1')->group(function (): void {
         ->group(static function (): void {
             Route::post('books', [BookController::class, 'store'])->name('books.store');
             Route::put('books/{id}', [BookController::class, 'update'])->name('books.update');
+            Route::patch('books/{id}/publish', PublishBookController::class)->name('books.publish');
             Route::delete('books/{id}', [BookController::class, 'destroy'])->name('books.destroy');
 
             Route::post('books/{id}/cover', BookCoverController::class)->name('books.cover');

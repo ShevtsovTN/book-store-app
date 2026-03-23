@@ -5,28 +5,6 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Barlow:wght@300;400;500;600&family=Barlow+Condensed:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
-:root {
-  --bg:           #0F0F11;
-  --bg-surface:   #17171A;
-  --bg-card:      #1E1E22;
-  --bg-hover:     #25252A;
-  --border:       #2A2A30;
-  --border-lt:    #33333A;
-  --text:         #E8E6E0;
-  --text-muted:   #888880;
-  --text-dim:     #444440;
-  --accent:       #E8A020;
-  --accent-dk:    #C88010;
-  --accent-glow:  rgba(232,160,32,0.15);
-  --green:        #3ECF8E;
-  --red:          #F66;
-  --blue:         #5B9CF6;
-  --purple:       #A78BFA;
-  --radius:       8px;
-  --sidebar-w:    240px;
-  --transition:   0.2s ease;
-}
-
 /* ---- Scrollbar ---- */
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
@@ -252,7 +230,9 @@ td { padding: 14px 16px; font-size: 0.84rem; color: var(--text); vertical-align:
   align-items: center; justify-content: center; padding: 20px;
 }
 .modal {
-  background: var(--bg-card); border: 1px solid var(--border-lt);
+  background: var(--bg-card-light);
+  color: var(--text-dark);
+  border: 1px solid var(--border-lt);
   border-radius: 12px; width: 100%; max-width: 720px;
   max-height: 90vh; overflow-y: auto;
   animation: modalIn 0.25s ease;

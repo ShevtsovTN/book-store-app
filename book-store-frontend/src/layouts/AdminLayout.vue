@@ -1,14 +1,17 @@
 <script setup lang="ts">
-import { RouterLink, RouterView, useRouter } from 'vue-router'
+import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { computed } from 'vue'
 
 const auth = useAuthStore()
 const router = useRouter()
+const route = useRoute()
 
 async function handleLogout(): Promise<void> {
   await auth.adminLogout()
   await router.push({ name: 'admin-login' })
 }
+const isActive = (name: string) => computed(() => route.name === name)
 </script>
 
 <template>
@@ -17,8 +20,16 @@ async function handleLogout(): Promise<void> {
       <span class="admin-sidebar__brand">Admin Panel</span>
 
       <nav class="admin-sidebar__nav">
-        <RouterLink :to="{ name: 'admin-dashboard' }">Dashboard</RouterLink>
-        <RouterLink :to="{ name: 'admin-books' }">Books</RouterLink>
+        <RouterLink
+          :to="{ name: 'admin-dashboard' }"
+          :class="{ 'router-link-active': isActive('admin-dashboard').value }"
+          >Dashboard</RouterLink
+        >
+        <RouterLink
+          :to="{ name: 'admin-books' }"
+          :class="{ 'router-link-active': isActive('admin-books').value }"
+          >Books</RouterLink
+        >
       </nav>
 
       <div class="admin-sidebar__footer">

@@ -25,6 +25,6 @@ final class PublishBookController extends Controller
             ),
         );
 
-        return new JsonResponse(new PublishBookResource($result)->withStorage($this->storage));
+        return new JsonResponse(new PublishBookResource($result->book)->withStorage($this->storage));
     }
 }

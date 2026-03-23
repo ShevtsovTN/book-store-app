@@ -34,6 +34,8 @@ export const booksApi = {
 
   update: (id: number, payload: UpdateBookPayload) => http.put<Book>(`/admin/books/${id}`, payload),
 
+  publish: (id: number) => http.patch<void>(`/admin/books/${id}/publish`),
+
   destroy: (id: number) => http.delete<void>(`/admin/books/${id}`),
 
   uploadCover: (id: number, file: File) => {

@@ -3,3 +3,25 @@
   padding: 0;
   box-sizing: border-box;
 }
+
+:root {
+  --bg: #0F0F11;
+  --bg-surface: #17171A;
+  --bg-card: #1E1E22;
+  --bg-hover: #25252A;
+  --border: #2A2A30;
+  --border-lt: #33333A;
+  --text: #E8E6E0;
+  --text-muted: #888880;
+  --text-dim: #444440;
+  --accent: #E8A020;
+  --accent-dk: #C88010;
+  --accent-glow: rgba(232, 160, 32, 0.15);
+  --green: #3ECF8E;
+  --red: #F66;
+  --blue: #5B9CF6;
+  --purple: #A78BFA;
+  --radius: 8px;
+  --sidebar-w: 240px;
+  --transition: 0.2s ease;
+}

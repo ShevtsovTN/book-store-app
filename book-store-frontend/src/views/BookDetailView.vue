@@ -5,6 +5,7 @@ import { useBooksStore } from '@/stores/books'
 import { useCartStore } from '@/stores/cart'
 import { useReadingStore } from '@/stores/reading'
 import { useAuthStore } from '@/stores/auth'
+import { useToastStore } from '@/stores/toast'
 import AppSpinner from '@/components/ui/AppSpinner.vue'
 
 const props = defineProps<{ id: number }>()
@@ -13,24 +14,35 @@ const booksStore = useBooksStore()
 const cartStore = useCartStore()
 const readingStore = useReadingStore()
 const auth = useAuthStore()
+const toast = useToastStore()
 const router = useRouter()
 
 onMounted(() => booksStore.fetchBook(props.id))
 
 async function handleAddToCart(): Promise<void> {
   if (!auth.isAuthenticated) {
-    router.push({ name: 'login' })
+    await router.push({ name: 'login' })
     return
   }
   await cartStore.addItem('book', props.id)
+  if (!cartStore.error) {
+    toast.success('Add to cart', booksStore.currentBook?.title)
+  } else {
+    toast.error('Fail', cartStore.error)
+  }
 }
 
 async function handleAddToList(): Promise<void> {
   if (!auth.isAuthenticated) {
-    router.push({ name: 'login' })
+    await router.push({ name: 'login' })
     return
   }
-  await readingStore.addToList(props.id)
+  const entry = await readingStore.addToList(props.id)
+  if (entry) {
+    toast.success('Add to reading list', booksStore.currentBook?.title)
+  } else {
+    toast.error('Fail', readingStore.error ?? undefined)
+  }
 }
 </script>
 
