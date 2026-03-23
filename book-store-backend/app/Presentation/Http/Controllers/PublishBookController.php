@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Presentation\Http\Controllers;
 
+use App\Application\Catalog\Interfaces\BookCoverStorageInterface;
 use App\Application\Catalog\UseCases\PublishBook\PublishBookCommand;
 use App\Application\Catalog\UseCases\PublishBook\PublishBookHandler;
 use App\Presentation\Http\Resources\Catalog\PublishBookResource;
@@ -13,6 +14,7 @@ final class PublishBookController extends Controller
 {
     public function __construct(
         private readonly PublishBookHandler $handler,
+        private readonly BookCoverStorageInterface $storage,
     ) {}
 
     public function __invoke(int $bookId): JsonResponse
@@ -23,6 +25,6 @@ final class PublishBookController extends Controller
             ),
         );
 
-        return new JsonResponse(new PublishBookResource($result));
+        return new JsonResponse(new PublishBookResource($result)->withStorage($this->storage));
     }
 }
