@@ -1,40 +1,135 @@
 <script setup lang="ts">
-import { RouterLink, RouterView, useRoute, useRouter } from 'vue-router'
+import { RouterLink, RouterView, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { computed } from 'vue'
 
 const auth = useAuthStore()
 const router = useRouter()
-const route = useRoute()
+
+const initials = computed(() => {
+  return (
+    auth.user?.name
+      .split(' ')
+      .map((w) => w[0])
+      .join('')
+      .slice(0, 2)
+      .toUpperCase() ?? '?'
+  )
+})
 
 async function handleLogout(): Promise<void> {
   await auth.adminLogout()
   await router.push({ name: 'admin-login' })
 }
-const isActive = (name: string) => computed(() => route.name === name)
 </script>
 
 <template>
   <div class="admin-layout">
-    <aside class="admin-sidebar">
-      <span class="admin-sidebar__brand">Admin Panel</span>
+    <aside class="sidebar">
+      <div class="sidebar__logo">
+        <span class="sidebar__logo-text"><em>Book</em>shop</span>
+        <span class="sidebar__badge">Admin</span>
+      </div>
 
-      <nav class="admin-sidebar__nav">
+      <nav class="sidebar__nav">
+        <span class="sidebar__section-label">Catalog</span>
+
         <RouterLink
+          class="nav-item"
           :to="{ name: 'admin-dashboard' }"
-          :class="{ 'router-link-active': isActive('admin-dashboard').value }"
-          >Dashboard</RouterLink
+          active-class=""
+          exact-active-class="active"
         >
+          <svg
+            class="nav-item__icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <rect x="3" y="3" width="7" height="7" rx="1" />
+            <rect x="14" y="3" width="7" height="7" rx="1" />
+            <rect x="3" y="14" width="7" height="7" rx="1" />
+            <rect x="14" y="14" width="7" height="7" rx="1" />
+          </svg>
+          Dashboard
+        </RouterLink>
+
         <RouterLink
+          class="nav-item"
           :to="{ name: 'admin-books' }"
-          :class="{ 'router-link-active': isActive('admin-books').value }"
-          >Books</RouterLink
+          active-class=""
+          exact-active-class="active"
         >
+          <svg
+            class="nav-item__icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+          </svg>
+          Books
+        </RouterLink>
+
+        <span class="sidebar__section-label">Users</span>
+
+        <a class="nav-item" href="#">
+          <svg
+            class="nav-item__icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+          </svg>
+          Readers
+        </a>
+
+        <a class="nav-item" href="#">
+          <svg
+            class="nav-item__icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+            <line x1="3" y1="6" x2="21" y2="6" />
+            <path d="M16 10a4 4 0 0 1-8 0" />
+          </svg>
+          Orders
+        </a>
       </nav>
 
-      <div class="admin-sidebar__footer">
-        <span>{{ auth.user?.name }}</span>
-        <button @click="handleLogout">Logout</button>
+      <div class="sidebar__footer">
+        <div class="sidebar__user">
+          <div class="sidebar__avatar">{{ initials }}</div>
+          <div>
+            <div class="sidebar__user-name">{{ auth.user?.name }}</div>
+            <div class="sidebar__user-role">Administrator</div>
+          </div>
+          <button class="sidebar__logout" @click="handleLogout">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              width="16"
+              height="16"
+            >
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+          </button>
+        </div>
       </div>
     </aside>
 
@@ -45,68 +140,177 @@ const isActive = (name: string) => computed(() => route.name === name)
 </template>
 
 <style scoped>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,400&family=Barlow:wght@400;500&family=Barlow+Condensed:wght@600;700&display=swap');
+
 .admin-layout {
   min-height: 100vh;
   display: flex;
 }
 
-.admin-sidebar {
-  width: 220px;
+.sidebar {
+  width: var(--sidebar-w);
+  background: var(--bg-surface);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
   flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  padding: 1.5rem 1rem;
-  background: #111827;
-  color: #d1d5db;
-  gap: 1.5rem;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 50;
+  transition: transform 0.3s ease;
 }
-
-.admin-sidebar__brand {
-  font-size: 1rem;
-  font-weight: 700;
-  color: #fff;
-}
-
-.admin-sidebar__nav {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.admin-sidebar__nav a {
-  display: block;
-  padding: 0.6rem 0.75rem;
-  border-radius: 8px;
-  color: #9ca3af;
-  text-decoration: none;
-}
-
-.admin-sidebar__nav a:hover,
-.admin-sidebar__nav a.router-link-active {
-  background: rgba(255, 255, 255, 0.08);
-  color: #fff;
-}
-
-.admin-sidebar__footer {
+.sidebar__logo {
+  padding: 24px 20px 20px;
+  border-bottom: 1px solid var(--border);
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  font-size: 0.8rem;
+  gap: 10px;
+}
+.sidebar__logo-text {
+  font-size: 1.3rem;
+  font-family: 'Playfair Display', serif;
+  color: var(--text);
+  line-height: 1;
+}
+.sidebar__logo-text em {
+  color: var(--accent);
+  font-style: italic;
+}
+.sidebar__badge {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  background: var(--accent-glow);
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  padding: 2px 7px;
+  border-radius: 3px;
+  margin-left: auto;
 }
 
-.admin-sidebar__footer button {
-  background: none;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: inherit;
-  border-radius: 6px;
-  padding: 0.25rem 0.5rem;
+.sidebar__nav {
+  flex: 1;
+  padding: 16px 12px;
+  overflow-y: auto;
+}
+.sidebar__section-label {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  padding: 10px 8px 6px;
+  margin-top: 8px;
+  display: block;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  transition: all var(--transition);
+  position: relative;
   cursor: pointer;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  text-decoration: none;
+  margin-bottom: 4px;
+}
+.nav-item:hover {
+  background: var(--bg-hover);
+  color: var(--text);
+}
+.nav-item.active {
+  background: var(--accent-glow);
+  color: var(--accent);
+  border: 1px solid rgba(232, 160, 32, 0.2);
+}
+.nav-item.active .nav-item__icon {
+  color: var(--accent);
+}
+.nav-item__icon {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
 }
 
+.sidebar__footer {
+  padding: 16px 12px;
+  border-top: 1px solid var(--border);
+}
+.sidebar__user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  transition: background var(--transition);
+}
+.sidebar__user:hover {
+  background: var(--bg-hover);
+}
+.sidebar__avatar {
+  width: 32px;
+  height: 32px;
+  background: var(--accent);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+.sidebar__user-name {
+  font-size: 0.84rem;
+  font-family: 'Barlow', sans-serif;
+  font-weight: 500;
+  color: var(--text);
+}
+.sidebar__user-role {
+  font-size: 0.72rem;
+  font-family: 'Barlow', sans-serif;
+  color: var(--text-muted);
+}
+
+.sidebar__logout {
+  margin-left: auto;
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  border-radius: var(--radius);
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: all var(--transition);
+}
+.sidebar__logout:hover {
+  border-color: var(--red);
+  color: var(--red);
+}
+
+/* ── Main content offset ── */
 .admin-layout__main {
   flex: 1;
+  margin-left: var(--sidebar-w);
   padding: 2rem;
-  background: #f9fafb;
+  background: var(--bg);
+  min-height: 100vh;
 }
 </style>
