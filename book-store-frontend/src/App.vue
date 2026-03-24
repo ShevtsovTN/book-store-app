@@ -7,4 +7,4 @@ import ToastContainer from '@/components/ui/ToastContainer.vue'
   <ToastContainer />
 </template>
 
-<style scoped></style>
+<style></style>
