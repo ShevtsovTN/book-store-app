@@ -1,16 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useAuthStore } from '@/stores/auth'
 
-const auth = useAuthStore()
-
-const todayDate = computed(() => {
-  return new Date().toLocaleDateString('en-US', {
-    weekday: 'long',
-    day: 'numeric',
-    month: 'long',
-  })
-})
 
 const stats = [
   {
@@ -49,7 +38,7 @@ const stats = [
 </script>
 
 <template>
-  <div class="page active">
+  <div class="page">
     <div class="page-header">
       <div>
         <h1 class="page-header__title">Dashboard</h1>
@@ -77,12 +66,5 @@ const stats = [
   </div>
 </template>
 
-<style scoped>
-.activity-item .dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  margin-top: 4px;
-  flex-shrink: 0;
-}
+<style>
 </style>

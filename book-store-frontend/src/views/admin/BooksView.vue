@@ -115,7 +115,7 @@ async function handlePublish(id: number): Promise<void> {
 </script>
 
 <template>
-  <div class="page active">
+  <div class="page">
     <div class="page-header">
       <div>
         <h1 class="page-header__title">Book Management</h1>
