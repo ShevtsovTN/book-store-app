@@ -22,7 +22,7 @@ class ListBooksRequest extends FormRequest
             'language' => ['nullable', 'string', 'size:2', 'regex:/^[a-z]{2}$/'],
             'per_page' => ['nullable', 'integer', 'min:1', 'max:100'],
             'page' => ['nullable', 'integer', 'min:1'],
-            'search' => ['nullable', 'string'],
+            'search' => ['nullable', 'string', 'min:3', 'max:255'],
         ];
     }
 }

@@ -144,6 +144,9 @@ ul { list-style: none; }
 
 /* ---- Table ---- */
 .table-wrap {
+  display: flex;
+  flex-direction: column; gap: 16px;
+  flex: 1;
   background: var(--bg-card); border: 1px solid var(--border);
   border-radius: var(--radius); overflow: hidden;
 }

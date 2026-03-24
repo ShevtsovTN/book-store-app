@@ -6,9 +6,17 @@ const props = defineProps<{
   total: number
 }>()
 
+const isPrevDisabled = computed(() => props.current <= 1)
+const isNextDisabled = computed(() => props.current >= props.total)
+
 const emit = defineEmits<{
   change: [page: number]
 }>()
+
+const goToPage = (page: number) => {
+  if (page < 1 || page > props.total || page === props.current) return
+  emit('change', page)
+}
 
 const pages = computed<(number | '…')[]>(() => {
   const { current, total } = props
@@ -32,73 +40,54 @@ const pages = computed<(number | '…')[]>(() => {
 
 <template>
   <nav class="pagination" aria-label="Pagination">
-    <button class="pagination__btn" :disabled="current === 1" @click="emit('change', current - 1)">
-      ←
-    </button>
+    <button class="page-btn" :disabled="isPrevDisabled" @click="goToPage(current - 1)">←</button>
 
     <template v-for="page in pages" :key="page">
       <span v-if="page === '…'" class="pagination__ellipsis">…</span>
+
       <button
         v-else
-        class="pagination__btn"
-        :class="{ 'pagination__btn--active': page === current }"
-        @click="emit('change', page)"
+        class="page-btn"
+        :class="{ active: page === current }"
+        :disabled="page === current"
+        @click="goToPage(page)"
       >
         {{ page }}
       </button>
     </template>
 
-    <button
-      class="pagination__btn"
-      :disabled="current === total"
-      @click="emit('change', current + 1)"
-    >
-      →
-    </button>
+    <button class="page-btn" :disabled="isNextDisabled" @click="goToPage(current + 1)">→</button>
   </nav>
 </template>
 
 <style scoped>
 .pagination {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.25rem;
-  padding: 1rem 0;
+  gap: 4px;
 }
-
-.pagination__btn {
-  min-width: 36px;
-  height: 36px;
-  padding: 0 0.5rem;
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  background: #fff;
-  cursor: pointer;
-  font-size: 0.875rem;
-  transition:
-    background 0.15s,
-    border-color 0.15s;
+.page-btn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  transition: all var(--transition);
+  min-width: 32px;
+  text-align: center;
 }
-
-.pagination__btn:hover:not(:disabled) {
-  border-color: #4f46e5;
-  color: #4f46e5;
+.page-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
 }
-
-.pagination__btn--active {
-  background: #4f46e5;
-  border-color: #4f46e5;
+.page-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
   color: #fff;
 }
-
-.pagination__btn:disabled {
+.page-btn:disabled {
   opacity: 0.4;
   cursor: not-allowed;
-}
-
-.pagination__ellipsis {
-  padding: 0 0.25rem;
-  color: #9ca3af;
 }
 </style>

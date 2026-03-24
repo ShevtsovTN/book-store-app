@@ -17,6 +17,7 @@ final readonly class ListBooksHandler
             status: $command->status ?? null,
             accessType: $command->accessType ?? null,
             language: $command->language ?? null,
+            search: $command->search ?? null,
             perPage: $command->perPage,
             page: $command->page,
         );

@@ -1,34 +1,49 @@
 <script setup lang="ts"></script>
+
 <template>
-  <div class="spinner" role="status" aria-label="Loading">
-    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle
-        cx="12"
-        cy="12"
-        r="10"
-        stroke="currentColor"
-        stroke-width="2"
-        stroke-linecap="round"
-        stroke-dasharray="60"
-        stroke-dashoffset="20"
-      />
-    </svg>
+  <div class="loader" role="status" aria-label="Loading">
+    <div class="loader__ring"></div>
+    <div class="loader__ring loader__ring--delay"></div>
   </div>
 </template>
 
 <style scoped>
-.spinner {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 2rem;
+.loader {
+  position: relative;
+  width: 40px;
+  height: 40px;
 }
 
-.spinner svg {
-  width: 36px;
-  height: 36px;
-  color: #4f46e5;
-  animation: spin 0.8s linear infinite;
+.loader__ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid transparent;
+
+  border-top-color: var(--accent);
+  border-right-color: var(--accent);
+
+  animation: spin 0.9s linear infinite;
+}
+
+.loader__ring--delay {
+  border-top-color: var(--accent-dk);
+  border-right-color: transparent;
+
+  animation-duration: 1.2s;
+  animation-direction: reverse;
+  opacity: 0.7;
+}
+
+.loader::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+
+  background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+  filter: blur(6px);
+  z-index: -1;
 }
 
 @keyframes spin {

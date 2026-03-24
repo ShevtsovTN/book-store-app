@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { RouterLink } from 'vue-router'
 import { useBooksStore } from '@/stores/books'
 import { booksApi } from '@/api/books'
 import { useToastStore } from '@/stores/toast'
 import AppSpinner from '@/components/ui/AppSpinner.vue'
+import AppPagination from '@/components/ui/AppPagination.vue'
 import type { BookStatus, AccessType } from '@/types'
 
 const books = useBooksStore()
@@ -14,31 +15,39 @@ type FilterKey = 'all' | BookStatus | AccessType
 
 const activeFilter = ref<FilterKey>('all')
 const searchQuery = ref('')
+const currentPage = ref(1)
+const PER_PAGE = 20
 
-onMounted(() => books.fetchBooks({ per_page: 100 }))
+function load(): void {
+  books.fetchBooks({
+    status:
+      activeFilter.value !== 'all' &&
+      ['published', 'draft', 'archived'].includes(activeFilter.value)
+        ? (activeFilter.value as BookStatus)
+        : undefined,
+    access_type:
+      activeFilter.value !== 'all' &&
+      ['free', 'subscription', 'purchase'].includes(activeFilter.value)
+        ? (activeFilter.value as AccessType)
+        : undefined,
+    search: searchQuery.value.trim() || undefined,
+    page: currentPage.value,
+    per_page: PER_PAGE,
+  })
+}
 
-const filteredBooks = computed(() => {
-  let list = books.books
-
-  if (activeFilter.value !== 'all') {
-    list = list.filter(
-      (b) => b.status === activeFilter.value || b.access_type === activeFilter.value,
-    )
-  }
-
-  const q = searchQuery.value.trim().toLowerCase()
-  if (q) {
-    list = list.filter(
-      (b) => b.title.toLowerCase().includes(q) || (b.isbn ?? '').toLowerCase().includes(q),
-    )
-  }
-
-  return list
+watch([activeFilter, searchQuery], () => {
+  currentPage.value = 1
+  load()
 })
+
+watch(currentPage, load)
+
+onMounted(load)
 
 const subtitle = computed(() => {
   if (books.isLoading) return 'Loading...'
-  return `Complete catalogue · ${books.meta?.total ?? filteredBooks.value.length} books`
+  return `Complete catalogue · ${books.meta?.total ?? books.books.length} books`
 })
 
 const FILTERS: { key: FilterKey; label: string }[] = [
@@ -86,7 +95,7 @@ async function handleDelete(id: number): Promise<void> {
   if (!confirm('Delete this book?')) return
   try {
     await booksApi.destroy(id)
-    await books.fetchBooks({ per_page: 100 })
+    load()
     toast.success('Eliminated', 'The book was successfully deleted')
   } catch {
     toast.error('Error', 'Could not delete book')
@@ -97,7 +106,7 @@ async function handlePublish(id: number): Promise<void> {
   if (!confirm('Publish this book?')) return
   try {
     await booksApi.publish(id)
-    await books.fetchBooks({ per_page: 100 })
+    load()
     toast.success('Published', 'The book is now available')
   } catch {
     toast.error('Error', 'The book could not be published')
@@ -130,9 +139,7 @@ async function handlePublish(id: number): Promise<void> {
       </div>
     </div>
 
-    <AppSpinner v-if="books.isLoading" />
-
-    <div v-else class="table-wrap">
+    <div class="table-wrap">
       <div class="table-filters">
         <div class="filter-tabs">
           <button
@@ -160,8 +167,13 @@ async function handlePublish(id: number): Promise<void> {
           <input v-model="searchQuery" type="text" placeholder="Find Title, ISBN..." />
         </div>
       </div>
-
-      <table>
+      <div v-if="books.isLoading" class="table-overlay">
+        <div class="loader-box">
+          <AppSpinner />
+          <span>Loading books...</span>
+        </div>
+      </div>
+      <table v-else>
         <thead>
           <tr>
             <th style="width: 40px">
@@ -177,7 +189,7 @@ async function handlePublish(id: number): Promise<void> {
           </tr>
         </thead>
         <tbody>
-          <tr v-for="book in filteredBooks" :key="book.id">
+          <tr v-for="book in books.books" :key="book.id">
             <td>
               <input type="checkbox" style="accent-color: var(--accent)" />
             </td>
@@ -289,7 +301,7 @@ async function handlePublish(id: number): Promise<void> {
             </td>
           </tr>
 
-          <tr v-if="!filteredBooks.length">
+          <tr v-if="!books.books.length">
             <td colspan="8" style="text-align: center; color: var(--text-muted); padding: 2.5rem">
               No books found
             </td>
@@ -299,8 +311,17 @@ async function handlePublish(id: number): Promise<void> {
 
       <div class="table-footer">
         <span class="table-footer__info">
-          {{ filteredBooks.length }} resultado{{ filteredBooks.length !== 1 ? 's' : '' }}
+          {{ books.meta?.total ?? books.books.length }} result{{
+            (books.meta?.total ?? books.books.length) !== 1 ? 's' : ''
+          }}
         </span>
+
+        <AppPagination
+          v-if="books.meta && books.meta.total_pages > 1"
+          :current="books.meta.current_page"
+          :total="books.meta.total_pages"
+          @change="currentPage = $event"
+        />
       </div>
     </div>
   </div>
@@ -316,5 +337,31 @@ async function handlePublish(id: number): Promise<void> {
 .row-actions .btn-icon--danger:hover {
   border-color: var(--red);
   color: var(--red);
+}
+
+.table-wrap .table-overlay {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  animation: fadeIn 0.15s ease forwards;
+  gap: 10px;
+}
+
+.table-wrap .table-overlay .loader-box {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
 }
 </style>

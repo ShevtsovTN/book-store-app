@@ -328,14 +328,6 @@ async function handleSubmit(): Promise<void> {
   gap: 20px;
 }
 
-/* ── Form card — reuses table-wrap shell ──────────────── */
-.table-wrap {
-  background: var(--bg-card);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  overflow: hidden;
-}
-
 /* ── Section block inside the card ───────────────────── */
 .form-section {
   padding: 24px 28px;

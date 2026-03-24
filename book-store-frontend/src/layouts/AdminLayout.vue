@@ -328,6 +328,5 @@ async function handleLogout(): Promise<void> {
   margin-left: var(--sidebar-w);
   padding: 2rem;
   background: var(--bg);
-  min-height: 100vh;
 }
 </style>
