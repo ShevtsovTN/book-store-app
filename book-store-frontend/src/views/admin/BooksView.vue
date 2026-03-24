@@ -312,4 +312,9 @@ async function handlePublish(id: number): Promise<void> {
   gap: 4px;
   align-items: center;
 }
+
+.row-actions .btn-icon--danger:hover {
+  border-color: var(--red);
+  color: var(--red);
+}
 </style>
