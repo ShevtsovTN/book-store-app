@@ -6,6 +6,7 @@ namespace App\Application\Reading\UseCases\GetReadingHistory;
 
 use App\Domain\Reading\Interfaces\ReadingSessionRepositoryInterface;
 use App\Domain\Reading\Interfaces\UserReadingProgressRepositoryInterface;
+use App\Domain\Reading\ValueObjects\ReadingHistoryItem;
 
 final readonly class GetReadingHistoryHandler
 {

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Application\Reading\UseCases\GetReadingHistory;
 
+use App\Domain\Reading\ValueObjects\ReadingHistoryItem;
+
 final readonly class GetReadingHistoryResult
 {
     /**

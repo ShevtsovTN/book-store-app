@@ -20,8 +20,6 @@ final class QueueableBookPublishedNotificationJob implements ShouldQueue
 
     public int    $backoff = 30;
 
-    public $queue  = 'notifications';
-
     public function __construct(
         private readonly int    $bookId,
         private readonly string $bookTitle,

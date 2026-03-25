@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Application\Reading\UseCases\GetReadingHistory;
+namespace App\Domain\Reading\ValueObjects;
 
 final readonly class ReadingHistoryItem
 {

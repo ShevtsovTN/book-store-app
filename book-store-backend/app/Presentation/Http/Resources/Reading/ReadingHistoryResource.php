@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Presentation\Http\Resources\Reading;
 
 use App\Application\Reading\UseCases\GetReadingHistory\GetReadingHistoryResult;
-use App\Application\Reading\UseCases\GetReadingHistory\ReadingHistoryItem;
+use App\Domain\Reading\ValueObjects\ReadingHistoryItem;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 

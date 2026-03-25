@@ -17,6 +17,7 @@ final readonly class ListBooksCommand
         public ?BookStatusEnum $status = null,
         public ?AccessTypeEnum $accessType = null,
         public ?string         $language = null,
+        public ?string         $search = null,
         public ?int            $perPage = null,
         public ?int            $page = null,
     ) {}
@@ -27,6 +28,7 @@ final readonly class ListBooksCommand
             status: ! empty($data['status']) ? BookStatusEnum::from($data['status']) : null,
             accessType: ! empty($data['access_type']) ? AccessTypeEnum::from($data['access_type']) : null,
             language: $data['language'] ?? null,
+            search: $data['search'] ?? null,
             perPage: ! empty($data['per_page']) ? (int) $data['per_page'] : self::DEFAULT_PER_PAGE,
             page: ! empty($data['page']) ? (int) $data['page'] : self::DEFAULT_PAGE,
         );
