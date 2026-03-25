@@ -8,6 +8,9 @@ use App\Presentation\Http\Controllers\BookPageController;
 use App\Presentation\Http\Controllers\BookSearchController;
 use App\Presentation\Http\Controllers\BookTagController;
 use App\Presentation\Http\Controllers\CartController;
+use App\Presentation\Http\Controllers\DashboardChartReadingSessionController;
+use App\Presentation\Http\Controllers\DashboardStatisticController;
+use App\Presentation\Http\Controllers\DashboardWidgetController;
 use App\Presentation\Http\Controllers\NotificationController;
 use App\Presentation\Http\Controllers\PopularBooksController;
 use App\Presentation\Http\Controllers\ReaderAuthController;
@@ -105,6 +108,14 @@ Route::prefix('v1')->group(function (): void {
             Route::delete('books/{id}/tags/{tagId}', [BookTagController::class, 'detach'])->name('books.tags.detach');
 
             Route::post('auth/logout', [AdminAuthController::class, 'logout'])->name('auth.logout');
+
+            Route::get('dashboard/stats', DashboardStatisticController::class)
+                ->name('dashboard.stats');
+            Route::get('dashboard/{widget}', DashboardWidgetController::class)
+                ->whereIn('widget', [])
+                ->name('dashboard.widget');
+            Route::get('dashboard/charts/reading-sessions', DashboardChartReadingSessionController::class)
+                ->name('dashboard.charts.reading-sessions');
         });
 
     Route::post('webhooks/stripe', StripeWebhookController::class)
