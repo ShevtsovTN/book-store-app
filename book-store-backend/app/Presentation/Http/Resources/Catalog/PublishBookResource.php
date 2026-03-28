@@ -11,7 +11,8 @@ use Illuminate\Http\Resources\Json\JsonResource;
 /**
  * @property Book $resource
  */
-class PublishBookResource extends JsonResource {
+class PublishBookResource extends JsonResource
+{
     private BookCoverStorageInterface $storage;
 
     private array $fileLinks = [];

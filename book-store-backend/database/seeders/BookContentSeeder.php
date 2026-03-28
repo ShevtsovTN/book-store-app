@@ -16,7 +16,9 @@ use Random\RandomException;
 final class BookContentSeeder extends Seeder
 {
     private const int CHAPTERS_PER_BOOK = 3;
+
     private const int PAGES_PER_CHAPTER = 5;
+
     private const int WORDS_PER_PAGE    = 300;
 
     /**
@@ -59,7 +61,7 @@ final class BookContentSeeder extends Seeder
                 'title'                 => $title,
                 'slug'                  => Str::slug($title),
                 'reading_time_minutes'  => (int) ceil(
-                    self::PAGES_PER_CHAPTER * self::WORDS_PER_PAGE / 200
+                    self::PAGES_PER_CHAPTER * self::WORDS_PER_PAGE / 200,
                 ),
                 'is_published'          => true,
             ]);

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 
-
 const stats = [
   {
     label: 'Today Revenue',

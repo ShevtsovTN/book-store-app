@@ -140,6 +140,7 @@ final class BookSeeder extends Seeder
     ];
 
     private const int FAKER_PUBLISHED_COUNT = 15;
+
     private const int FAKER_DRAFT_COUNT     = 5;
 
     public function run(): void
@@ -180,7 +181,7 @@ final class BookSeeder extends Seeder
                     'price'          => $data['price'],
                     'currency'       => $data['currency'],
                     'status'         => $data['status'],
-                    'published_at'   => $data['status'] === BookStatusEnum::PUBLISHED
+                    'published_at'   => BookStatusEnum::PUBLISHED === $data['status']
                         ? now()->subDays(random_int(10, 365))
                         : null,
                 ],
@@ -191,7 +192,7 @@ final class BookSeeder extends Seeder
                 array_map(static fn(string $name) => $tagMap[$name] ?? null, $data['tags']),
             );
 
-            if ($tagIds !== []) {
+            if ([] !== $tagIds) {
                 $book->tags()->syncWithoutDetaching(array_values($tagIds));
             }
         }

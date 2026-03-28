@@ -10,7 +10,6 @@ use App\Presentation\Http\Controllers\BookTagController;
 use App\Presentation\Http\Controllers\CartController;
 use App\Presentation\Http\Controllers\DashboardChartReadingSessionController;
 use App\Presentation\Http\Controllers\DashboardStatisticController;
-use App\Presentation\Http\Controllers\DashboardWidgetController;
 use App\Presentation\Http\Controllers\NotificationController;
 use App\Presentation\Http\Controllers\PopularBooksController;
 use App\Presentation\Http\Controllers\PublishBookController;
@@ -113,9 +112,7 @@ Route::prefix('v1')->group(function (): void {
 
             Route::get('dashboard/stats', DashboardStatisticController::class)
                 ->name('dashboard.stats');
-            Route::get('dashboard/{widget}', DashboardWidgetController::class)
-                ->whereIn('widget', [])
-                ->name('dashboard.widget');
+
             Route::get('dashboard/charts/reading-sessions', DashboardChartReadingSessionController::class)
                 ->name('dashboard.charts.reading-sessions');
         });

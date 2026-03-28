@@ -49,7 +49,7 @@ final class UserAccessSeeder extends Seeder
             }
 
             // Grant individual book access
-            if (!empty($purchasableBooks) && random_int(1, 100) <= self::PURCHASER_FRACTION * 100) {
+            if ( ! empty($purchasableBooks) && random_int(1, 100) <= self::PURCHASER_FRACTION * 100) {
                 $bookIds   = array_rand(
                     array_flip($purchasableBooks),
                     min(random_int(1, 3), count($purchasableBooks)),

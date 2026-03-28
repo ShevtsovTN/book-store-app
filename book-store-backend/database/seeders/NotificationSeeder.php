@@ -42,7 +42,7 @@ final class NotificationSeeder extends Seeder
                 ),
             ));
 
-            if ($publishedBook !== null) {
+            if (null !== $publishedBook) {
                 $reader->notify(new UserDatabaseNotification(
                     new NotificationContent(
                         type: NotificationTypeEnum::BOOK_PUBLISHED,

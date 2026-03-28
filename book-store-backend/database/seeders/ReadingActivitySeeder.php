@@ -38,6 +38,7 @@ final class ReadingActivitySeeder extends Seeder
 
         if ($publishedBooks->isEmpty() || $readers->isEmpty()) {
             $this->command->warn('No readers or published books found — skipping ReadingActivitySeeder.');
+
             return;
         }
 
@@ -91,7 +92,7 @@ final class ReadingActivitySeeder extends Seeder
             ? now()->subDays(random_int(5, 60))
             : null;
 
-        $finishedAt = $status === ReadingStatusEnum::FINISHED
+        $finishedAt = ReadingStatusEnum::FINISHED === $status
             ? now()->subDays(random_int(1, 30))
             : null;
 
@@ -148,11 +149,11 @@ final class ReadingActivitySeeder extends Seeder
         $pages      = $book->chapters->flatMap(fn($c) => $c->pages);
         $totalPages = $book->pages_count > 0 ? $book->pages_count : $pages->count();
 
-        if ($totalPages === 0 || $pages->isEmpty()) {
+        if (0 === $totalPages || $pages->isEmpty()) {
             return 0;
         }
 
-        $globalPageNumber = $status === ReadingStatusEnum::FINISHED
+        $globalPageNumber = ReadingStatusEnum::FINISHED === $status
             ? $totalPages
             : random_int(1, max(1, (int) ($totalPages * 0.8)));
 
@@ -160,7 +161,7 @@ final class ReadingActivitySeeder extends Seeder
         $page = $pages->first(fn($p) => $p->global_number === $globalPageNumber)
             ?? $pages->last();
 
-        if ($page === null) {
+        if (null === $page) {
             return 0;
         }
 
