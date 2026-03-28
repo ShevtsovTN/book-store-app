@@ -4,7 +4,6 @@ namespace App\Presentation\Http\Resources\Cart;
 
 use App\Domain\Cart\Entities\Cart;
 use App\Domain\Cart\Entities\CartItem;
-use App\Domain\Cart\Enums\CartStatusEnum;
 use App\Domain\Shared\ValueObjects\Currency;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Request;

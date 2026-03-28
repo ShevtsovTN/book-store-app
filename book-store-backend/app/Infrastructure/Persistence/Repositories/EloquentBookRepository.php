@@ -34,6 +34,12 @@ final class EloquentBookRepository implements BookRepositoryInterface
             $query = $query->where('status', $filter->status);
         }
 
+        if ($filter->search) {
+            $query = $query
+                ->where('title', 'like', "%{$filter->search}%")
+                ->orWhere('isbn', 'like', "%{$filter->search}%");
+        }
+
         if ($filter->accessType) {
             $query = $query->byAccessType($filter->accessType);
         }

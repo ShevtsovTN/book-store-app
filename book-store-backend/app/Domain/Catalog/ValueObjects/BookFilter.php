@@ -13,6 +13,7 @@ final readonly class BookFilter
         public ?BookStatusEnum $status = null,
         public ?AccessTypeEnum $accessType = null,
         public ?string         $language = null,
+        public ?string         $search = null,
         public int             $perPage = 20,
         public int             $page = 1,
     ) {}
