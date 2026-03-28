@@ -102,20 +102,20 @@ final class EloquentDashboardRepository implements DashboardRepositoryInterface
             ->get();
 
         $indexed = $rows->keyBy('date')->toArray();
-        $points  = [];
+        $points = [];
 
         $cursor = DateTimeImmutable::createFromFormat('Y-m-d H:i:s', $from->format('Y-m-d 00:00:00'));
 
         while ($cursor <= $to) {
-            $date          = $cursor->format('Y-m-d');
-            $row           = $indexed[$date] ?? null;
-            $points[]      = new ChartPoint(
+            $date = $cursor->format('Y-m-d');
+            $row = $indexed[$date] ?? null;
+            $points[] = new ChartPoint(
                 date: $date,
                 sessions: $row ? (int) $row->sessions : 0,
                 pagesRead: $row ? (int) $row->pages_read : 0,
                 durationSeconds: $row ? (int) $row->duration_seconds : 0,
             );
-            $cursor        = $cursor->modify('+1 day');
+            $cursor = $cursor->modify('+1 day');
         }
 
         return $points;
