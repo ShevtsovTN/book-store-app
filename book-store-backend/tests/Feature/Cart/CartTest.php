@@ -6,7 +6,7 @@ namespace Tests\Feature\Cart;
 
 use App\Application\Cart\Interfaces\PaymentGatewayInterface;
 use App\Domain\Cart\Enums\CartItemTypeEnum;
-use App\Domain\Identity\Enums\RoleEnum;
+use App\Domain\Shared\Enums\RoleEnum;
 use App\Infrastructure\Persistence\Models\BookModel;
 use App\Infrastructure\Persistence\Models\UserModel;
 use Illuminate\Foundation\Testing\DatabaseTransactions;

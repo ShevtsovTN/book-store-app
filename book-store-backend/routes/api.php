@@ -14,6 +14,7 @@ use App\Presentation\Http\Controllers\NotificationController;
 use App\Presentation\Http\Controllers\PopularBooksController;
 use App\Presentation\Http\Controllers\PublishBookController;
 use App\Presentation\Http\Controllers\ReaderAuthController;
+use App\Presentation\Http\Controllers\ReaderController;
 use App\Presentation\Http\Controllers\ReadingHistoryController;
 use App\Presentation\Http\Controllers\ReadingListController;
 use App\Presentation\Http\Controllers\ReadingProgressController;
@@ -115,6 +116,11 @@ Route::prefix('v1')->group(function (): void {
 
             Route::get('dashboard/charts/reading-sessions', DashboardChartReadingSessionController::class)
                 ->name('dashboard.charts.reading-sessions');
+
+            Route::get('readers', [ReaderController::class, 'index'])
+                ->name('readers.index');
+            Route::get('readers/{id}', [ReaderController::class, 'show'])
+                ->name('readers.show');
         });
 
     Route::post('webhooks/stripe', StripeWebhookController::class)

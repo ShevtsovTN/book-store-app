@@ -13,10 +13,11 @@ const icons: Record<Toast['type'], string> = {
 }
 
 const icon = computed(() => icons[props.toast.type])
+const hasDuration = computed(() => props.toast.duration > 0)
 </script>
 
 <template>
-  <div :class="['toast', `toast--${toast.type}`]" role="alert" aria-live="polite">
+  <div :class="['toast', `toast--${toast.type}`]" role="status" aria-live="polite">
     <div class="toast__icon-wrap">
       <span class="toast__icon">{{ icon }}</span>
     </div>
@@ -37,7 +38,7 @@ const icon = computed(() => icons[props.toast.type])
       </svg>
     </button>
 
-    <div class="toast__progress" />
+    <div v-if="hasDuration" class="toast__progress" />
   </div>
 </template>
 
@@ -54,7 +55,7 @@ const icon = computed(() => icons[props.toast.type])
   gap: 0.75rem;
   width: 22rem;
   padding: 1rem 1rem 1.25rem;
-  background: #faf8f5;
+  background: var(--_bg);
   border: 1px solid #e8e2d9;
   border-left: 3px solid var(--_accent);
   border-radius: 2px;

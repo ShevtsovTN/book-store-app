@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Identity;
 
-use App\Domain\Identity\Enums\RoleEnum;
+use App\Domain\Shared\Enums\RoleEnum;
 use App\Infrastructure\Persistence\Models\UserModel;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Tests\TestCase;

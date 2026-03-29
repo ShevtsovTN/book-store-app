@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace App\Domain\Identity\Entities;
 
-use App\Domain\Identity\Enums\RoleEnum;
 use App\Domain\Identity\ValueObjects\Email;
 use App\Domain\Identity\ValueObjects\HashedPassword;
 use App\Domain\Identity\ValueObjects\UserId;
+use App\Domain\Shared\Enums\RoleEnum;
 
 final readonly class User
 {

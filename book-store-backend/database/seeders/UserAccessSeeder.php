@@ -7,7 +7,7 @@ namespace Database\Seeders;
 use App\Domain\Access\Enums\SubscriptionStatusEnum;
 use App\Domain\Catalog\Enums\AccessTypeEnum;
 use App\Domain\Catalog\Enums\BookStatusEnum;
-use App\Domain\Identity\Enums\RoleEnum;
+use App\Domain\Shared\Enums\RoleEnum;
 use App\Infrastructure\Persistence\Models\BookModel;
 use App\Infrastructure\Persistence\Models\UserModel;
 use Illuminate\Database\Eloquent\Collection;

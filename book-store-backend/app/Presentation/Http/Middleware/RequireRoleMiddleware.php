@@ -2,7 +2,7 @@
 
 namespace App\Presentation\Http\Middleware;
 
-use App\Domain\Identity\Enums\RoleEnum;
+use App\Domain\Shared\Enums\RoleEnum;
 use App\Infrastructure\Persistence\Models\UserModel;
 use Closure;
 use Illuminate\Http\Request;

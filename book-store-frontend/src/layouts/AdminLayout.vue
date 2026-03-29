@@ -76,7 +76,12 @@ async function handleLogout(): Promise<void> {
 
       <span class="sidebar__section-label">Users</span>
 
-      <a class="nav-item" href="#">
+      <RouterLink
+        class="nav-item"
+        :to="{ name: 'admin-readers' }"
+        active-class=""
+        exact-active-class="active"
+      >
         <svg
           class="nav-item__icon"
           viewBox="0 0 24 24"
@@ -90,7 +95,7 @@ async function handleLogout(): Promise<void> {
           <path d="M16 3.13a4 4 0 0 1 0 7.75" />
         </svg>
         Readers
-      </a>
+      </RouterLink>
 
       <span class="sidebar__section-label">Payments</span>
 

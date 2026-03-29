@@ -476,6 +476,7 @@ async function handleSubmit(): Promise<void> {
   justify-content: space-between;
   gap: 12px;
   padding: 4px 0;
+  margin-top: 10px;
 }
 
 .form-footer__hint {

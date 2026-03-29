@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Auth;
 
-use App\Domain\Identity\Enums\RoleEnum;
+use App\Domain\Identity\Entities\User;
 use App\Domain\Identity\Interfaces\AuthenticationServiceInterface;
 use App\Domain\Identity\ValueObjects\AuthToken;
-use App\Infrastructure\Persistence\Models\UserModel;
-use App\Domain\Identity\Entities\User;
 use App\Domain\Identity\ValueObjects\UserId;
+use App\Domain\Shared\Enums\RoleEnum;
+use App\Infrastructure\Persistence\Models\UserModel;
 use Illuminate\Http\Request;
 use Laravel\Sanctum\PersonalAccessToken;
 

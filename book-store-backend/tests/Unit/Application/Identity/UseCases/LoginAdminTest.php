@@ -6,15 +6,15 @@ namespace Tests\Unit\Application\Identity\UseCases;
 
 use App\Application\Identity\UseCases\LoginAdmin\LoginAdminCommand;
 use App\Application\Identity\UseCases\LoginAdmin\LoginAdminHandler;
-use App\Domain\Identity\Enums\RoleEnum;
+use App\Domain\Identity\Entities\User;
 use App\Domain\Identity\Exceptions\InvalidCredentialsException;
 use App\Domain\Identity\ValueObjects\Email;
 use App\Domain\Identity\ValueObjects\HashedPassword;
+use App\Domain\Shared\Enums\RoleEnum;
 use PHPUnit\Framework\TestCase;
 use Tests\Fakes\FakeAuthenticationService;
 use Tests\Fakes\FakePasswordHasher;
 use Tests\Fakes\FakeUserRepository;
-use App\Domain\Identity\Entities\User;
 
 final class LoginAdminTest extends TestCase
 {

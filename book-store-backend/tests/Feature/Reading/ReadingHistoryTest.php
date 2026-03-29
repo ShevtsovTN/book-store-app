@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Tests\Feature\Reading;
 
 use App\Domain\Catalog\Enums\AccessTypeEnum;
-use App\Domain\Identity\Enums\RoleEnum;
 use App\Domain\Reading\Interfaces\ReadingProgressCacheRepositoryInterface;
+use App\Domain\Shared\Enums\RoleEnum;
 use App\Infrastructure\Persistence\Models\BookChapterModel;
 use App\Infrastructure\Persistence\Models\BookModel;
 use App\Infrastructure\Persistence\Models\BookPageModel;

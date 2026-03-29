@@ -2,7 +2,7 @@
 
 namespace Tests\Feature\Catalog;
 
-use App\Domain\Identity\Enums\RoleEnum;
+use App\Domain\Shared\Enums\RoleEnum;
 use App\Infrastructure\Persistence\Models\BookModel;
 use App\Infrastructure\Persistence\Models\TagModel;
 use App\Infrastructure\Persistence\Models\UserModel;

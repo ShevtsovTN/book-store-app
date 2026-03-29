@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Database\Seeders;
 
 use App\Domain\Catalog\Enums\BookStatusEnum;
-use App\Domain\Identity\Enums\RoleEnum;
 use App\Domain\Reading\Enums\ReadingStatusEnum;
+use App\Domain\Shared\Enums\RoleEnum;
 use App\Infrastructure\Persistence\Models\BookModel;
 use App\Infrastructure\Persistence\Models\BookPageModel;
 use App\Infrastructure\Persistence\Models\UserModel;

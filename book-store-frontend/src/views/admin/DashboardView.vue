@@ -2,6 +2,7 @@
 import { useDashboardStore } from '@/stores/dashboard'
 import { storeToRefs } from 'pinia'
 import { computed, onMounted } from 'vue'
+import type { PeriodType } from '@/types/dashboard'
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -27,14 +28,23 @@ ChartJS.register(
 import AppChart from '@/components/ui/AppChart.vue'
 import { ReadingSessionsChartFactory } from '@/services/chart/readingSessionsChartFactory'
 import AppSpinner from '@/components/ui/AppSpinner.vue'
+import { useToastStore } from '@/stores'
 
-const dashboardStore = useDashboardStore()
+const dashboard = useDashboardStore()
+const toast = useToastStore()
 
 const { cards, readingSessionsChart, readingSessionsSummary, currentPeriod, loading, error } =
-  storeToRefs(dashboardStore)
+  storeToRefs(dashboard)
 
 const chartConfig = computed(() => ReadingSessionsChartFactory.make(readingSessionsChart.value))
 
+type PeriodKey = PeriodType
+const PERIODS: { key: PeriodKey; label: string }[] = [
+  { key: 'day', label: 'Today' },
+  { key: 'week', label: 'Week' },
+  { key: 'month', label: 'Month' },
+  { key: 'year', label: 'Year' },
+]
 const periodLabels = {
   day: 'Today',
   week: 'Week',
@@ -49,9 +59,23 @@ const cardLabels = {
   active_subscriptions: 'Active Subscriptions',
 } as const
 
-onMounted(() => {
-  dashboardStore.fetchAll()
-})
+async function load(): Promise<void> {
+  try {
+    await dashboard.fetchAll()
+  } catch {
+    toast.error('Error', 'Error loading data')
+  }
+}
+
+async function sessionsChart(period: PeriodType): Promise<void> {
+  try {
+    await dashboard.fetchReadingSessionsChart(period)
+  } catch {
+    toast.error('Error', 'Error loading data')
+  }
+}
+
+onMounted(load)
 
 const getIcon = (type: string): string => {
   switch (type) {
@@ -112,13 +136,13 @@ const summary = computed(() => readingSessionsSummary.value)
         <h2>Reading Sessions</h2>
         <div class="period-selector">
           <button
-            v-for="p in ['day', 'week', 'month', 'year'] as const"
-            :key="p"
-            :class="{ active: currentPeriod === p }"
+            v-for="p in PERIODS"
+            :key="p.key"
+            :class="{ active: currentPeriod === p.key }"
             class="filter-tab"
-            @click="dashboardStore.fetchReadingSessionsChart(p)"
+            @click="sessionsChart(p.key)"
           >
-            {{ periodLabels[p] }}
+            {{ periodLabels[p.key] }}
           </button>
         </div>
       </div>

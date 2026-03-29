@@ -2,7 +2,6 @@ import type { Money } from './common'
 
 export type BookStatus = 'draft' | 'published' | 'archived'
 export type AccessType = 'subscription' | 'purchase' | 'free'
-export type BookUploadStatus = 'processing' | 'uploaded' | 'failed'
 export type PopularityPeriod = 'day' | 'week' | 'month'
 
 export interface FileLink {

@@ -117,6 +117,17 @@ const router = createRouter({
           component: () => import('@/views/admin/DashboardView.vue'),
         },
         {
+          path: 'readers',
+          name: 'admin-readers',
+          component: () => import('@/views/admin/ReadersView.vue'),
+        },
+        {
+          path: 'readers/:id',
+          name: 'admin-readers-show',
+          component: () => import('@/views/admin/ReaderView.vue'),
+          props: (route) => ({ id: Number(route.params.id) }),
+        },
+        {
           path: 'books',
           name: 'admin-books',
           component: () => import('@/views/admin/BooksView.vue'),

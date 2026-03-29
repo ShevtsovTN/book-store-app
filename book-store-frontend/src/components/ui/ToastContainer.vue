@@ -31,7 +31,6 @@ const { toasts, remove } = useToastStore()
   pointer-events: auto;
 }
 
-/* — enter — */
 .toast-enter-from {
   opacity: 0;
   transform: translateX(1.5rem) scale(0.96);
@@ -46,28 +45,19 @@ const { toasts, remove } = useToastStore()
   transform: translateX(0) scale(1);
 }
 
-/* — leave — */
 .toast-leave-from {
   opacity: 1;
-  transform: translateX(0) scale(1);
-  max-height: 8rem;
+  transform: translateX(0);
 }
 .toast-leave-active {
   transition:
-    opacity 0.22s ease,
-    transform 0.22s ease,
-    max-height 0.22s ease 0.1s;
-  overflow: hidden;
+    opacity 0.2s ease,
+    transform 0.2s ease;
+  pointer-events: none;
 }
 .toast-leave-to {
   opacity: 0;
-  transform: translateX(1.5rem) scale(0.96);
-  max-height: 0;
-}
-
-/* — reorder — */
-.toast-move {
-  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateX(1.5rem);
 }
 
 @media (max-width: 480px) {

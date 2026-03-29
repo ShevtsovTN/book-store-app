@@ -6,9 +6,9 @@ namespace Tests\Unit\Application\Identity\UseCases;
 
 use App\Application\Identity\UseCases\RegisterReader\RegisterReaderCommand;
 use App\Application\Identity\UseCases\RegisterReader\RegisterReaderHandler;
-use App\Domain\Identity\Enums\RoleEnum;
 use App\Domain\Identity\Exceptions\ReaderAlreadyExistsException;
 use App\Domain\Identity\ValueObjects\Email;
+use App\Domain\Shared\Enums\RoleEnum;
 use PHPUnit\Framework\TestCase;
 use Tests\Fakes\FakeAuthenticationService;
 use Tests\Fakes\FakeEventDispatcher;

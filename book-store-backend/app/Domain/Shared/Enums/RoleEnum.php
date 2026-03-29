@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Identity\Enums;
+namespace App\Domain\Shared\Enums;
 
 enum RoleEnum: string
 {

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Integration\Catalog;
 
-use App\Domain\Identity\Enums\RoleEnum;
+use App\Domain\Shared\Enums\RoleEnum;
 use App\Infrastructure\Persistence\Models\BookModel;
 use App\Infrastructure\Persistence\Models\UserModel;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
