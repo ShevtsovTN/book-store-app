@@ -17,16 +17,15 @@ final readonly class ListReadersCommand
         public ?string           $search = null,
         public ?int              $perPage = null,
         public ?int              $page = null,
-    ) {
-    }
+    ) {}
 
     public static function fromArray(array $data): self
     {
         return new self(
-            filter: !empty($data['filter']) ? ReaderFilterEnum::from($data['filter']) : null,
+            filter: ! empty($data['filter']) ? ReaderFilterEnum::from($data['filter']) : null,
             search: $data['search'] ?? null,
-            perPage: !empty($data['per_page']) ? (int)$data['per_page'] : self::DEFAULT_PER_PAGE,
-            page: !empty($data['page']) ? (int)$data['page'] : self::DEFAULT_PAGE,
+            perPage: ! empty($data['per_page']) ? (int) $data['per_page'] : self::DEFAULT_PER_PAGE,
+            page: ! empty($data['page']) ? (int) $data['page'] : self::DEFAULT_PAGE,
         );
     }
 }

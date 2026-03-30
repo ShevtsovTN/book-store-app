@@ -9,9 +9,7 @@ use App\Domain\User\ValueObjects\ReaderFilter;
 
 final readonly class ListReadersHandler
 {
-    public function __construct(private ReaderRepositoryInterface $readerRepository)
-    {
-    }
+    public function __construct(private ReaderRepositoryInterface $readerRepository) {}
 
     public function handle(ListReadersCommand $command): ListReadersResult
     {
@@ -23,7 +21,7 @@ final readonly class ListReadersHandler
         );
 
         return new ListReadersResult(
-            $this->readerRepository->findAll($filter)
+            $this->readerRepository->findAll($filter),
         );
     }
 }

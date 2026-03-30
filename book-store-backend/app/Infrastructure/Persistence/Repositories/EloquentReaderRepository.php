@@ -16,16 +16,15 @@ use Symfony\Component\HttpFoundation\Response;
 
 class EloquentReaderRepository implements ReaderRepositoryInterface
 {
-
     public function findAll(ReaderFilter $filter): ReaderCollection
     {
         $query = UserModel::query()
             ->where('role', RoleEnum::READER)
             ->withCount([
-                'subscriptions as subscriptions_count' => function ($q) {
+                'subscriptions as subscriptions_count' => function ($q): void {
                     $q->where('status', SubscriptionStatusEnum::ACTIVE);
                 },
-                'books as books_count'
+                'books as books_count',
             ]);
 
         if ($filter->filter) {
@@ -54,6 +53,22 @@ class EloquentReaderRepository implements ReaderRepositoryInterface
         );
     }
 
+    public function findOne(int $userId): Reader
+    {
+        /** @var UserModel $reader */
+        $reader = UserModel::query()
+            ->where('id', $userId)
+            ->where('role', RoleEnum::READER)->withCount([
+                'subscriptions as subscriptions_count' => function ($q): void {
+                    $q->where('status', SubscriptionStatusEnum::ACTIVE);
+                },
+                'books as books_count',
+            ])
+            ->first();
+
+        return $this->toDomain($reader);
+    }
+
     private function toDomain(UserModel $model): Reader
     {
         return new Reader(
@@ -68,7 +83,7 @@ class EloquentReaderRepository implements ReaderRepositoryInterface
 
     private function applyFilter($query, ReaderFilterEnum $filterType): Builder
     {
-        return match(true) {
+        return match (true) {
             $filterType->isSubscriptionFilter() => $this->applySubscriptionFilter($query, $filterType),
             $filterType->isBooksFilter() => $this->applyBooksFilter($query, $filterType),
             default => throw new InvalidArgumentException("Unknown filter type: {$filterType->value}", Response::HTTP_BAD_REQUEST),
@@ -77,38 +92,23 @@ class EloquentReaderRepository implements ReaderRepositoryInterface
 
     private function applySubscriptionFilter(Builder $query, ReaderFilterEnum $type): Builder
     {
-        if ($type === ReaderFilterEnum::SUBSCRIBED) {
-            return $query->whereHas('subscriptions', function ($q) {
+        if (ReaderFilterEnum::SUBSCRIBED === $type) {
+            return $query->whereHas('subscriptions', function ($q): void {
                 $q->where('status', SubscriptionStatusEnum::ACTIVE);
             });
         }
 
-        return $query->whereDoesntHave('subscriptions', function ($q) {
+        return $query->whereDoesntHave('subscriptions', function ($q): void {
             $q->where('status', SubscriptionStatusEnum::ACTIVE);
         });
     }
 
     private function applyBooksFilter(Builder $query, ReaderFilterEnum $type): Builder
     {
-        if ($type === ReaderFilterEnum::HAS_BOOKS) {
+        if (ReaderFilterEnum::HAS_BOOKS === $type) {
             return $query->whereHas('books');
         }
 
         return $query->whereDoesntHave('books');
-    }
-
-    public function findOne(int $userId): Reader
-    {
-        /** @var UserModel $reader */
-        $reader = UserModel::query()
-            ->where('id', $userId)
-            ->where('role', RoleEnum::READER)->withCount([
-                'subscriptions as subscriptions_count' => function ($q) {
-                    $q->where('status', SubscriptionStatusEnum::ACTIVE);
-                },
-                'books as books_count'
-            ])
-            ->first();
-        return $this->toDomain($reader);
     }
 }

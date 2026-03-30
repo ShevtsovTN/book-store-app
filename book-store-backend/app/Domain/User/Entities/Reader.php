@@ -12,7 +12,6 @@ final readonly class Reader
         public string $email,
         public bool $hasActiveSubscription = false,
         public bool $hasBooks = false,
-        public string $created_at
-    ) {
-    }
+        public string $created_at,
+    ) {}
 }

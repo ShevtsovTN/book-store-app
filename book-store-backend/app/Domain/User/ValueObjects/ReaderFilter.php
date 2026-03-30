@@ -13,6 +13,5 @@ final readonly class ReaderFilter
         public ?string           $search = null,
         public int               $perPage = 20,
         public int               $page = 1,
-    ) {
-    }
+    ) {}
 }
