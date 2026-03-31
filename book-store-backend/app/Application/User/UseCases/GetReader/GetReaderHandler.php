@@ -12,8 +12,6 @@ final readonly class GetReaderHandler
 
     public function handle(GetReaderCommand $command): GetReaderResult
     {
-        return new GetReaderResult(
-            $this->readerRepository->findOne($command->userId),
-        );
+        return new GetReaderResult($this->readerRepository->findOne($command->userId));
     }
 }

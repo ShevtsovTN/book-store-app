@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Infrastructure\Persistence\Repositories;
 
 use App\Domain\Order\Enums\OrderItemTypeEnum;
+use App\Domain\Order\Exceptions\OrderNotFoundException;
 use App\Domain\Order\Interfaces\OrderRepositoryInterface;
 use App\Domain\Order\ValueObject\OrderCollection;
 use App\Domain\Order\ValueObject\OrderFilter;
@@ -46,6 +47,22 @@ final class EloquentOrderRepository implements OrderRepositoryInterface
             perPage: $paginator->perPage(),
             currentPage: $paginator->currentPage(),
         );
+    }
+
+    public function findById(int $cartId): OrderSummary
+    {
+        $cart = CartModel::query()
+            ->with(['items', 'user'])
+            ->where('status', 'checked_out')
+            ->find($cartId);
+
+        if (null === $cart) {
+            throw new OrderNotFoundException($cartId);
+        }
+
+        $accessIndex = $this->buildAccessIndex([$cartId]);
+
+        return $this->toDomain($cart, $accessIndex);
     }
 
     private function applySearch(Builder $query, ?string $search): void

@@ -1,6 +1,7 @@
 <?php
 
 use App\Presentation\Http\Controllers\AdminAuthController;
+use App\Presentation\Http\Controllers\AdminOrderController;
 use App\Presentation\Http\Controllers\BookController;
 use App\Presentation\Http\Controllers\BookCoverController;
 use App\Presentation\Http\Controllers\BookFileController;
@@ -121,6 +122,11 @@ Route::prefix('v1')->group(function (): void {
                 ->name('readers.index');
             Route::get('readers/{id}', [ReaderController::class, 'show'])
                 ->name('readers.show');
+
+            Route::get('orders', [AdminOrderController::class, 'index'])
+                ->name('orders.index');
+            Route::get('orders/{id}', [AdminOrderController::class, 'show'])
+                ->name('orders.show');
         });
 
     Route::post('webhooks/stripe', StripeWebhookController::class)
