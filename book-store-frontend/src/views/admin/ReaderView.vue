@@ -42,7 +42,7 @@ const getBookLabelText = (hasBooks: boolean) => getBooksLabel(hasBooks)
     <div class="page-header">
       <div>
         <h1 class="page-header__title">Reader Details</h1>
-        <p class="page-header__sub">Просмотр информации о читателе</p>
+        <p class="page-header__sub">View reader information</p>
       </div>
       <div class="page-header__actions">
         <button class="btn-secondary" @click="router.back()">
@@ -82,7 +82,6 @@ const getBookLabelText = (hasBooks: boolean) => getBooksLabel(hasBooks)
 
       <div class="modal__body" style="padding: 24px">
         <div class="user-detail-grid">
-
           <!-- ID -->
           <div class="user-detail-cell">
             <label>Reader ID</label>

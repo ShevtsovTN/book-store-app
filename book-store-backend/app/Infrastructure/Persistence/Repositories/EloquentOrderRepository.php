@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Repositories;
 
+use App\Domain\Cart\Enums\CartStatusEnum;
 use App\Domain\Order\Enums\OrderItemTypeEnum;
 use App\Domain\Order\Exceptions\OrderNotFoundException;
 use App\Domain\Order\Interfaces\OrderRepositoryInterface;
@@ -13,6 +14,7 @@ use App\Domain\Order\ValueObject\OrderItem;
 use App\Domain\Order\ValueObject\OrderSummary;
 use App\Domain\Shared\ValueObjects\Currency;
 use App\Domain\Shared\ValueObjects\Money;
+use App\Infrastructure\Persistence\Models\CartItemModel;
 use App\Infrastructure\Persistence\Models\CartModel;
 use DB;
 use Illuminate\Contracts\Database\Eloquent\Builder;
@@ -24,7 +26,7 @@ final class EloquentOrderRepository implements OrderRepositoryInterface
         /** @var Builder $query */
         $query = CartModel::query()
             ->with(['items', 'user'])
-            ->where('status', 'checked_out')
+            ->where('status', CartStatusEnum::CHECKED_OUT)
             ->orderByDesc('checked_out_at');
 
         $this->applySearch($query, $filter->search);
@@ -117,13 +119,13 @@ final class EloquentOrderRepository implements OrderRepositoryInterface
         $currency = $cart->items->first()?->currency ?? 'EUR';
         $currencyVo = new Currency($currency);
 
-        $items = $cart->items->map(function ($item) use ($cart, $accessIndex, $currencyVo): OrderItem {
-            $isBook = OrderItemTypeEnum::BOOK === OrderItemTypeEnum::from($item->type);
+        $items = $cart->items->map(function (CartItemModel $item) use ($cart, $accessIndex, $currencyVo): OrderItem {
+            $isBook = OrderItemTypeEnum::BOOK->value === $item->type->value;
             $accessGranted = $isBook
                 && isset($accessIndex[$cart->id][$item->reference_id]);
 
             return new OrderItem(
-                type: OrderItemTypeEnum::from($item->type),
+                type: OrderItemTypeEnum::from($item->type->value),
                 referenceId: $item->reference_id,
                 title: $item->title,
                 price: new Money($item->price, $currencyVo),

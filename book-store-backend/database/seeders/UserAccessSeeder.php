@@ -6,65 +6,112 @@ namespace Database\Seeders;
 
 use App\Domain\Access\Enums\SubscriptionStatusEnum;
 use App\Domain\Catalog\Enums\AccessTypeEnum;
-use App\Domain\Catalog\Enums\BookStatusEnum;
+use App\Domain\Order\Enums\OrderItemTypeEnum;
 use App\Domain\Shared\Enums\RoleEnum;
 use App\Infrastructure\Persistence\Models\BookModel;
+use App\Infrastructure\Persistence\Models\CartItemModel;
+use App\Infrastructure\Persistence\Models\CartModel;
 use App\Infrastructure\Persistence\Models\UserModel;
+use Faker\Generator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Random\RandomException;
+use Faker\Factory as Faker;
 
 final class UserAccessSeeder extends Seeder
 {
-    /** Fraction of readers who have an active subscription */
-    private const float SUBSCRIPTION_FRACTION = 0.3;
-
-    /** Fraction of readers who have purchased at least one book */
-    private const float PURCHASER_FRACTION = 0.5;
+    private const float SUBSCRIPTION_FRACTION = 0.30;
+    private const float PURCHASER_FRACTION = 0.55;
+    private const float BOOKS_PER_PURCHASER = 2.3;
 
     /**
      * @throws RandomException
      */
     public function run(): void
     {
-        /** @var Collection<UserModel> $readers */
-        $readers = UserModel::query()
-            ->where('role', RoleEnum::READER)
+        $faker = Faker::create('en');
+
+        $readers = UserModel::query()->where('role', RoleEnum::READER)->get();
+        $books = BookModel::where('status', 'published')
+            ->whereIn('access_type', [AccessTypeEnum::PURCHASE, AccessTypeEnum::SUBSCRIPTION])
             ->get();
 
-        $purchasableBooks = BookModel::query()
-            ->where('status', BookStatusEnum::PUBLISHED)
-            ->whereIn('access_type', [AccessTypeEnum::PURCHASE, AccessTypeEnum::SUBSCRIPTION])
-            ->pluck('id')
-            ->all();
+        if ($readers->isEmpty() || $books->isEmpty()) {
+            $this->command->error('Reader or Book models are empty.');
+            return;
+        }
 
         $subscriptionCount = 0;
-        $accessCount       = 0;
+        $orderCount = 0;
+        $accessCount = 0;
 
         foreach ($readers as $reader) {
-            if (random_int(1, 100) <= self::SUBSCRIPTION_FRACTION * 100) {
+            if ($faker->boolean(self::SUBSCRIPTION_FRACTION * 100)) {
                 $this->grantSubscription($reader->id);
                 $subscriptionCount++;
             }
 
-            // Grant individual book access
-            if ( ! empty($purchasableBooks) && random_int(1, 100) <= self::PURCHASER_FRACTION * 100) {
-                $bookIds   = array_rand(
-                    array_flip($purchasableBooks),
-                    min(random_int(1, 3), count($purchasableBooks)),
-                );
-                $bookIds = is_array($bookIds) ? $bookIds : [$bookIds];
-
-                foreach ($bookIds as $bookId) {
-                    $this->grantBookAccess($reader->id, $bookId);
-                    $accessCount++;
+            if ($faker->boolean(self::PURCHASER_FRACTION * 100) && $books->isNotEmpty()) {
+                $bookCount = $faker->numberBetween(1, 4);
+                if ($faker->boolean(40)) {
+                    $bookCount = $faker->numberBetween(2, 5);
                 }
+
+                $selectedBooks = $books->random(min($bookCount, $books->count()));
+
+                $this->createOrderWithBooks($reader, $selectedBooks, $faker);
+                $orderCount++;
+                $accessCount += $selectedBooks->count();
             }
         }
 
-        $this->command->info("Subscriptions granted: {$subscriptionCount}");
-        $this->command->info("Book access records:   {$accessCount}");
+        $this->command->info('=== UserAccessSeeder is finished ===');
+        $this->command->info("Subscription created: {$subscriptionCount}");
+        $this->command->info("Order created: {$orderCount}");
+        $this->command->info("Book Access created: {$accessCount}");
+    }
+
+    /**
+     * @throws RandomException
+     */
+    private function createOrderWithBooks(UserModel $user, Collection $books, Generator $faker): void
+    {
+        $checkedOutAt = now()->subDays(random_int(0, 180));
+
+        $cart = CartModel::query()->create([
+            'user_id' => $user->id,
+            'status' => 'checked_out',
+            'checked_out_at' => $checkedOutAt,
+            'created_at' => $checkedOutAt->copy()->subMinutes(random_int(5, 120)),
+            'updated_at' => $checkedOutAt,
+        ]);
+
+        foreach ($books as $book) {
+            $price = $book->price ?? random_int(490, 2990);
+
+            CartItemModel::query()->create([
+                'cart_id' => $cart->id,
+                'type' => OrderItemTypeEnum::BOOK->value,
+                'reference_id' => $book->id,
+                'title' => $book->title,
+                'price' => $price,
+                'currency' => 'EUR',
+                'created_at' => $checkedOutAt,
+                'updated_at' => $checkedOutAt,
+            ]);
+
+            $paymentIntentId = 'pi_seed_' . bin2hex(random_bytes(12));
+
+            DB::table('user_book_access')->upsert([
+                'user_id' => $user->id,
+                'book_id' => $book->id,
+                'stripe_payment_intent_id' => $paymentIntentId,
+                'granted_at' => $checkedOutAt,
+                'created_at' => $checkedOutAt,
+                'updated_at' => $checkedOutAt,
+            ], ['user_id', 'book_id'], ['stripe_payment_intent_id', 'granted_at']);
+        }
     }
 
     /**
@@ -82,35 +129,16 @@ final class UserAccessSeeder extends Seeder
             return;
         }
 
-        $startedAt = now()->subDays(random_int(0, 30));
+        $startedAt = now()->subDays(random_int(0, 45));
 
         DB::table('user_subscriptions')->insert([
-            'user_id'                => $userId,
-            'status'                 => SubscriptionStatusEnum::ACTIVE->value,
-            'stripe_subscription_id' => 'sub_seed_' . uniqid('', true),
-            'started_at'             => $startedAt,
-            'expires_at'             => $startedAt->copy()->addMonth(),
-            'created_at'             => now(),
-            'updated_at'             => now(),
+            'user_id' => $userId,
+            'status' => SubscriptionStatusEnum::ACTIVE->value,
+            'stripe_subscription_id' => 'sub_seed_' . bin2hex(random_bytes(8)),
+            'started_at' => $startedAt,
+            'expires_at' => $startedAt->copy()->addMonths(1),
+            'created_at' => now(),
+            'updated_at' => now(),
         ]);
-    }
-
-    /**
-     * @throws RandomException
-     */
-    private function grantBookAccess(int $userId, int $bookId): void
-    {
-        DB::table('user_book_access')->upsert(
-            [
-                'user_id'                  => $userId,
-                'book_id'                  => $bookId,
-                'stripe_payment_intent_id' => 'pi_seed_' . uniqid('', true),
-                'granted_at'               => now()->subDays(random_int(1, 60)),
-                'created_at'               => now(),
-                'updated_at'               => now(),
-            ],
-            ['user_id', 'book_id'],
-            ['granted_at'],
-        );
     }
 }
