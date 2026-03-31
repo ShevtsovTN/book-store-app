@@ -8,6 +8,7 @@ use App\Domain\Cart\Enums\CartStatusEnum;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
@@ -35,5 +36,10 @@ final class CartModel extends Model
     public function items(): HasMany
     {
         return $this->hasMany(CartItemModel::class, 'cart_id');
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(UserModel::class, 'user_id');
     }
 }

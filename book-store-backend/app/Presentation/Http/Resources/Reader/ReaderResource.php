@@ -21,7 +21,7 @@ class ReaderResource extends JsonResource
             'email' => $resource->email,
             'has_active_subscriptions' => $resource->hasActiveSubscription,
             'has_books' => $resource->hasBooks,
-            'created_at' => $resource->created_at
+            'created_at' => $resource->created_at,
         ];
     }
 }

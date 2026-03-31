@@ -37,6 +37,7 @@ class UserModel extends Authenticatable
 {
     /** @use HasFactory<UserModelFactory> */
     use HasFactory;
+
     use Notifiable;
     use HasApiTokens;
 
@@ -64,6 +65,16 @@ class UserModel extends Authenticatable
         'remember_token',
     ];
 
+    public function subscriptions(): HasMany
+    {
+        return $this->hasMany(UserSubscriptionModel::class, 'user_id');
+    }
+
+    public function books(): HasMany
+    {
+        return $this->hasMany(UserBookAccessModel::class, 'user_id');
+    }
+
     protected static function newFactory(): UserModelFactory
     {
         return UserModelFactory::new();
@@ -81,15 +92,5 @@ class UserModel extends Authenticatable
             'password' => 'hashed',
             'role' => RoleEnum::class,
         ];
-    }
-
-    public function subscriptions(): HasMany
-    {
-        return $this->hasMany(UserSubscriptionModel::class, 'user_id');
-    }
-
-    public function books(): HasMany
-    {
-        return $this->hasMany(UserBookAccessModel::class, 'user_id');
     }
 }

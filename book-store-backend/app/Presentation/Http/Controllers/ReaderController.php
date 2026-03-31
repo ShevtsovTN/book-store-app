@@ -17,9 +17,8 @@ final class ReaderController extends Controller
 {
     public function __construct(
         private readonly ListReadersHandler $listReadersHandler,
-        private readonly GetReaderHandler   $getReaderHandler
-    ) {
-    }
+        private readonly GetReaderHandler   $getReaderHandler,
+    ) {}
 
     /**
      * @response array{
@@ -42,11 +41,11 @@ final class ReaderController extends Controller
     public function index(ListReadersRequest $request): JsonResponse
     {
         $result = $this->listReadersHandler->handle(
-            ListReadersCommand::fromArray($request->validated())
+            ListReadersCommand::fromArray($request->validated()),
         );
 
         return new JsonResponse(
-            new ReaderCollectionResource($result->collection)
+            new ReaderCollectionResource($result->collection),
         );
     }
 
@@ -66,11 +65,12 @@ final class ReaderController extends Controller
     {
         $result = $this->getReaderHandler->handle(
             new GetReaderCommand(
-                userId: $id
-            )
+                userId: $id,
+            ),
         );
+
         return new JsonResponse(
-            new ReaderResource($result->reader)
+            new ReaderResource($result->reader),
         );
     }
 }

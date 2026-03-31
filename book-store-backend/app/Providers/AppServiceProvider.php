@@ -21,6 +21,7 @@ use App\Domain\Catalog\Interfaces\BookRepositoryInterface;
 use App\Domain\Catalog\Interfaces\BookTagRepositoryInterface;
 use App\Domain\Catalog\Interfaces\TagRepositoryInterface;
 use App\Domain\Dashboard\Interfaces\DashboardRepositoryInterface;
+use App\Domain\Order\Interfaces\OrderRepositoryInterface;
 use App\Domain\Reading\Interfaces\BookChapterRepositoryInterface;
 use App\Domain\Reading\Interfaces\BookPageRepositoryInterface;
 use App\Domain\Reading\Interfaces\ReadingListRepositoryInterface;
@@ -38,6 +39,7 @@ use App\Infrastructure\Persistence\Repositories\EloquentBookRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentBookTagRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentCartRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentDashboardRepository;
+use App\Infrastructure\Persistence\Repositories\EloquentOrderRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentReaderRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentReadingListRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentReadingSessionRepository;
@@ -126,6 +128,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(UserSubscriptionRepositoryInterface::class, EloquentUserSubscriptionRepository::class);
         $this->app->bind(DashboardRepositoryInterface::class, EloquentDashboardRepository::class);
         $this->app->bind(ReaderRepositoryInterface::class, EloquentReaderRepository::class);
+        $this->app->bind(OrderRepositoryInterface::class, EloquentOrderRepository::class);
     }
 
     /**

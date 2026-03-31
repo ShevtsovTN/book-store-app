@@ -9,7 +9,6 @@ use App\Domain\User\ValueObjects\ReaderCollection;
 final readonly class ListReadersResult
 {
     public function __construct(
-        public ReaderCollection $collection
-    ) {
-    }
+        public ReaderCollection $collection,
+    ) {}
 }

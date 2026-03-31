@@ -10,6 +10,5 @@ final readonly class GetReaderResult
 {
     public function __construct(
         public Reader $reader,
-    ) {
-    }
+    ) {}
 }
