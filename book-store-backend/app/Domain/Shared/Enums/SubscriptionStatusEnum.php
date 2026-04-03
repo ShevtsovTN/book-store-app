@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Domain\Access\Enums;
+namespace App\Domain\Shared\Enums;
 
 enum SubscriptionStatusEnum: string
 {

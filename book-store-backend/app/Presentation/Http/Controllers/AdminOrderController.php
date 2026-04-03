@@ -55,11 +55,11 @@ final class AdminOrderController extends Controller
         $validated = $request->validated();
 
         $result = $this->listOrdersHandler->handle(new ListOrdersCommand(
-            perPage:  (int) ($validated['per_page'] ?? 20),
-            page:     (int) ($validated['page'] ?? 1),
-            search:   $validated['search'] ?? null,
+            perPage: (int) ($validated['per_page'] ?? 20),
+            page: (int) ($validated['page'] ?? 1),
+            search: $validated['search'] ?? null,
             dateFrom: $validated['date_from'] ?? null,
-            dateTo:   $validated['date_to'] ?? null,
+            dateTo: $validated['date_to'] ?? null,
         ));
 
         return new JsonResponse(new OrderCollectionResource($result->collection));
@@ -89,7 +89,7 @@ final class AdminOrderController extends Controller
     public function show(int $id): JsonResponse
     {
         $result = $this->getOrderHandler->handle(
-            new GetOrderCommand($id)
+            new GetOrderCommand($id),
         );
 
         return new JsonResponse(new OrderResource($result->order));

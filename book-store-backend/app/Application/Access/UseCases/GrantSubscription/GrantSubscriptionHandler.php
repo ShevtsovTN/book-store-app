@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace App\Application\Access\UseCases\GrantSubscription;
 
 use App\Domain\Access\Entities\UserSubscription;
-use App\Domain\Access\Enums\SubscriptionStatusEnum;
-use App\Domain\Access\Interfaces\UserSubscriptionRepositoryInterface;
+use App\Domain\Access\Interfaces\UserSubscriptionAccessRepositoryInterface;
+use App\Domain\Shared\Enums\SubscriptionStatusEnum;
 use DateTimeImmutable;
 
 final readonly class GrantSubscriptionHandler
 {
     public function __construct(
-        private UserSubscriptionRepositoryInterface $subscriptions,
+        private UserSubscriptionAccessRepositoryInterface $subscriptions,
     ) {}
 
     public function handle(GrantSubscriptionCommand $command): void
@@ -23,7 +23,7 @@ final readonly class GrantSubscriptionHandler
             return;
         }
 
-        $this->subscriptions->save(
+        $this->subscriptions->saveAccess(
             new UserSubscription(
                 id: null,
                 userId: $command->userId,

@@ -13,7 +13,7 @@ use App\Application\Shared\Interfaces\EventDispatcherInterface;
 use App\Application\Shared\Interfaces\SlugGeneratorInterface;
 use App\Domain\Access\Interfaces\BookAccessCheckerInterface;
 use App\Domain\Access\Interfaces\UserBookAccessRepositoryInterface;
-use App\Domain\Access\Interfaces\UserSubscriptionRepositoryInterface;
+use App\Domain\Access\Interfaces\UserSubscriptionAccessRepositoryInterface;
 use App\Domain\Cart\Interfaces\CartItemPriceResolverInterface;
 use App\Domain\Cart\Interfaces\CartRepositoryInterface;
 use App\Domain\Catalog\Interfaces\BookPopularityRepositoryInterface;
@@ -125,7 +125,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(CartItemPriceResolverInterface::class, CartItemPriceResolver::class);
         $this->app->bind(BookAccessCheckerInterface::class, BookAccessChecker::class);
         $this->app->bind(UserBookAccessRepositoryInterface::class, EloquentUserBookAccessRepository::class);
-        $this->app->bind(UserSubscriptionRepositoryInterface::class, EloquentUserSubscriptionRepository::class);
+        $this->app->bind(UserSubscriptionAccessRepositoryInterface::class, EloquentUserSubscriptionRepository::class);
         $this->app->bind(DashboardRepositoryInterface::class, EloquentDashboardRepository::class);
         $this->app->bind(ReaderRepositoryInterface::class, EloquentReaderRepository::class);
         $this->app->bind(OrderRepositoryInterface::class, EloquentOrderRepository::class);

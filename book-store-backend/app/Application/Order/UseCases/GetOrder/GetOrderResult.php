@@ -9,7 +9,6 @@ use App\Domain\Order\ValueObject\OrderSummary;
 final readonly class GetOrderResult
 {
     public function __construct(
-        public OrderSummary $order
-    ) {
-    }
+        public OrderSummary $order,
+    ) {}
 }
