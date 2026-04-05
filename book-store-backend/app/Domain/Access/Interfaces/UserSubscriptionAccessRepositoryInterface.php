@@ -6,9 +6,9 @@ namespace App\Domain\Access\Interfaces;
 
 use App\Domain\Access\Entities\UserSubscription;
 
-interface UserSubscriptionRepositoryInterface
+interface UserSubscriptionAccessRepositoryInterface
 {
     public function findActiveByUser(int $userId): ?UserSubscription;
 
-    public function save(UserSubscription $subscription): UserSubscription;
+    public function saveAccess(UserSubscription $subscription): UserSubscription;
 }

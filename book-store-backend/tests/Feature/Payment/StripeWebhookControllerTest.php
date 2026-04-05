@@ -6,7 +6,7 @@ namespace Tests\Feature\Payment;
 
 use App\Application\Cart\Interfaces\PaymentGatewayInterface;
 use App\Domain\Access\Interfaces\UserBookAccessRepositoryInterface;
-use App\Domain\Access\Interfaces\UserSubscriptionRepositoryInterface;
+use App\Domain\Access\Interfaces\UserSubscriptionAccessRepositoryInterface;
 use App\Domain\Cart\Entities\Cart;
 use App\Domain\Cart\Entities\CartItem;
 use App\Domain\Cart\Enums\CartItemTypeEnum;
@@ -203,7 +203,7 @@ final class StripeWebhookControllerTest extends TestCase
 
         $this->postJson(route('webhooks.stripe'))->assertOk();
 
-        $subscription = $this->app->make(UserSubscriptionRepositoryInterface::class)
+        $subscription = $this->app->make(UserSubscriptionAccessRepositoryInterface::class)
             ->findActiveByUser($user->id);
 
         $this->assertNotNull($subscription);

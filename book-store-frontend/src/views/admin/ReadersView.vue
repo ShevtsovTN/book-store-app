@@ -5,17 +5,17 @@ import AppSpinner from '@/components/ui/AppSpinner.vue'
 import AppPagination from '@/components/ui/AppPagination.vue'
 
 import {
-  type SubscriptionStatus,
+  type ReaderSubscriptionStatus,
   type HasBooksStatus,
-  getSubscriptionBadge,
-  getSubscriptionLabel,
-  getBooksBadge,
-  getBooksLabel,
+  getReaderSubscriptionBadge,
+  getReaderSubscriptionLabel,
+  getReaderBooksBadge,
+  getReaderBooksLabel,
 } from '@/types'
 
 const readers = useReadersStore()
 
-type FilterKey = 'all' | SubscriptionStatus | HasBooksStatus
+type FilterKey = 'all' | ReaderSubscriptionStatus | HasBooksStatus
 
 const activeFilter = ref<FilterKey>('all')
 const searchQuery = ref('')
@@ -33,13 +33,13 @@ function load(): void {
   })
 }
 
-function getReaderFilter(): SubscriptionStatus | HasBooksStatus | undefined {
+function getReaderFilter(): ReaderSubscriptionStatus | HasBooksStatus | undefined {
   const filterValue = activeFilter.value
 
   if (filterValue === 'all') return undefined
 
   if (['subscribed', 'not_subscribed'].includes(filterValue)) {
-    return filterValue as SubscriptionStatus
+    return filterValue as ReaderSubscriptionStatus
   }
 
   if (['has_books', 'has_not_books'].includes(filterValue)) {
@@ -63,11 +63,11 @@ const subtitle = computed(() => {
   return `Complete list · ${readers.meta?.total ?? readers.readers.length} readers`
 })
 
-const getSubscriptionBadgeClass = (hasActive: boolean) => getSubscriptionBadge(hasActive)
-const getSubscriptionLabelText = (hasActive: boolean) => getSubscriptionLabel(hasActive)
+const getSubscriptionBadgeClass = (hasActive: boolean) => getReaderSubscriptionBadge(hasActive)
+const getSubscriptionLabelText = (hasActive: boolean) => getReaderSubscriptionLabel(hasActive)
 
-const getBookBadgeClass = (hasBooks: boolean) => getBooksBadge(hasBooks)
-const getBookLabelText = (hasBooks: boolean) => getBooksLabel(hasBooks)
+const getBookBadgeClass = (hasBooks: boolean) => getReaderBooksBadge(hasBooks)
+const getBookLabelText = (hasBooks: boolean) => getReaderBooksLabel(hasBooks)
 
 const FILTERS: { key: FilterKey; label: string }[] = [
   { key: 'all', label: 'All' },

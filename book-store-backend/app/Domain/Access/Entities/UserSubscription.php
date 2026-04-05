@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Access\Entities;
 
-use App\Domain\Access\Enums\SubscriptionStatusEnum;
+use App\Domain\Shared\Enums\SubscriptionStatusEnum;
 use DateTimeImmutable;
 
 final readonly class UserSubscription

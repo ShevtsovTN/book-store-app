@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Infrastructure\Persistence\Models;
 
-use App\Domain\Access\Enums\SubscriptionStatusEnum;
+use App\Domain\Shared\Enums\SubscriptionStatusEnum;
 use Carbon\CarbonImmutable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;

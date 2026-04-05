@@ -6,7 +6,7 @@ namespace Tests\Unit\Application\Access\UseCases;
 
 use App\Application\Access\UseCases\GrantSubscription\GrantSubscriptionCommand;
 use App\Application\Access\UseCases\GrantSubscription\GrantSubscriptionHandler;
-use App\Domain\Access\Enums\SubscriptionStatusEnum;
+use App\Domain\Shared\Enums\SubscriptionStatusEnum;
 use PHPUnit\Framework\TestCase;
 use Tests\Fakes\FakeUserSubscriptionRepository;
 

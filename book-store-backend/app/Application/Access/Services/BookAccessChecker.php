@@ -6,16 +6,16 @@ namespace App\Application\Access\Services;
 
 use App\Domain\Access\Interfaces\BookAccessCheckerInterface;
 use App\Domain\Access\Interfaces\UserBookAccessRepositoryInterface;
-use App\Domain\Access\Interfaces\UserSubscriptionRepositoryInterface;
+use App\Domain\Access\Interfaces\UserSubscriptionAccessRepositoryInterface;
 use App\Domain\Catalog\Enums\AccessTypeEnum;
 use App\Domain\Catalog\Interfaces\BookRepositoryInterface;
 
 final readonly class BookAccessChecker implements BookAccessCheckerInterface
 {
     public function __construct(
-        private BookRepositoryInterface             $books,
-        private UserBookAccessRepositoryInterface   $bookAccess,
-        private UserSubscriptionRepositoryInterface $subscriptions,
+        private BookRepositoryInterface                   $books,
+        private UserBookAccessRepositoryInterface         $bookAccess,
+        private UserSubscriptionAccessRepositoryInterface $subscriptions,
     ) {}
 
     public function canRead(int $userId, int $bookId): bool

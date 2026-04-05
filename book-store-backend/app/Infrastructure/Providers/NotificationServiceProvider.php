@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Providers;
+namespace App\Infrastructure\Providers;
 
 use App\Application\Notification\Interfaces\NotificationSenderInterface;
 use App\Domain\Notification\Interfaces\NotificationRepositoryInterface;

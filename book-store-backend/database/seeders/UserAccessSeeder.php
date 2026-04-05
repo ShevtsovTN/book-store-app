@@ -4,25 +4,27 @@ declare(strict_types=1);
 
 namespace Database\Seeders;
 
-use App\Domain\Access\Enums\SubscriptionStatusEnum;
 use App\Domain\Catalog\Enums\AccessTypeEnum;
 use App\Domain\Order\Enums\OrderItemTypeEnum;
 use App\Domain\Shared\Enums\RoleEnum;
+use App\Domain\Shared\Enums\SubscriptionStatusEnum;
 use App\Infrastructure\Persistence\Models\BookModel;
 use App\Infrastructure\Persistence\Models\CartItemModel;
 use App\Infrastructure\Persistence\Models\CartModel;
 use App\Infrastructure\Persistence\Models\UserModel;
+use Faker\Factory as Faker;
 use Faker\Generator;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Random\RandomException;
-use Faker\Factory as Faker;
 
 final class UserAccessSeeder extends Seeder
 {
     private const float SUBSCRIPTION_FRACTION = 0.30;
+
     private const float PURCHASER_FRACTION = 0.55;
+
     private const float BOOKS_PER_PURCHASER = 2.3;
 
     /**
@@ -39,6 +41,7 @@ final class UserAccessSeeder extends Seeder
 
         if ($readers->isEmpty() || $books->isEmpty()) {
             $this->command->error('Reader or Book models are empty.');
+
             return;
         }
 

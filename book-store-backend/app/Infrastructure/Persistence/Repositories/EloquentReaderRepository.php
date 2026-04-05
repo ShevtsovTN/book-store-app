@@ -2,8 +2,8 @@
 
 namespace App\Infrastructure\Persistence\Repositories;
 
-use App\Domain\Access\Enums\SubscriptionStatusEnum;
 use App\Domain\Shared\Enums\RoleEnum;
+use App\Domain\Shared\Enums\SubscriptionStatusEnum;
 use App\Domain\User\Entities\Reader;
 use App\Domain\User\Enums\ReaderFilterEnum;
 use App\Domain\User\Interfaces\ReaderRepositoryInterface;

@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace Tests\Fakes;
 
 use App\Domain\Access\Entities\UserSubscription;
-use App\Domain\Access\Interfaces\UserSubscriptionRepositoryInterface;
+use App\Domain\Access\Interfaces\UserSubscriptionAccessRepositoryInterface;
 use PHPUnit\Framework\Assert;
 
-final class FakeUserSubscriptionRepository implements UserSubscriptionRepositoryInterface
+final class FakeUserSubscriptionRepository implements UserSubscriptionAccessRepositoryInterface
 {
     /** @var UserSubscription[] */
     private array $store = [];
@@ -21,7 +21,7 @@ final class FakeUserSubscriptionRepository implements UserSubscriptionRepository
         );
     }
 
-    public function save(UserSubscription $subscription): UserSubscription
+    public function saveAccess(UserSubscription $subscription): UserSubscription
     {
         $saved = new UserSubscription(
             id: $subscription->id ?? count($this->store) + 1,

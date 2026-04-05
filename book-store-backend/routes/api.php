@@ -22,6 +22,7 @@ use App\Presentation\Http\Controllers\ReadingProgressController;
 use App\Presentation\Http\Controllers\ReadingSessionController;
 use App\Presentation\Http\Controllers\StripeWebhookController;
 use App\Presentation\Http\Controllers\SubscriptionCheckoutController;
+use App\Presentation\Http\Controllers\SubscriptionController;
 use App\Presentation\Http\Controllers\TagController;
 use Illuminate\Support\Facades\Route;
 
@@ -127,6 +128,11 @@ Route::prefix('v1')->group(function (): void {
                 ->name('orders.index');
             Route::get('orders/{id}', [AdminOrderController::class, 'show'])
                 ->name('orders.show');
+
+            Route::get('subscriptions', [SubscriptionController::class, 'index'])
+                ->name('subscriptions.index');
+            Route::get('subscriptions/{id}', [SubscriptionController::class, 'show'])
+                ->name('subscriptions.show');
         });
 
     Route::post('webhooks/stripe', StripeWebhookController::class)

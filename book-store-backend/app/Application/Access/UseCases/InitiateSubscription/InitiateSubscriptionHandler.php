@@ -6,13 +6,13 @@ namespace App\Application\Access\UseCases\InitiateSubscription;
 
 use App\Application\Cart\Interfaces\PaymentGatewayInterface;
 use App\Domain\Access\Exceptions\SubscriptionAlreadyActiveException;
-use App\Domain\Access\Interfaces\UserSubscriptionRepositoryInterface;
+use App\Domain\Access\Interfaces\UserSubscriptionAccessRepositoryInterface;
 
 final readonly class InitiateSubscriptionHandler
 {
     public function __construct(
-        private PaymentGatewayInterface            $gateway,
-        private UserSubscriptionRepositoryInterface $subscriptions,
+        private PaymentGatewayInterface                   $gateway,
+        private UserSubscriptionAccessRepositoryInterface $subscriptions,
     ) {}
 
     public function handle(InitiateSubscriptionCommand $command): string
