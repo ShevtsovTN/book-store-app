@@ -139,6 +139,17 @@ const router = createRouter({
           props: (route) => ({ id: Number(route.params.id) }),
         },
         {
+          path: 'subscriptions',
+          name: 'admin-subscriptions',
+          component: () => import('@/views/admin/SubscriptionsView.vue'),
+        },
+        {
+          path: 'subscriptions/:id',
+          name: 'admin-subscriptions-show',
+          component: () => import('@/views/admin/SubscriptionView.vue'),
+          props: (route) => ({ id: Number(route.params.id) }),
+        },
+        {
           path: 'books',
           name: 'admin-books',
           component: () => import('@/views/admin/BooksView.vue'),

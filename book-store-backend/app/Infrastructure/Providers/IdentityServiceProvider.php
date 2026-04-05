@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Providers;
+namespace App\Infrastructure\Providers;
 
 use App\Application\Identity\Interfaces\PasswordHasherInterface;
 use App\Domain\Identity\Interfaces\AuthenticationServiceInterface;
@@ -8,8 +8,8 @@ use App\Domain\Identity\Interfaces\UserRepositoryInterface;
 use App\Infrastructure\Auth\LaravelPasswordHasher;
 use App\Infrastructure\Auth\SanctumAuthenticationService;
 use App\Infrastructure\Persistence\Repositories\EloquentUserRepository;
-use Illuminate\Support\ServiceProvider;
 use Illuminate\Http\Request;
+use Illuminate\Support\ServiceProvider;
 
 final class IdentityServiceProvider extends ServiceProvider
 {

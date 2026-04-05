@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Providers;
+namespace App\Infrastructure\Providers;
 
 use App\Application\Access\Services\BookAccessChecker;
 use App\Application\Cart\Interfaces\PaymentGatewayInterface;
@@ -28,6 +28,7 @@ use App\Domain\Reading\Interfaces\ReadingListRepositoryInterface;
 use App\Domain\Reading\Interfaces\ReadingProgressCacheRepositoryInterface;
 use App\Domain\Reading\Interfaces\ReadingSessionRepositoryInterface;
 use App\Domain\Reading\Interfaces\UserReadingProgressRepositoryInterface;
+use App\Domain\Subscription\Interfaces\UserSubscriptionRepositoryInterface;
 use App\Domain\User\Interfaces\ReaderRepositoryInterface;
 use App\Infrastructure\Cache\RedisReadingProgressCacheRepository;
 use App\Infrastructure\Parser\BookFileParserRouter;
@@ -129,6 +130,7 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(DashboardRepositoryInterface::class, EloquentDashboardRepository::class);
         $this->app->bind(ReaderRepositoryInterface::class, EloquentReaderRepository::class);
         $this->app->bind(OrderRepositoryInterface::class, EloquentOrderRepository::class);
+        $this->app->bind(UserSubscriptionRepositoryInterface::class, EloquentUserSubscriptionRepository::class);
     }
 
     /**

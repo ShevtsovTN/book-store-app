@@ -1,9 +1,9 @@
 <?php
 
-use App\Providers\IdentityServiceProvider;
-use App\Providers\AppServiceProvider;
-use App\Providers\NotificationServiceProvider;
-use App\Providers\ScrambleServiceProvider;
+use App\Infrastructure\Providers\AppServiceProvider;
+use App\Infrastructure\Providers\IdentityServiceProvider;
+use App\Infrastructure\Providers\NotificationServiceProvider;
+use App\Infrastructure\Providers\ScrambleServiceProvider;
 
 return [
     AppServiceProvider::class,

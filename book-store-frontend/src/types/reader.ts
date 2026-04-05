@@ -1,8 +1,8 @@
-export type SubscriptionStatus = 'subscribed' | 'not_subscribed'
+export type ReaderSubscriptionStatus = 'subscribed' | 'not_subscribed'
 export type HasBooksStatus = 'has_books' | 'has_not_books'
 
 export interface ReaderIndexParams {
-  filter?: SubscriptionStatus | HasBooksStatus
+  filter?: ReaderSubscriptionStatus | HasBooksStatus
   per_page?: number
   page?: number
   search?: string
@@ -41,22 +41,16 @@ export const booksStatus = {
   } as const,
 } as const
 
-export const getSubscriptionBadge = (hasActive: boolean): string =>
+export const getReaderSubscriptionBadge = (hasActive: boolean): string =>
   hasActive
     ? subscriptionStatus.badge.true
     : subscriptionStatus.badge.false;
 
-export const getSubscriptionLabel = (hasActive: boolean): string =>
-  hasActive
-    ? subscriptionStatus.label.true
-    : subscriptionStatus.label.false;
+export const getReaderSubscriptionLabel = (hasActive: boolean): string =>
+  hasActive ? subscriptionStatus.label.true : subscriptionStatus.label.false
 
-export const getBooksBadge = (hasBooks: boolean): string =>
-  hasBooks
-    ? booksStatus.badge.true
-    : booksStatus.badge.false;
+export const getReaderBooksBadge = (hasBooks: boolean): string =>
+  hasBooks ? booksStatus.badge.true : booksStatus.badge.false
 
-export const getBooksLabel = (hasBooks: boolean): string =>
-  hasBooks
-    ? booksStatus.label.true
-    : booksStatus.label.false;
+export const getReaderBooksLabel = (hasBooks: boolean): string =>
+  hasBooks ? booksStatus.label.true : booksStatus.label.false

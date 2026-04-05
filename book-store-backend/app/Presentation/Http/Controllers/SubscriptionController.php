@@ -44,8 +44,10 @@ final class SubscriptionController extends Controller
     {
         $command = ListSubscriptionsCommand::fromArray($request->validated());
 
+        $result = $this->handler->handle($command);
+
         return new JsonResponse(
-            new SubscriptionCollectionResource($this->handler->handle($command)),
+            new SubscriptionCollectionResource($result->collection),
         );
     }
 
@@ -65,8 +67,10 @@ final class SubscriptionController extends Controller
     {
         $command = new GetSubscriptionCommand($id);
 
+        $result = $this->getHandler->handle($command);
+
         return new JsonResponse(
-            new SubscriptionResource($this->getHandler->handle($command)),
+            new SubscriptionResource($result->subscription),
         );
     }
 }

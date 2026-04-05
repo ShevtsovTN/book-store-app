@@ -4,10 +4,12 @@ import { useRouter } from 'vue-router'
 import { useToastStore } from '@/stores/toast'
 import AppSpinner from '@/components/ui/AppSpinner.vue'
 
-import { getReaderBooksBadge, getReaderBooksLabel, getReaderSubscriptionBadge, getReaderSubscriptionLabel } from '@/types'
+import { getSubscriptionBadge, getSubscriptionLabel, type SubscriptionStatus } from '@/types'
+import { useSubscriptionsStore } from '@/stores/subscriptions'
 import { useReadersStore } from '@/stores/reader'
 
 const toast = useToastStore()
+const subscriptions = useSubscriptionsStore()
 const readers = useReadersStore()
 const router = useRouter()
 
@@ -15,25 +17,27 @@ const props = defineProps<{
   id: number
 }>()
 
+const currentSubscription = computed(() => subscriptions.currentSubscription)
 const currentReader = computed(() => readers.currentReader)
 const isLoading = ref(true)
 
 onMounted(async () => {
   try {
-    await readers.fetchReader(props.id)
+    await subscriptions.fetchSubscription(props.id)
+
+    if (currentSubscription.value) {
+      await readers.fetchReader(currentSubscription.value.user_id)
+    }
   } catch {
-    toast.error('Error', 'Failed to fetch reader details.')
+    toast.error('Error', 'Failed to fetch subscription details.')
     router.back()
   } finally {
     isLoading.value = false
   }
 })
 
-const getSubscriptionBadgeClass = (hasActive: boolean) => getReaderSubscriptionBadge(hasActive)
-const getSubscriptionLabelText = (hasActive: boolean) => getReaderSubscriptionLabel(hasActive)
-
-const getBookBadgeClass = (hasBooks: boolean) => getReaderBooksBadge(hasBooks)
-const getBookLabelText = (hasBooks: boolean) => getReaderBooksLabel(hasBooks)
+const getSubscriptionBadgeClass = (status: SubscriptionStatus) => getSubscriptionBadge(status)
+const getSubscriptionLabelText = (status: SubscriptionStatus) => getSubscriptionLabel(status)
 </script>
 
 <template>
@@ -41,8 +45,8 @@ const getBookLabelText = (hasBooks: boolean) => getReaderBooksLabel(hasBooks)
     <!-- Page Header -->
     <div class="page-header">
       <div>
-        <h1 class="page-header__title">Reader Details</h1>
-        <p class="page-header__sub">View reader information</p>
+        <h1 class="page-header__title">Subscription Details</h1>
+        <p class="page-header__sub">View subscription information</p>
       </div>
       <div class="page-header__actions">
         <button class="btn-secondary" @click="router.back()">
@@ -63,15 +67,9 @@ const getBookLabelText = (hasBooks: boolean) => getReaderBooksLabel(hasBooks)
 
     <AppSpinner v-if="isLoading" />
 
-    <div v-else-if="currentReader" class="table-wrap">
-      <!-- User Header -->
-      <div class="user-modal-header">
-        <div
-          class="user-modal-avatar"
-          :style="{
-            background: currentReader.has_active_subscriptions ? 'var(--green)' : 'var(--text-dim)',
-          }"
-        >
+    <div v-else-if="currentSubscription" class="table-wrap">
+      <div v-if="currentReader" class="user-modal-header">
+        <div class="user-modal-avatar" style="background: var(--green)">
           {{ currentReader.name.charAt(0).toUpperCase() }}
         </div>
         <div>
@@ -79,36 +77,31 @@ const getBookLabelText = (hasBooks: boolean) => getReaderBooksLabel(hasBooks)
           <div class="user-modal-email">{{ currentReader.email }}</div>
         </div>
       </div>
+      <div v-else class="user-modal-header">
+        <div class="user-modal-avatar" style="background: var(--text-dim)">?</div>
+        <div>
+          <div class="user-modal-name">Loading...</div>
+        </div>
+      </div>
 
       <div class="modal__body" style="padding: 24px">
         <div class="user-detail-grid">
           <!-- ID -->
           <div class="user-detail-cell">
-            <label>Reader ID</label>
-            <p class="td-mono">#{{ currentReader.id }}</p>
+            <label>Subscription ID</label>
+            <p class="td-mono">#{{ currentSubscription.id }}</p>
           </div>
 
           <!-- Role -->
           <div class="user-detail-cell">
-            <label>Role</label>
-            <p>Reader</p>
+            <label>Stripe ID</label>
+            <p>{{ currentSubscription.stripe_subscription_id }}</p>
           </div>
 
           <div class="user-detail-cell">
             <label>Subscription Status</label>
-            <span
-              class="badge"
-              :class="getSubscriptionBadgeClass(currentReader.has_active_subscriptions)"
-            >
-              {{ getSubscriptionLabelText(currentReader.has_active_subscriptions) }}
-            </span>
-          </div>
-
-          <!-- Books Access -->
-          <div class="user-detail-cell">
-            <label>Books Access</label>
-            <span class="badge" :class="getBookBadgeClass(currentReader.has_books)">
-              {{ getBookLabelText(currentReader.has_books) }}
+            <span class="badge" :class="getSubscriptionBadgeClass(currentSubscription.status)">
+              {{ getSubscriptionLabelText(currentSubscription.status) }}
             </span>
           </div>
         </div>
@@ -116,10 +109,10 @@ const getBookLabelText = (hasBooks: boolean) => getReaderBooksLabel(hasBooks)
         <div style="margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border)">
           <div class="user-detail-grid">
             <div class="user-detail-cell">
-              <label>Joined</label>
-              <p v-if="currentReader.created_at">
+              <label>Started At</label>
+              <p v-if="currentSubscription.started_at">
                 {{
-                  new Date(currentReader.created_at).toLocaleString('en', {
+                  new Date(currentSubscription.started_at).toLocaleString('en', {
                     day: '2-digit',
                     month: '2-digit',
                     year: 'numeric',
@@ -131,8 +124,19 @@ const getBookLabelText = (hasBooks: boolean) => getReaderBooksLabel(hasBooks)
               <p v-else class="td-muted">—</p>
             </div>
             <div class="user-detail-cell">
-              <label>Last Activity</label>
-              <p class="td-muted">—</p>
+              <label>Expires At</label>
+              <p v-if="currentSubscription.started_at">
+                {{
+                  new Date(currentSubscription.expires_at).toLocaleString('en', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })
+                }}
+              </p>
+              <p v-else class="td-muted">—</p>
             </div>
           </div>
         </div>
