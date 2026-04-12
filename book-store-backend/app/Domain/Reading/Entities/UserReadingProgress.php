@@ -5,19 +5,20 @@ declare(strict_types=1);
 namespace App\Domain\Reading\Entities;
 
 use App\Domain\Reading\ValueObjects\ReadingPosition;
+use DateTimeImmutable;
 
 final readonly class UserReadingProgress
 {
     public function __construct(
-        public ?int              $id,
-        public int               $userId,
-        public int               $bookId,
-        public int               $totalPages,
-        public ?ReadingPosition  $position,
-        public float             $completionPercentage,
-        public bool              $isFinished,
-        public ?\DateTimeImmutable $lastReadAt,
-        public ?\DateTimeImmutable $finishedAt,
+        public ?int               $id,
+        public int                $userId,
+        public int                $bookId,
+        public int                $totalPages,
+        public ?ReadingPosition   $position,
+        public float              $completionPercentage,
+        public bool               $isFinished,
+        public ?DateTimeImmutable $lastReadAt,
+        public ?DateTimeImmutable $finishedAt,
     ) {}
 
     public static function initiate(int $userId, int $bookId, int $totalPages): self
@@ -51,9 +52,9 @@ final readonly class UserReadingProgress
             position: $position,
             completionPercentage: $percentage,
             isFinished: $isFinished,
-            lastReadAt: new \DateTimeImmutable(),
+            lastReadAt: new DateTimeImmutable(),
             finishedAt: $isFinished && ! $this->isFinished
-                ? new \DateTimeImmutable()
+                ? new DateTimeImmutable()
                 : $this->finishedAt,
         );
     }

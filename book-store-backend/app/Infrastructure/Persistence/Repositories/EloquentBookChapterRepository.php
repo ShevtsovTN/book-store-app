@@ -10,7 +10,7 @@ final class EloquentBookChapterRepository implements BookChapterRepositoryInterf
 {
     public function findById(int $id): ?BookChapter
     {
-        $model = BookChapterModel::find($id);
+        $model = BookChapterModel::query()->with('pages')->find($id);
 
         return $model ? $this->toDomain($model) : null;
     }
@@ -96,6 +96,9 @@ final class EloquentBookChapterRepository implements BookChapterRepositoryInterf
             slug: $model->slug,
             readingTimeMinutes: $model->reading_time_minutes,
             isPublished: $model->is_published,
+            pageIds: $model->relationLoaded('pages')
+                ? $model->pages?->pluck('id')->toArray()
+                : [],
         );
     }
 }

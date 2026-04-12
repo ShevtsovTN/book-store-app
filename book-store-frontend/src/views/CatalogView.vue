@@ -31,7 +31,30 @@ onMounted(load)
 </script>
 
 <template>
-  <div>
+  <div class="content">
+    <section class="section">
+      <div class="section__header">
+        <h2 class="section__title">FEATURED</h2>
+        <p class="section__subtitle">
+          A carefully curated selection of the best titles from our bookstore
+        </p>
+        <div class="section__line"></div>
+      </div>
+
+      <AppSpinner v-if="books.isLoading" />
+
+      <div v-else class="products-grid">
+        <div v-for="book in books.books" :key="book.id" class="product-card">
+          <BookCard :book="book" />
+        </div>
+      </div>
+      <AppPagination
+        v-if="books.meta"
+        :current="books.meta.current_page"
+        :total="books.meta.total_pages"
+        @change="page = $event"
+      />
+    </section>
     <div class="catalog-filters">
       <select v-model="status">
         <option value="">All statuses</option>
@@ -47,21 +70,6 @@ onMounted(load)
         <option value="subscription">Subscription</option>
       </select>
     </div>
-
-    <AppSpinner v-if="books.isLoading" />
-
-    <template v-else>
-      <div class="book-grid">
-        <BookCard v-for="book in books.books" :key="book.id" :book="book" />
-      </div>
-
-      <AppPagination
-        v-if="books.meta"
-        :current="books.meta.current_page"
-        :total="books.meta.total_pages"
-        @change="page = $event"
-      />
-    </template>
   </div>
 </template>
 

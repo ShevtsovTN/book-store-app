@@ -88,6 +88,11 @@ final class BookModel extends Model
         return $this->hasMany(BookVolumeModel::class, 'book_id');
     }
 
+    public function bookmark(): HasMany
+    {
+        return $this->hasMany(BookmarkModel::class, 'book_id');
+    }
+
     public function scopePublished(Builder $query): Builder
     {
         return $query->where('status', BookStatusEnum::PUBLISHED)

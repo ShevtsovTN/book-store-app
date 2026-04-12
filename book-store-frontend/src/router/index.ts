@@ -70,7 +70,7 @@ const router = createRouter({
     // ── Reader (authenticated) ───────────────────────────────
     {
       path: '/reader',
-      component: () => import('@/layouts/ReaderLayout.vue'),
+      component: () => import('@/layouts/PublicLayout.vue'),
       meta: { requiresAuth: true },
       children: [
         {
@@ -78,29 +78,38 @@ const router = createRouter({
           name: 'reading-list',
           component: () => import('@/views/reader/ReadingListView.vue'),
         },
-        //     {
-        //       path: 'books/:bookId/read/:pageId',
-        //       name: 'read-page',
-        //       component: () => import('@/views/reader/ReadPageView.vue'),
-        //       props: (route) => ({
-        //         bookId: Number(route.params.bookId),
-        //         pageId: Number(route.params.pageId),
-        //       }),
-        //     },
-        //     {
-        //       path: 'history',
-        //       name: 'reading-history',
-        //       component: () => import('@/views/reader/ReadingHistoryView.vue'),
-        //     },
-        //     {
-        //       path: 'notifications',
-        //       name: 'notifications',
-        //       component: () => import('@/views/reader/NotificationsView.vue'),
-        //     },
         {
           path: 'cart',
           name: 'cart',
           component: () => import('@/views/reader/CartView.vue'),
+        },
+      ],
+    },
+    {
+      path: '/reading/:bookId/read',
+      component: () => import('@/layouts/ReadingLayout.vue'),
+      meta: { requiresAuth: true },
+      props: (route) => ({
+        bookId: Number(route.params.bookId),
+      }),
+      children: [
+        {
+          path: ':chapterId',
+          name: 'read-chapter',
+          component: () => import('@/views/reading/BookChapterView.vue'),
+          props: (route) => ({
+            chapterId: Number(route.params.chapterId),
+          }),
+          children: [
+            {
+              path: ':pageId',
+              name: 'read-page',
+              component: () => import('@/views/reading/BookPageView.vue'),
+              props: (route) => ({
+                pageId: Number(route.params.pageId),
+              }),
+            },
+          ],
         },
       ],
     },

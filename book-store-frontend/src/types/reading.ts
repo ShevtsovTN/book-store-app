@@ -1,4 +1,23 @@
 export type ReadingStatus = 'want_to_read' | 'reading' | 'finished' | 'dropped'
+export type Theme = 'light' | 'dark'
+export type PaginationMode = 'page' | 'scroll'
+export type FontFamily = 'Lora' | 'Playfair Display' | 'Georgia'
+export type LineHeight = '1.5' | '1.8' | '2'
+
+export interface BookChapter {
+  id: number
+  title: string
+  number: number
+  slug: string
+  bookId: number
+  pageIds: number[]
+}
+
+export interface FontOption {
+  name: string
+  value: string
+  style: string
+}
 
 export interface ReadingEntry {
   id: number | null
@@ -52,6 +71,26 @@ export interface BookPage {
   }
 }
 
+export interface Bookmark {
+  id: number
+  userId: number
+  bookId: number
+  chapterId: number
+  pageId: number
+  label: string
+  color: string
+}
+
+export interface ReadingBook {
+  id: number
+  title: string
+  slug: string
+  description: string
+  publisher: string | null
+  bookmark: Bookmark
+  chapters: BookChapter[]
+}
+
 export interface ReadingHistoryMeta {
   total_sessions: number
   total_pages_read: number
@@ -61,6 +100,16 @@ export interface ReadingHistoryMeta {
 export interface ReadingHistory {
   data: unknown[]
   meta: ReadingHistoryMeta
+}
+
+export interface ReadingSettings {
+  theme: Theme
+  fontSize: number
+  lineHeight: LineHeight
+  fontFamily: FontFamily
+  paginationMode: PaginationMode
+  wordsPerPage: number
+  pageWidth: number
 }
 
 export interface SaveProgressPayload {

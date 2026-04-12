@@ -5,7 +5,9 @@ use App\Presentation\Http\Controllers\AdminOrderController;
 use App\Presentation\Http\Controllers\BookController;
 use App\Presentation\Http\Controllers\BookCoverController;
 use App\Presentation\Http\Controllers\BookFileController;
-use App\Presentation\Http\Controllers\BookPageController;
+use App\Presentation\Http\Controllers\ReadingBookChapterController;
+use App\Presentation\Http\Controllers\ReadingBookController;
+use App\Presentation\Http\Controllers\ReadingBookPageController;
 use App\Presentation\Http\Controllers\BookSearchController;
 use App\Presentation\Http\Controllers\BookTagController;
 use App\Presentation\Http\Controllers\CartController;
@@ -20,6 +22,7 @@ use App\Presentation\Http\Controllers\ReadingHistoryController;
 use App\Presentation\Http\Controllers\ReadingListController;
 use App\Presentation\Http\Controllers\ReadingProgressController;
 use App\Presentation\Http\Controllers\ReadingSessionController;
+use App\Presentation\Http\Controllers\ReadingSettingsController;
 use App\Presentation\Http\Controllers\StripeWebhookController;
 use App\Presentation\Http\Controllers\SubscriptionCheckoutController;
 use App\Presentation\Http\Controllers\SubscriptionController;
@@ -40,26 +43,36 @@ Route::prefix('v1')->group(function (): void {
     Route::middleware(['auth:sanctum', 'role:reader'])
         ->group(static function (): void {
             Route::prefix('books/{bookId}')
+                ->middleware('book.access')
                 ->group(static function (): void {
+                    Route::get('/read', ReadingBookController::class)
+                        ->name('reading.book.show');
 
                     Route::get('progress', [ReadingProgressController::class, 'show'])
                         ->name('reading.progress.show');
 
-                    Route::middleware('book.access')
-                        ->group(static function (): void {
-                            Route::get('pages/{pageId}', BookPageController::class)
-                                ->name('reading.page');
-                            Route::post('progress', [ReadingProgressController::class, 'save'])
-                                ->name('reading.progress.save');
-                            Route::post('sessions', [ReadingSessionController::class, 'start'])
-                                ->name('reading.session.start');
-                            Route::patch('sessions/{sessionId}', [ReadingSessionController::class, 'end'])
-                                ->name('reading.session.end');
-                        });
+                    Route::post('progress', [ReadingProgressController::class, 'save'])
+                        ->name('reading.progress.save');
+
+                    Route::get('chapters/{chapterId}', ReadingBookChapterController::class)
+                        ->name('reading.chapter');
+
+                    Route::get('pages/{pageId}', ReadingBookPageController::class)
+                        ->name('reading.page');
+
+                    Route::post('sessions', [ReadingSessionController::class, 'start'])
+                        ->name('reading.session.start');
+                    Route::patch('sessions/{sessionId}', [ReadingSessionController::class, 'end'])
+                        ->name('reading.session.end');
                 });
 
             Route::get('reading/history', ReadingHistoryController::class)
                 ->name('reading.history');
+
+            Route::get('reading/settings', [ReadingSettingsController::class, 'show'])
+                ->name('reading.settings.show');
+            Route::put('reading/settings', [ReadingSettingsController::class, 'update'])
+                ->name('reading.settings.update');
 
             Route::post('auth/logout', [ReaderAuthController::class, 'logout'])->name('auth.logout');
 

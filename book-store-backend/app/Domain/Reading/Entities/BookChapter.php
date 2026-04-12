@@ -15,6 +15,7 @@ final readonly class BookChapter
         public string  $slug,
         public int     $readingTimeMinutes,
         public bool    $isPublished,
+        public array   $pageIds,
     ) {}
 
     public function isAccessible(): bool
