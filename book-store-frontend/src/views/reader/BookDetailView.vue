@@ -65,22 +65,6 @@ async function handleRemoveFromList(): Promise<void> {
   }
   await readingStore.removeFromList(bookId.value)
 }
-
-// Toast
-const showToast = ref(false)
-const toastMessage = ref('')
-
-function triggerToast(msg: string) {
-  toastMessage.value = msg
-  showToast.value = true
-  setTimeout(() => {
-    showToast.value = false
-  }, 2800)
-}
-
-function handleReadClick() {
-  triggerToast('📖 Opening book...')
-}
 </script>
 
 <template>

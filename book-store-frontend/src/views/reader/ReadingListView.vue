@@ -274,37 +274,6 @@ async function remove(bookId: number): Promise<void> {
   color: #fff;
 }
 
-/* HEADER & FILTER (polished) */
-.section__header {
-  margin-bottom: 24px;
-}
-
-.section__title {
-  font-size: 2.1rem;
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  margin: 0;
-}
-
-.section__subtitle {
-  color: #6b5e4f;
-  font-size: 1.05rem;
-  margin: 4px 0 12px;
-}
-
-.section__line {
-  height: 3px;
-  width: 64px;
-  background: #e8a020;
-  border-radius: 9999px;
-}
-
-.filters-bar {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 32px;
-}
-
 /* EMPTY STATE (already nice, slightly enhanced) */
 .empty-state {
   text-align: center;
