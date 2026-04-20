@@ -31,28 +31,42 @@ onMounted(load)
 </script>
 
 <template>
-  <div>
-    <div class="catalog-filters">
-      <select v-model="status">
-        <option value="">All statuses</option>
-        <option value="published">Published</option>
-        <option value="draft">Draft</option>
-        <option value="archived">Archived</option>
-      </select>
+  <div class="content">
+    <section class="section">
+      <div class="section__header">
+        <h2 class="section__title">FEATURED</h2>
+        <p class="section__subtitle">
+          A carefully curated selection of the best titles from our bookstore
+        </p>
+        <div class="section__line"></div>
+      </div>
 
-      <select v-model="accessType">
-        <option value="">All access types</option>
-        <option value="free">Free</option>
-        <option value="purchase">Purchase</option>
-        <option value="subscription">Subscription</option>
-      </select>
-    </div>
+      <div class="filters-bar">
+        <div class="filters-right">
+          <select class="sort-select" v-model="status">
+            <option value="">All statuses</option>
+            <option value="published">Published</option>
+            <option value="draft">Draft</option>
+            <option value="archived">Archived</option>
+          </select>
 
-    <AppSpinner v-if="books.isLoading" />
+          <select class="sort-select" v-model="accessType">
+            <option value="">All access types</option>
+            <option value="free">Free</option>
+            <option value="purchase">Purchase</option>
+            <option value="subscription">Subscription</option>
+          </select>
+        </div>
+      </div>
 
-    <template v-else>
-      <div class="book-grid">
-        <BookCard v-for="book in books.books" :key="book.id" :book="book" />
+      <div class="products-wrapper">
+        <TransitionGroup name="book" tag="div" class="products-grid" :css="true">
+          <div v-for="book in books.books" :key="book.id" class="product-card">
+            <BookCard :book="book" />
+          </div>
+        </TransitionGroup>
+
+        <AppSpinner v-if="books.isLoading" class="products-overlay" />
       </div>
 
       <AppPagination
@@ -61,28 +75,24 @@ onMounted(load)
         :total="books.meta.total_pages"
         @change="page = $event"
       />
-    </template>
+    </section>
   </div>
 </template>
 
-<style scoped>
-.catalog-filters {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
+<style>
+.book-enter-active,
+.book-leave-active,
+.book-move {
+  transition: all 420ms cubic-bezier(0.34, 1.56, 0.64, 1); /* bouncy, но очень приятно */
 }
 
-.catalog-filters select {
-  padding: 0.5rem 0.75rem;
-  border: 1px solid #d1d5db;
-  border-radius: 8px;
-  background: #fff;
+.book-enter-from,
+.book-leave-to {
+  opacity: 0;
+  transform: translateY(40px) scale(0.92);
 }
 
-.book-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
+.book-leave-active {
+  position: absolute;
 }
 </style>

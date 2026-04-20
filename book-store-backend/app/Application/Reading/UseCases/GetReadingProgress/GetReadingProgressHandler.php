@@ -17,15 +17,22 @@ final readonly class GetReadingProgressHandler
 
     public function handle(GetReadingProgressCommand $command): GetReadingProgressResult
     {
-        // Cache-first: позиция скролла нужна быстро при открытии книги
         $cachedPosition = $this->cache->get($command->userId, $command->bookId);
 
         $record = $this->progressRepository
             ->findByUserAndBook($command->userId, $command->bookId);
 
         $progress = $record
-            ? new ReadingProgress($command->bookId, $record->totalPages, $record->position?->pageId ?? 0)
-            : new ReadingProgress($command->bookId, 0, 0);
+            ? new ReadingProgress(
+                $command->bookId,
+                $record->totalPages,
+                $record->position?->globalPageNumber ?? 0,
+            )
+            : new ReadingProgress(
+                $command->bookId,
+                0,
+                0,
+            );
 
         return new GetReadingProgressResult(
             progress: $progress,

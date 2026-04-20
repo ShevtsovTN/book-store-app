@@ -14,8 +14,13 @@ async function handleCheckout(): Promise<void> {
 </script>
 
 <template>
-  <div>
-    <h1 class="page-title">Shopping Cart</h1>
+  <div class="content">
+    <section class="section">
+      <div class="section__header">
+        <h2 class="section__title">CART</h2>
+        <div class="section__line"></div>
+      </div>
+    </section>
 
     <AppSpinner v-if="cart.isLoading" />
 

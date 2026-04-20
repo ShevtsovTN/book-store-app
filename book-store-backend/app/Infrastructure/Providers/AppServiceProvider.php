@@ -18,6 +18,7 @@ use App\Domain\Cart\Interfaces\CartItemPriceResolverInterface;
 use App\Domain\Cart\Interfaces\CartRepositoryInterface;
 use App\Domain\Catalog\Interfaces\BookPopularityRepositoryInterface;
 use App\Domain\Catalog\Interfaces\BookRepositoryInterface;
+use App\Domain\Reading\Interfaces\BookRepositoryInterface as ReadingBookRepositoryInterface;
 use App\Domain\Catalog\Interfaces\BookTagRepositoryInterface;
 use App\Domain\Catalog\Interfaces\TagRepositoryInterface;
 use App\Domain\Dashboard\Interfaces\DashboardRepositoryInterface;
@@ -28,6 +29,7 @@ use App\Domain\Reading\Interfaces\ReadingListRepositoryInterface;
 use App\Domain\Reading\Interfaces\ReadingProgressCacheRepositoryInterface;
 use App\Domain\Reading\Interfaces\ReadingSessionRepositoryInterface;
 use App\Domain\Reading\Interfaces\UserReadingProgressRepositoryInterface;
+use App\Domain\Reading\Interfaces\UserReadingSettingsRepositoryInterface;
 use App\Domain\Subscription\Interfaces\UserSubscriptionRepositoryInterface;
 use App\Domain\User\Interfaces\ReaderRepositoryInterface;
 use App\Infrastructure\Cache\RedisReadingProgressCacheRepository;
@@ -47,6 +49,7 @@ use App\Infrastructure\Persistence\Repositories\EloquentReadingSessionRepository
 use App\Infrastructure\Persistence\Repositories\EloquentTagRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentUserBookAccessRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentUserReadingProgressRepository;
+use App\Infrastructure\Persistence\Repositories\EloquentUserReadingSettingsRepository;
 use App\Infrastructure\Persistence\Repositories\EloquentUserSubscriptionRepository;
 use App\Infrastructure\Queue\LaravelEventDispatcher;
 use App\Infrastructure\Search\MeilisearchBookIndex;
@@ -131,6 +134,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(ReaderRepositoryInterface::class, EloquentReaderRepository::class);
         $this->app->bind(OrderRepositoryInterface::class, EloquentOrderRepository::class);
         $this->app->bind(UserSubscriptionRepositoryInterface::class, EloquentUserSubscriptionRepository::class);
+        $this->app->bind(UserReadingSettingsRepositoryInterface::class, EloquentUserReadingSettingsRepository::class);
+        $this->app->bind(ReadingBookRepositoryInterface::class, EloquentBookRepository::class);
     }
 
     /**

@@ -22,22 +22,38 @@ const router = createRouter({
           path: '',
           name: 'home',
           component: () => import('@/views/HomeView.vue'),
+          meta: {
+            breadcrumb: [{ text: 'Main' }],
+          },
         },
         {
           path: 'catalog',
           name: 'catalog',
           component: () => import('@/views/CatalogView.vue'),
+          meta: {
+            breadcrumb: [{ text: 'Main', to: '/' }, { text: 'Catalog' }],
+          },
         },
         {
           path: 'books/:id',
           name: 'book-detail',
           component: () => import('@/views/BookDetailView.vue'),
           props: (route) => ({ id: Number(route.params.id) }),
+          meta: {
+            breadcrumb: (route) => [
+              { text: 'Main', to: '/' },
+              { text: 'Catalog', to: '/catalog' },
+              { text: `Book #${route.params.id}` },
+            ],
+          },
         },
         {
           path: 'search',
           name: 'search',
           component: () => import('@/views/SearchView.vue'),
+          meta: {
+            breadcrumb: [{ text: 'Main', to: '/' }, { text: 'Search' }],
+          },
         },
       ],
     },
@@ -70,37 +86,64 @@ const router = createRouter({
     // ── Reader (authenticated) ───────────────────────────────
     {
       path: '/reader',
-      component: () => import('@/layouts/ReaderLayout.vue'),
+      component: () => import('@/layouts/PublicLayout.vue'),
       meta: { requiresAuth: true },
       children: [
         {
           path: 'reading-list',
           name: 'reading-list',
           component: () => import('@/views/reader/ReadingListView.vue'),
+          meta: {
+            breadcrumb: [{ text: 'Main', to: '/' }, { text: 'Reading List' }],
+          },
         },
-        //     {
-        //       path: 'books/:bookId/read/:pageId',
-        //       name: 'read-page',
-        //       component: () => import('@/views/reader/ReadPageView.vue'),
-        //       props: (route) => ({
-        //         bookId: Number(route.params.bookId),
-        //         pageId: Number(route.params.pageId),
-        //       }),
-        //     },
-        //     {
-        //       path: 'history',
-        //       name: 'reading-history',
-        //       component: () => import('@/views/reader/ReadingHistoryView.vue'),
-        //     },
-        //     {
-        //       path: 'notifications',
-        //       name: 'notifications',
-        //       component: () => import('@/views/reader/NotificationsView.vue'),
-        //     },
+        {
+          path: 'book/:id',
+          name: 'reading-book-detail',
+          component: () => import('@/views/reader/BookDetailView.vue'),
+          meta: {
+            breadcrumb: (route) => [
+              { text: 'Main', to: '/' },
+              { text: 'Reading List', to: '/reader/reading-list' },
+              { text: `Book #${route.params.id}` },
+            ],
+          },
+        },
         {
           path: 'cart',
           name: 'cart',
           component: () => import('@/views/reader/CartView.vue'),
+          meta: {
+            breadcrumb: [{ text: 'Main', to: '/' }, { text: 'Cart' }],
+          },
+        },
+      ],
+    },
+    {
+      path: '/reading/:bookId/read',
+      component: () => import('@/layouts/ReadingLayout.vue'),
+      meta: { requiresAuth: true },
+      props: (route) => ({
+        bookId: Number(route.params.bookId),
+      }),
+      children: [
+        {
+          path: ':chapterId',
+          name: 'read-chapter',
+          component: () => import('@/views/reading/BookChapterView.vue'),
+          props: (route) => ({
+            chapterId: Number(route.params.chapterId),
+          }),
+          children: [
+            {
+              path: ':pageId',
+              name: 'read-page',
+              component: () => import('@/views/reading/BookPageView.vue'),
+              props: (route) => ({
+                pageId: Number(route.params.pageId),
+              }),
+            },
+          ],
         },
       ],
     },

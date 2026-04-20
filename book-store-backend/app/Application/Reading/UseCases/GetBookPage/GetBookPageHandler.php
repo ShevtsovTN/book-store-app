@@ -29,7 +29,7 @@ final readonly class GetBookPageHandler
         $progress = new ReadingProgress(
             bookId: $command->bookId,
             totalPages: $progressRecord?->totalPages ?? 0,
-            readPages: $progressRecord?->position?->pageId ?? 0,
+            readPages: $progressRecord?->position?->globalPageNumber ?? 0,
         );
 
         return new GetBookPageResult(

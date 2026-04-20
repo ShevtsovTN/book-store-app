@@ -6,17 +6,17 @@ namespace App\Presentation\Http\Controllers;
 
 use App\Application\Reading\UseCases\GetBookPage\GetBookPageCommand;
 use App\Application\Reading\UseCases\GetBookPage\GetBookPageHandler;
-use App\Presentation\Http\Requests\Reading\GetBookPageRequest;
 use App\Presentation\Http\Resources\Reading\BookPageResource;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
-final class BookPageController extends Controller
+final class ReadingBookPageController extends Controller
 {
     public function __construct(
         private readonly GetBookPageHandler $handler,
     ) {}
 
-    public function __invoke(GetBookPageRequest $request, int $bookId, int $pageId): JsonResponse
+    public function __invoke(Request $request, int $bookId, int $pageId): JsonResponse
     {
         $result = $this->handler->handle(
             new GetBookPageCommand(

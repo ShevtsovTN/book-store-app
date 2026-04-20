@@ -9,16 +9,18 @@ import type {
   SaveProgressPayload,
   StartSessionPayload,
   EndSessionPayload,
+  ReadingSettings,
+  ReadingBook, BookChapter,
 } from '@/types'
 
 export const readingApi = {
-  // Reading List
   list: (params: { status?: ReadingStatus; per_page?: number; page?: number } = {}) =>
     http.get<PaginatedResponse<ReadingEntry>>(
       `/reading-list${buildQuery(params as Record<string, unknown>)}`,
     ),
 
-  addToList: (bookId: number) => http.post<ReadingEntry>('/reading-list', { book_id: bookId }),
+  addToList: (bookId: number) =>
+    http.post<ReadingEntry>(`/reading-list/${bookId}`),
 
   startReading: (bookId: number, totalPages: number) =>
     http.patch<ReadingEntry>(`/reading-list/${bookId}/start`, { total_pages: totalPages }),
@@ -28,7 +30,6 @@ export const readingApi = {
 
   removeFromList: (bookId: number) => http.delete<void>(`/reading-list/${bookId}`),
 
-  // Progress
   getProgress: (bookId: number) => http.get<ReadingProgress>(`/books/${bookId}/progress`),
 
   saveProgress: (bookId: number, payload: SaveProgressPayload) =>
@@ -37,11 +38,9 @@ export const readingApi = {
       payload,
     ),
 
-  // Pages
   getPage: (bookId: number, pageId: number) =>
     http.get<BookPage>(`/books/${bookId}/pages/${pageId}`),
 
-  // Sessions
   startSession: (bookId: number, payload: StartSessionPayload = {}) =>
     http.post<string>(`/books/${bookId}/sessions`, payload),
 
@@ -51,6 +50,15 @@ export const readingApi = {
       payload,
     ),
 
-  // History
   history: () => http.get<ReadingHistory>('/reading/history'),
+
+  settings: () => http.get<ReadingSettings>('/reading/settings'),
+
+  updateSettings: (payload: ReadingSettings) =>
+    http.put<ReadingSettings>('/reading/settings', payload),
+
+  getBook: (bookId: number) => http.get<ReadingBook>(`/books/${bookId}/read`),
+
+  getChapter: (bookId: number, chapterId: number) =>
+    http.get<BookChapter>(`/books/${bookId}/chapters/${chapterId}`),
 }

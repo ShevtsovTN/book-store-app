@@ -5,37 +5,45 @@ import BookCard from '@/components/book/BookCard.vue'
 import AppSpinner from '@/components/ui/AppSpinner.vue'
 
 const books = useBooksStore()
-onMounted(() => books.fetchPopular('week'))
+onMounted(() => books.fetchPopular('month'))
 </script>
 
 <template>
-  <div>
-    <h1 class="page-title">Popular This Week</h1>
+  <div class="content">
+    <section class="section">
+      <div class="section__header">
+        <h2 class="section__title">POPULAR THIS MONTH</h2>
+        <p class="section__subtitle">On this page you can see popular books from our bookstore</p>
+        <div class="section__line"></div>
+      </div>
 
-    <AppSpinner v-if="books.isLoading" />
+      <div class="products-wrapper">
+        <TransitionGroup name="book" tag="div" class="products-grid" :css="true">
+          <div v-for="book in books.books" :key="book.id" class="product-card">
+            <BookCard :book="book" />
+          </div>
+        </TransitionGroup>
 
-    <p v-else-if="books.error" class="error">{{ books.error }}</p>
-
-    <div v-else class="book-grid">
-      <BookCard v-for="book in books.books" :key="book.id" :book="book" />
-    </div>
+        <AppSpinner v-if="books.isLoading" />
+      </div>
+    </section>
   </div>
 </template>
 
-<style scoped>
-.page-title {
-  font-size: 1.75rem;
-  font-weight: 700;
-  margin-bottom: 1.5rem;
+<style>
+.book-enter-active,
+.book-leave-active,
+.book-move {
+  transition: all 420ms cubic-bezier(0.34, 1.56, 0.64, 1); /* bouncy, но очень приятно */
 }
 
-.book-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 1.5rem;
+.book-enter-from,
+.book-leave-to {
+  opacity: 0;
+  transform: translateY(40px) scale(0.92);
 }
 
-.error {
-  color: #ef4444;
+.book-leave-active {
+  position: absolute;
 }
 </style>

@@ -62,8 +62,10 @@ const pages = computed<(number | '…')[]>(() => {
 
 <style scoped>
 .pagination {
+  margin: 15px 0;
   display: flex;
   gap: 4px;
+  justify-self: center;
 }
 .page-btn {
   background: none;
