@@ -44,8 +44,6 @@ final class BookChapterModel extends Model
         'is_published'         => 'boolean',
     ];
 
-    // ── Relationships ─────────────────────────────────────
-
     public function book(): BelongsTo
     {
         return $this->belongsTo(BookModel::class, 'book_id');

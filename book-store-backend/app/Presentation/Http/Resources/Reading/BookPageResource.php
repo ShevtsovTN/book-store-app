@@ -8,11 +8,11 @@ use App\Application\Reading\UseCases\GetBookPage\GetBookPageResult;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Request;
 
+/** @property GetBookPageResult $resource */
 final class BookPageResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
-        /** @var GetBookPageResult $result */
         $result = $this->resource;
         $page   = $result->page;
 

@@ -6,7 +6,7 @@ namespace Tests\Feature\Catalog;
 
 use App\Application\Catalog\Interfaces\BookFileStorageInterface;
 use App\Application\Catalog\Jobs\ParseBookFileJob;
-use App\Domain\Identity\Enums\RoleEnum;
+use App\Domain\Shared\Enums\RoleEnum;
 use App\Infrastructure\Persistence\Models\BookModel;
 use App\Infrastructure\Persistence\Models\UserModel;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -103,7 +103,7 @@ final class UploadBookFileTest extends TestCase
         Queue::assertPushed(
             ParseBookFileJob::class,
             static fn($job) => $job->bookId === $book->id
-                && $job->mimeType === 'application/pdf',
+                && 'application/pdf' === $job->mimeType,
         );
     }
 

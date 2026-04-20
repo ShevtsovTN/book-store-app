@@ -9,16 +9,23 @@ use App\Application\Catalog\DTOs\BookSearchResult;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @property BookSearchResult $resource
+ * @property BookSearchHit[] $data
+ * @property int $total
+ * @property int $limit
+ * @property int $offset
+ * @property int $processingTimeMs
+ */
 final class BookSearchResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
-        /** @var BookSearchResult $result */
         $result = $this->resource;
 
         return [
             'data' => array_map(
-                static fn (BookSearchHit $hit) => [
+                static fn(BookSearchHit $hit) => [
                     'id'            => $hit->bookId,
                     'title'         => $hit->title,
                     'slug'          => $hit->slug,

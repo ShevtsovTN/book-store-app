@@ -7,7 +7,6 @@ use App\Application\Catalog\DTOs\ParsedChapter;
 use App\Application\Catalog\DTOs\ParsedPage;
 use App\Domain\Reading\Enums\ContentFormatEnum;
 use Exception;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use lywzx\epub\EpubParser;
 
@@ -43,20 +42,20 @@ final class EpubBookFileParser
                 }
 
                 $parsedChapters[] = new ParsedChapter(
-                    title:  $title,
+                    title: $title,
                     number: $chapterNumber++,
-                    pages:  $pages,
+                    pages: $pages,
                 );
             }
 
             $totalPages = array_sum(
-                array_map(static fn (ParsedChapter $c) => count($c->pages), $parsedChapters)
+                array_map(static fn(ParsedChapter $c) => count($c->pages), $parsedChapters),
             );
 
             return new ParsedBook(
-                bookId:     $bookId,
+                bookId: $bookId,
                 totalPages: $totalPages,
-                chapters:   $parsedChapters,
+                chapters: $parsedChapters,
             );
         } finally {
             if (file_exists($localPath)) {
@@ -69,7 +68,7 @@ final class EpubBookFileParser
     private function splitIntoPages(string $content): array
     {
         $plainText = strip_tags($content);
-        $words     = preg_split('/\s+/', trim($plainText), flags: PREG_SPLIT_NO_EMPTY);
+        $words     = preg_split('/\s+/', mb_trim($plainText), flags: PREG_SPLIT_NO_EMPTY);
 
         if (empty($words)) {
             return [];
@@ -80,10 +79,10 @@ final class EpubBookFileParser
 
         foreach ($chunks as $index => $chunk) {
             $pages[] = new ParsedPage(
-                number:        $index + 1,
-                content:       implode(' ', $chunk),
+                number: $index + 1,
+                content: implode(' ', $chunk),
                 contentFormat: ContentFormatEnum::TEXT,
-                wordCount:     count($chunk),
+                wordCount: count($chunk),
             );
         }
 
@@ -95,6 +94,7 @@ final class EpubBookFileParser
         $localPath = sys_get_temp_dir() . '/' . uniqid('epub_', true) . '.epub';
         $contents  = Storage::disk('s3')->get($s3Path);
         file_put_contents($localPath, $contents);
+
         return $localPath;
     }
 }

@@ -14,19 +14,21 @@ final class FakeUserRepository implements UserRepositoryInterface
 {
     /** @var User[] */
     private array $users = [];
+
     private int   $nextId = 1;
 
     public function save(User $user): User
     {
         $saved = new User(
-            id:       new UserId($user->getId()?->value ?? $this->nextId++),
-            name:     $user->getName(),
-            email:    $user->getEmail(),
+            id: new UserId($user->getId()?->value ?? $this->nextId++),
+            name: $user->getName(),
+            email: $user->getEmail(),
             password: $user->getPassword(),
-            role:     $user->getRole(),
+            role: $user->getRole(),
         );
 
         $this->users[$saved->getId()->value] = $saved;
+
         return $saved;
     }
 
@@ -37,7 +39,7 @@ final class FakeUserRepository implements UserRepositoryInterface
 
     public function existsByEmail(Email $email): bool
     {
-        return $this->findByEmail($email) !== null;
+        return null !== $this->findByEmail($email);
     }
 
     public function assertUserSaved(string $email): void
@@ -45,7 +47,7 @@ final class FakeUserRepository implements UserRepositoryInterface
         $found = $this->findByEmail(new Email($email));
         Assert::assertNotNull(
             $found,
-            "Expected user with email '{$email}' to be saved."
+            "Expected user with email '{$email}' to be saved.",
         );
     }
 

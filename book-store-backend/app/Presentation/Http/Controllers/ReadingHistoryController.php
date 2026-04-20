@@ -19,7 +19,7 @@ final class ReadingHistoryController extends Controller
     public function __invoke(Request $request): JsonResponse
     {
         $result = $this->handler->handle(
-            new GetReadingHistoryCommand(userId: $request->user()->id)
+            new GetReadingHistoryCommand(userId: $request->user()->id),
         );
 
         return new JsonResponse(new ReadingHistoryResource($result));

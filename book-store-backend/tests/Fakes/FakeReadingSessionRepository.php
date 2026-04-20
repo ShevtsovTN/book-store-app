@@ -10,6 +10,7 @@ final class FakeReadingSessionRepository implements ReadingSessionRepositoryInte
 {
     /** @var array<int, ReadingSession> */
     private array $store  = [];
+
     private int   $nextId = 1;
 
     public function save(ReadingSession $session): ReadingSession
@@ -17,14 +18,14 @@ final class FakeReadingSessionRepository implements ReadingSessionRepositoryInte
         $id = $session->id ?? $this->nextId++;
 
         $saved = new ReadingSession(
-            id:              $id,
-            userId:          $session->userId,
-            bookId:          $session->bookId,
-            startPageId:     $session->startPageId,
-            endPageId:       $session->endPageId,
-            startedAt:       $session->startedAt,
-            endedAt:         $session->endedAt,
-            pagesRead:       $session->pagesRead,
+            id: $id,
+            userId: $session->userId,
+            bookId: $session->bookId,
+            startPageId: $session->startPageId,
+            endPageId: $session->endPageId,
+            startedAt: $session->startedAt,
+            endedAt: $session->endedAt,
+            pagesRead: $session->pagesRead,
             durationSeconds: $session->durationSeconds,
         );
 
@@ -42,7 +43,7 @@ final class FakeReadingSessionRepository implements ReadingSessionRepositoryInte
     {
         return array_find($this->store, fn($session) => $session->userId === $userId
             && $session->bookId === $bookId
-            && $session->endedAt === null);
+            && null === $session->endedAt);
 
     }
 
@@ -51,8 +52,8 @@ final class FakeReadingSessionRepository implements ReadingSessionRepositoryInte
         return array_values(
             array_filter(
                 $this->store,
-                static fn (ReadingSession $s) => $s->userId === $userId,
-            )
+                static fn(ReadingSession $s) => $s->userId === $userId,
+            ),
         );
     }
 
@@ -62,7 +63,7 @@ final class FakeReadingSessionRepository implements ReadingSessionRepositoryInte
     {
         $found = array_filter(
             $this->store,
-            static fn (ReadingSession $s) => $s->userId === $userId && $s->bookId === $bookId,
+            static fn(ReadingSession $s) => $s->userId === $userId && $s->bookId === $bookId,
         );
 
         Assert::assertNotEmpty($found, "Expected session for user={$userId}, book={$bookId} to exist.");

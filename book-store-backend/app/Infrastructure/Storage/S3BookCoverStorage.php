@@ -13,6 +13,7 @@ final class S3BookCoverStorage implements BookCoverStorageInterface
     {
         $path = "covers/{$bookId}/{$filename}";
         Storage::disk('s3')->putFileAs("covers/{$bookId}", $tempPath, $filename);
+
         return $path;
     }
 

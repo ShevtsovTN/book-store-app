@@ -2,10 +2,11 @@
 
 namespace App\Infrastructure\Persistence\Models;
 
-use App\Domain\Identity\Enums\RoleEnum;
+use App\Domain\Shared\Enums\RoleEnum;
 use Database\Factories\UserModelFactory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Notifications\DatabaseNotificationCollection;
@@ -27,11 +28,18 @@ use Laravel\Sanctum\PersonalAccessToken;
  * @property-read int|null $notifications_count
  * @property-read Collection<int, PersonalAccessToken> $tokens
  * @property-read int|null $tokens_count
+ * @property-read Collection<int, UserSubscriptionModel> $subscriptions
+ * @property-read int|null $subscriptions_count
+ * @property-read Collection<int, UserBookAccessModel> $books
+ * @property-read int|null $books_count
  */
 class UserModel extends Authenticatable
 {
     /** @use HasFactory<UserModelFactory> */
-    use HasFactory, Notifiable, HasApiTokens;
+    use HasFactory;
+
+    use Notifiable;
+    use HasApiTokens;
 
     protected $table = 'users';
 
@@ -57,6 +65,21 @@ class UserModel extends Authenticatable
         'remember_token',
     ];
 
+    public function subscriptions(): HasMany
+    {
+        return $this->hasMany(UserSubscriptionModel::class, 'user_id');
+    }
+
+    public function books(): HasMany
+    {
+        return $this->hasMany(UserBookAccessModel::class, 'user_id');
+    }
+
+    protected static function newFactory(): UserModelFactory
+    {
+        return UserModelFactory::new();
+    }
+
     /**
      * Get the attributes that should be cast.
      *
@@ -69,10 +92,5 @@ class UserModel extends Authenticatable
             'password' => 'hashed',
             'role' => RoleEnum::class,
         ];
-    }
-
-    protected static function newFactory(): UserModelFactory
-    {
-        return UserModelFactory::new();
     }
 }

@@ -22,12 +22,12 @@ final readonly class UploadBookFileHandler
     {
         $book = $this->books->findById($command->bookId);
 
-        if (!$book) {
+        if ( ! $book) {
             throw new BookNotFoundException($command->bookId);
         }
 
         $path = $this->storage->upload(
-            bookId:   $command->bookId,
+            bookId: $command->bookId,
             tempPath: $command->tempPath,
             filename: $command->filename,
         );
@@ -37,11 +37,11 @@ final readonly class UploadBookFileHandler
                 bookId: $command->bookId,
                 filePath: $path,
                 mimeType: $command->mimeType,
-            )
+            ),
         );
 
         return new UploadBookFileResult(
-            bookId:   $book->id,
+            bookId: $book->id,
             filePath: $path,
         );
     }

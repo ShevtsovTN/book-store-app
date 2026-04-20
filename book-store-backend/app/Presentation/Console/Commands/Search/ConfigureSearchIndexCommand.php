@@ -10,6 +10,7 @@ use Illuminate\Console\Command;
 final class ConfigureSearchIndexCommand extends Command
 {
     protected $signature   = 'search:configure';
+
     protected $description = 'Apply MeiliSearch index settings (searchable, filterable, sortable attributes)';
 
     public function __construct(

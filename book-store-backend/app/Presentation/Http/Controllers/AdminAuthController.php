@@ -20,10 +20,21 @@ final class AdminAuthController extends Controller
         private readonly LogoutHandler         $logoutHandler,
     ) {}
 
+    /**
+     * @response array{
+     *     token: string,
+     *     user: array{
+     *         id: int,
+     *         name: string,
+     *         email: string,
+     *         role: \App\Domain\Identity\Enums\RoleEnum
+     *     }
+     * }
+     */
     public function login(LoginRequest $request): JsonResponse
     {
         $result = $this->loginHandler->handle(
-            LoginAdminCommand::fromArray($request->validated())
+            LoginAdminCommand::fromArray($request->validated()),
         );
 
         return new JsonResponse(
@@ -35,8 +46,8 @@ final class AdminAuthController extends Controller
     {
         $this->logoutHandler->handle(
             new LogoutCommand(
-                new UserId($request->user()->id)
-            )
+                new UserId($request->user()->id),
+            ),
         );
 
         return new JsonResponse(null, Response::HTTP_NO_CONTENT);

@@ -13,7 +13,7 @@ final class EloquentUserRepository implements UserRepositoryInterface
 {
     public function save(User $user): User
     {
-        if ($user->getId() === null) {
+        if (null === $user->getId()) {
             $model = UserModel::query()->create($this->toArray($user));
         } else {
             $model = UserModel::query()->findOrFail($user->getId()->value);
@@ -52,11 +52,11 @@ final class EloquentUserRepository implements UserRepositoryInterface
     private function toDomain(UserModel $model): User
     {
         return new User(
-            id:       new UserId($model->id),
-            name:     $model->name,
-            email:    new Email($model->email),
+            id: new UserId($model->id),
+            name: $model->name,
+            email: new Email($model->email),
             password: new HashedPassword($model->password),
-            role:     $model->role,
+            role: $model->role,
         );
     }
 }

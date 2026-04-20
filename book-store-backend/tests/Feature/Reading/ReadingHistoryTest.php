@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Reading;
 
-use App\Domain\Identity\Enums\RoleEnum;
+use App\Domain\Catalog\Enums\AccessTypeEnum;
 use App\Domain\Reading\Interfaces\ReadingProgressCacheRepositoryInterface;
+use App\Domain\Shared\Enums\RoleEnum;
 use App\Infrastructure\Persistence\Models\BookChapterModel;
 use App\Infrastructure\Persistence\Models\BookModel;
 use App\Infrastructure\Persistence\Models\BookPageModel;
@@ -30,7 +31,7 @@ final class ReadingHistoryTest extends TestCase
         );
 
         $user = UserModel::factory()->create([
-            'role' => RoleEnum::READER
+            'role' => RoleEnum::READER,
         ]);
         $this->token = $user->createToken('reader-token')->plainTextToken;
     }
@@ -60,7 +61,9 @@ final class ReadingHistoryTest extends TestCase
     public function test_history_contains_completed_sessions(): void
     {
         /** @var BookModel $book */
-        $book = BookModel::factory()->create();
+        $book = BookModel::factory()->create([
+            'access_type' => AccessTypeEnum::FREE,
+        ]);
         /** @var BookChapterModel $chapter */
         $chapter = BookChapterModel::factory()
             ->for($book, 'book')
@@ -99,11 +102,13 @@ final class ReadingHistoryTest extends TestCase
     {
         /** @var UserModel $otherUser */
         $otherUser = UserModel::factory()->create([
-            'role' => RoleEnum::READER
+            'role' => RoleEnum::READER,
         ]);
         $otherUserToken = $otherUser->createToken('reader-token')->plainTextToken;
         /** @var BookModel $book */
-        $book = BookModel::factory()->create();
+        $book = BookModel::factory()->create([
+            'access_type' => AccessTypeEnum::FREE,
+        ]);
         /** @var BookChapterModel $chapter */
         $chapter = BookChapterModel::factory()
             ->for($book, 'book')

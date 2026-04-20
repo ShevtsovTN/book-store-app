@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Tests\Feature\Catalog;
 
 use App\Application\Catalog\Interfaces\BookCoverStorageInterface;
-use App\Domain\Identity\Enums\RoleEnum;
+use App\Domain\Shared\Enums\RoleEnum;
 use App\Infrastructure\Persistence\Models\BookModel;
 use App\Infrastructure\Persistence\Models\UserModel;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -17,6 +17,7 @@ use Tests\TestCase;
 final class UploadBookCoverTest extends TestCase
 {
     use DatabaseTransactions;
+
     private string $adminToken;
 
     protected function setUp(): void

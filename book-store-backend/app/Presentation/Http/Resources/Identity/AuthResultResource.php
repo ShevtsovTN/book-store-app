@@ -6,6 +6,7 @@ use App\Application\Identity\UseCases\AuthResult;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Http\Request;
 
+/** @property AuthResult $resource */
 final class AuthResultResource extends JsonResource
 {
     public function __construct(

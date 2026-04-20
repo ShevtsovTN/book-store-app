@@ -14,8 +14,8 @@ final readonly class ListTagsHandler
     public function handle(ListTagsCommand $command): ListTagsResult
     {
         $filter = new TagFilter(
-            perPage:    $command->perPage,
-            page:       $command->page,
+            perPage: $command->perPage,
+            page: $command->page,
         );
 
         $collection = $this->tags->findAll($filter);

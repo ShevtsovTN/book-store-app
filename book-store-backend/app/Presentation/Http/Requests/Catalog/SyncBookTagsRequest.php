@@ -2,10 +2,7 @@
 
 namespace App\Presentation\Http\Requests\Catalog;
 
-use App\Domain\Catalog\Enums\AccessTypeEnum;
-use App\Domain\Shared\ValueObjects\Currency;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 final class SyncBookTagsRequest extends FormRequest
 {

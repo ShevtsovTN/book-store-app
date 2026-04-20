@@ -17,8 +17,7 @@ final readonly class MeilisearchTaskAwaiter
         private Client $client,
         private int    $timeoutMs,   // макс. время ожидания одной задачи
         private int    $intervalMs,  // как часто поллим статус
-    ) {
-    }
+    ) {}
 
     /**
      * Ждёт завершения одной задачи.
@@ -34,8 +33,8 @@ final readonly class MeilisearchTaskAwaiter
             );
         } catch (TimeOutException) {
             throw new RuntimeException(
-                "MeiliSearch task #{$taskUid} did not complete within {$this->timeoutMs}ms. " .
-                'Consider increasing timeout or checking MeiliSearch health.'
+                "MeiliSearch task #{$taskUid} did not complete within {$this->timeoutMs}ms. "
+                . 'Consider increasing timeout or checking MeiliSearch health.',
             );
         } catch (ApiException $e) {
             throw new RuntimeException(
@@ -73,12 +72,12 @@ final readonly class MeilisearchTaskAwaiter
         $deadline = microtime(true) * 1000 + $totalTimeoutMs;
 
         foreach ($taskUids as $uid) {
-            $remaining = (int)($deadline - microtime(true) * 1000);
+            $remaining = (int) ($deadline - microtime(true) * 1000);
 
             if ($remaining <= 0) {
                 throw new RuntimeException(
-                    'Deadline exceeded while waiting for MeiliSearch tasks. ' .
-                    'Remaining tasks: ' . implode(', ', array_slice($taskUids, array_search($uid, $taskUids)))
+                    'Deadline exceeded while waiting for MeiliSearch tasks. '
+                    . 'Remaining tasks: ' . implode(', ', array_slice($taskUids, array_search($uid, $taskUids))),
                 );
             }
 
@@ -93,15 +92,15 @@ final readonly class MeilisearchTaskAwaiter
 
     private function assertTaskSucceeded(array $task, int $taskUid): void
     {
-        if ($task['status'] !== 'succeeded') {
+        if ('succeeded' !== $task['status']) {
             $errorMessage = $task['error']['message'] ?? 'unknown error';
             $errorCode = $task['error']['code'] ?? 'unknown';
             $errorType = $task['error']['type'] ?? 'unknown';
 
             throw new RuntimeException(
-                "MeiliSearch task #{$taskUid} failed. " .
-                "Status: {$task['status']}. " .
-                "Error [{$errorCode}/{$errorType}]: {$errorMessage}"
+                "MeiliSearch task #{$taskUid} failed. "
+                . "Status: {$task['status']}. "
+                . "Error [{$errorCode}/{$errorType}]: {$errorMessage}",
             );
         }
     }

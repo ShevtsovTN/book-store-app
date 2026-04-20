@@ -9,6 +9,5 @@ final readonly class EndReadingSessionResult
     public function __construct(
         public int $pagesRead,
         public int $durationSeconds,
-    ) {
-    }
+    ) {}
 }

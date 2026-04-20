@@ -10,6 +10,6 @@ final readonly class GetBookResult
 {
     public function __construct(
         public Book $book,
-        public array $fileLinks
+        public array $fileLinks,
     ) {}
 }

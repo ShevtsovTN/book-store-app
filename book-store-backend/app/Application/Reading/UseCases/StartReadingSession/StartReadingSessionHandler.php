@@ -17,12 +17,12 @@ final readonly class StartReadingSessionHandler
     {
         // Идемпотентность: не дублируем активную сессию
         $active = $this->sessions->findActiveByUser($command->userId, $command->bookId);
-        if ($active !== null) {
+        if (null !== $active) {
             return new StartReadingSessionResult($active->id, isResumed: true);
         }
 
         $session = $this->sessions->save(
-            ReadingSession::begin($command->userId, $command->bookId, $command->currentPageId)
+            ReadingSession::begin($command->userId, $command->bookId, $command->currentPageId),
         );
 
         return new StartReadingSessionResult($session->id, isResumed: false);

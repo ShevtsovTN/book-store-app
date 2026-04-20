@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\Reading;
 
+use App\Domain\Catalog\Enums\AccessTypeEnum;
 use App\Domain\Reading\Interfaces\ReadingProgressCacheRepositoryInterface;
 use App\Infrastructure\Persistence\Models\BookChapterModel;
 use App\Infrastructure\Persistence\Models\BookModel;
@@ -18,7 +19,11 @@ final class ReadingSessionTest extends TestCase
     use DatabaseTransactions;
 
     private UserModel $user;
+
+    private string    $token;
+
     private BookModel $book;
+
     private BookPageModel $page;
 
     protected function setUp(): void
@@ -31,7 +36,10 @@ final class ReadingSessionTest extends TestCase
         );
 
         $this->user = UserModel::factory()->create();
-        $this->book = BookModel::factory()->create();
+        $this->token = $this->user->createToken('reader-token')->plainTextToken;
+        $this->book = BookModel::factory()->create([
+            'access_type' => AccessTypeEnum::FREE,
+        ]);
         /** @var BookChapterModel $chapter */
         $chapter = BookChapterModel::factory()
             ->for($this->book, 'book')
@@ -45,7 +53,7 @@ final class ReadingSessionTest extends TestCase
 
     public function test_start_session_returns_201(): void
     {
-        $this->actingAs($this->user, 'sanctum')
+        $this->withToken($this->token)
             ->postJson(route('reading.session.start', ['bookId' => $this->book->id]), [])
             ->assertStatus(201)
             ->assertJsonStructure(['session_id', 'is_resumed']);
@@ -53,7 +61,7 @@ final class ReadingSessionTest extends TestCase
 
     public function test_start_session_persists_to_database(): void
     {
-        $this->actingAs($this->user, 'sanctum')
+        $this->withToken($this->token)
             ->postJson(route('reading.session.start', ['bookId' => $this->book->id]), []);
 
         $this->assertDatabaseHas('reading_sessions', [
@@ -65,10 +73,10 @@ final class ReadingSessionTest extends TestCase
 
     public function test_start_session_is_idempotent(): void
     {
-        $first = $this->actingAs($this->user, 'sanctum')
+        $first = $this->withToken($this->token)
             ->postJson(route('reading.session.start', ['bookId' => $this->book->id]), []);
 
-        $second = $this->actingAs($this->user, 'sanctum')
+        $second = $this->withToken($this->token)
             ->postJson(route('reading.session.start', ['bookId' => $this->book->id]), []);
 
         $second->assertStatus(200)
@@ -92,10 +100,10 @@ final class ReadingSessionTest extends TestCase
 
     public function test_end_session_returns_200(): void
     {
-        $started = $this->actingAs($this->user, 'sanctum')
+        $started = $this->withToken($this->token)
             ->postJson(route('reading.session.start', ['bookId' => $this->book->id]), []);
 
-        $this->actingAs($this->user, 'sanctum')
+        $this->withToken($this->token)
             ->patchJson(route('reading.session.end', [
                 'bookId'    => $this->book->id,
                 'sessionId' => $started->json('session_id'),
@@ -109,12 +117,12 @@ final class ReadingSessionTest extends TestCase
 
     public function test_end_session_persists_ended_at(): void
     {
-        $started = $this->actingAs($this->user, 'sanctum')
+        $started = $this->withToken($this->token)
             ->postJson(route('reading.session.start', ['bookId' => $this->book->id]), []);
 
         $sessionId = $started->json('session_id');
 
-        $this->actingAs($this->user, 'sanctum')
+        $this->withToken($this->token)
             ->patchJson(route('reading.session.end', [
                 'bookId'    => $this->book->id,
                 'sessionId' => $sessionId,
@@ -131,7 +139,7 @@ final class ReadingSessionTest extends TestCase
 
     public function test_end_session_validates_required_fields(): void
     {
-        $this->actingAs($this->user, 'sanctum')
+        $this->withToken($this->token)
             ->patchJson(route('reading.session.end', [
                 'bookId'    => $this->book->id,
                 'sessionId' => 1,

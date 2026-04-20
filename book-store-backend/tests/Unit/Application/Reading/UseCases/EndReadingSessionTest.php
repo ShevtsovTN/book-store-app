@@ -15,6 +15,7 @@ use Tests\Fakes\FakeReadingSessionRepository;
 final class EndReadingSessionTest extends TestCase
 {
     private FakeReadingSessionRepository $sessions;
+
     private EndReadingSessionHandler     $handler;
 
     protected function setUp(): void
@@ -27,12 +28,12 @@ final class EndReadingSessionTest extends TestCase
     {
         $startHandler = new StartReadingSessionHandler($this->sessions);
         $started = $startHandler->handle(
-            new StartReadingSessionCommand(userId: 1, bookId: 10, currentPageId: 5)
+            new StartReadingSessionCommand(userId: 1, bookId: 10, currentPageId: 5),
         );
 
         $result = $this->handler->handle(new EndReadingSessionCommand(
-            sessionId:       $started->sessionId,
-            endPageId:       25,
+            sessionId: $started->sessionId,
+            endPageId: 25,
             durationSeconds: 1200,
         ));
 
@@ -46,8 +47,8 @@ final class EndReadingSessionTest extends TestCase
         $this->expectException(SessionNotFoundException::class);
 
         $this->handler->handle(new EndReadingSessionCommand(
-            sessionId:       9999,
-            endPageId:       10,
+            sessionId: 9999,
+            endPageId: 10,
             durationSeconds: 60,
         ));
     }
