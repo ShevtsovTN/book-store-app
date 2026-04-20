@@ -22,22 +22,38 @@ const router = createRouter({
           path: '',
           name: 'home',
           component: () => import('@/views/HomeView.vue'),
+          meta: {
+            breadcrumb: [{ text: 'Main' }],
+          },
         },
         {
           path: 'catalog',
           name: 'catalog',
           component: () => import('@/views/CatalogView.vue'),
+          meta: {
+            breadcrumb: [{ text: 'Main', to: '/' }, { text: 'Catalog' }],
+          },
         },
         {
           path: 'books/:id',
           name: 'book-detail',
           component: () => import('@/views/BookDetailView.vue'),
           props: (route) => ({ id: Number(route.params.id) }),
+          meta: {
+            breadcrumb: (route) => [
+              { text: 'Main', to: '/' },
+              { text: 'Catalog', to: '/catalog' },
+              { text: `Book #${route.params.id}` },
+            ],
+          },
         },
         {
           path: 'search',
           name: 'search',
           component: () => import('@/views/SearchView.vue'),
+          meta: {
+            breadcrumb: [{ text: 'Main', to: '/' }, { text: 'Search' }],
+          },
         },
       ],
     },
@@ -77,11 +93,29 @@ const router = createRouter({
           path: 'reading-list',
           name: 'reading-list',
           component: () => import('@/views/reader/ReadingListView.vue'),
+          meta: {
+            breadcrumb: [{ text: 'Main', to: '/' }, { text: 'Reading List' }],
+          },
+        },
+        {
+          path: 'book/:id',
+          name: 'reading-book-detail',
+          component: () => import('@/views/reader/BookDetailView.vue'),
+          meta: {
+            breadcrumb: (route) => [
+              { text: 'Main', to: '/' },
+              { text: 'Reading List', to: '/reader/reading-list' },
+              { text: `Book #${route.params.id}` },
+            ],
+          },
         },
         {
           path: 'cart',
           name: 'cart',
           component: () => import('@/views/reader/CartView.vue'),
+          meta: {
+            breadcrumb: [{ text: 'Main', to: '/' }, { text: 'Cart' }],
+          },
         },
       ],
     },

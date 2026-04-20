@@ -14,7 +14,6 @@ use App\Application\Reading\UseCases\StartReading\StartReadingCommand;
 use App\Application\Reading\UseCases\StartReading\StartReadingHandler;
 use App\Application\Reading\UseCases\UpdateProgress\UpdateProgressCommand;
 use App\Application\Reading\UseCases\UpdateProgress\UpdateProgressHandler;
-use App\Presentation\Http\Requests\Reading\AddBookToListRequest;
 use App\Presentation\Http\Requests\Reading\ListReadingListRequest;
 use App\Presentation\Http\Requests\Reading\StartReadingRequest;
 use App\Presentation\Http\Requests\Reading\UpdateProgressRequest;
@@ -62,11 +61,11 @@ final class ReadingListController extends Controller
         return new JsonResponse(new ReadingEntryCollectionResource($result->collection));
     }
 
-    public function store(AddBookToListRequest $request): JsonResponse
+    public function store(int $bookId): JsonResponse
     {
         $result = $this->addHandler->handle(new AddBookToListCommand(
-            userId: $request->user()->id,
-            bookId: (int) $request->validated('book_id'),
+            userId: request()->user()->id,
+            bookId: $bookId,
         ));
 
         return new JsonResponse(

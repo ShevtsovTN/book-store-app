@@ -19,7 +19,8 @@ export const readingApi = {
       `/reading-list${buildQuery(params as Record<string, unknown>)}`,
     ),
 
-  addToList: (bookId: number) => http.post<ReadingEntry>('/reading-list', { book_id: bookId }),
+  addToList: (bookId: number) =>
+    http.post<ReadingEntry>(`/reading-list/${bookId}`),
 
   startReading: (bookId: number, totalPages: number) =>
     http.patch<ReadingEntry>(`/reading-list/${bookId}/start`, { total_pages: totalPages }),

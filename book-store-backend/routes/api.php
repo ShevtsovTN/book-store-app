@@ -76,13 +76,19 @@ Route::prefix('v1')->group(function (): void {
 
             Route::post('auth/logout', [ReaderAuthController::class, 'logout'])->name('auth.logout');
 
-            Route::prefix('reading-list')->name('reading-list.')->group(static function (): void {
-                Route::get('/', [ReadingListController::class, 'index'])->name('index');
-                Route::post('/', [ReadingListController::class, 'store'])->name('store');
-                Route::patch('/{bookId}/start', [ReadingListController::class, 'start'])->name('start');
-                Route::patch('/{bookId}/progress', [ReadingListController::class, 'progress'])->name('progress');
-                Route::delete('/{bookId}', [ReadingListController::class, 'destroy'])->name('destroy');
-            });
+            Route::prefix('reading-list')
+                ->name('reading-list.')
+                ->group(static function (): void {
+                    Route::get('/', [ReadingListController::class, 'index'])->name('index');
+                    Route::middleware('book.access')
+                        ->group(static function (): void {
+                            Route::post('/{bookId}', [ReadingListController::class, 'store'])->name('store');
+                            Route::patch('/{bookId}/start', [ReadingListController::class, 'start'])->name('start');
+                            Route::patch('/{bookId}/progress', [ReadingListController::class, 'progress'])->name('progress');
+                            Route::delete('/{bookId}', [ReadingListController::class, 'destroy'])->name('destroy');
+                        });
+
+                });
 
             Route::prefix('notifications')->name('notifications.')->group(static function (): void {
                 Route::get('/', [NotificationController::class, 'index'])->name('index');

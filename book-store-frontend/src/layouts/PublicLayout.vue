@@ -2,6 +2,7 @@
 import { RouterLink, RouterView } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useCartStore } from '@/stores/cart'
+import AppBreadcrumbs from '@/components/ui/AppBreadcrumbs.vue'
 
 const auth = useAuthStore()
 const cart = useCartStore()
@@ -64,6 +65,8 @@ const cart = useCartStore()
       </div>
     </div>
   </header>
+
+  <AppBreadcrumbs></AppBreadcrumbs>
 
   <main class="main container">
     <RouterView />
