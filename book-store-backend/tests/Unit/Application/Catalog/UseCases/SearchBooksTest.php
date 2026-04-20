@@ -12,18 +12,14 @@ use Tests\Fakes\FakeMeilisearchBookIndex;
 
 final class SearchBooksTest extends TestCase
 {
-    // ──────────────────────────────────────────────────────────────
-    // SearchBooksHandler
-    // ──────────────────────────────────────────────────────────────
-
     public function test_handler_delegates_search_to_index(): void
     {
         $index   = new FakeMeilisearchBookIndex();
         $handler = new SearchBooksHandler($index);
 
         $handler->handle(new SearchBooksCommand(
-            query:  'php',
-            limit:  20,
+            query: 'php',
+            limit: 20,
             offset: 0,
         ));
 
@@ -35,27 +31,23 @@ final class SearchBooksTest extends TestCase
         $index    = new FakeMeilisearchBookIndex();
         $handler  = new SearchBooksHandler($index);
         $expected = new BookSearchResult(
-            hits:             [],
-            total:            7,
-            limit:            20,
-            offset:           0,
+            hits: [],
+            total: 7,
+            limit: 20,
+            offset: 0,
             processingTimeMs: 3,
         );
 
         $index->pushResult($expected);
 
         $result = $handler->handle(new SearchBooksCommand(
-            query:  'php',
-            limit:  20,
+            query: 'php',
+            limit: 20,
             offset: 0,
         ));
 
         $this->assertSame($expected, $result);
     }
-
-    // ──────────────────────────────────────────────────────────────
-    // SearchBooksCommand::fromArray
-    // ──────────────────────────────────────────────────────────────
 
     public function test_from_array_maps_query(): void
     {
@@ -120,7 +112,7 @@ final class SearchBooksTest extends TestCase
             'offset' => 40,
         ]);
 
-        $this->assertSame(5,  $command->limit);
+        $this->assertSame(5, $command->limit);
         $this->assertSame(40, $command->offset);
     }
 
@@ -133,28 +125,24 @@ final class SearchBooksTest extends TestCase
         $this->assertNull($command->language);
     }
 
-    // ──────────────────────────────────────────────────────────────
-    // SearchBooksCommand::toQuery
-    // ──────────────────────────────────────────────────────────────
-
     public function test_to_query_maps_all_fields(): void
     {
         $command = new SearchBooksCommand(
-            query:      'ddd',
-            status:     BookStatusEnum::PUBLISHED,
+            query: 'ddd',
+            status: BookStatusEnum::PUBLISHED,
             accessType: AccessTypeEnum::FREE,
-            language:   'en',
-            limit:      10,
-            offset:     5,
+            language: 'en',
+            limit: 10,
+            offset: 5,
         );
 
         $query = $command->toQuery();
 
-        $this->assertSame('ddd',                   $query->query);
+        $this->assertSame('ddd', $query->query);
         $this->assertSame(BookStatusEnum::PUBLISHED, $query->status);
-        $this->assertSame(AccessTypeEnum::FREE,      $query->accessType);
-        $this->assertSame('en',                      $query->language);
-        $this->assertSame(10,                        $query->limit);
-        $this->assertSame(5,                         $query->offset);
+        $this->assertSame(AccessTypeEnum::FREE, $query->accessType);
+        $this->assertSame('en', $query->language);
+        $this->assertSame(10, $query->limit);
+        $this->assertSame(5, $query->offset);
     }
 }

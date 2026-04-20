@@ -18,6 +18,21 @@ final readonly class ReadingSession
         public int                 $durationSeconds,
     ) {}
 
+    public static function begin(int $userId, int $bookId, ?int $startPageId): self
+    {
+        return new self(
+            id: null,
+            userId: $userId,
+            bookId: $bookId,
+            startPageId: $startPageId,
+            endPageId: null,
+            startedAt: new \DateTimeImmutable(),
+            endedAt: null,
+            pagesRead: 0,
+            durationSeconds: 0,
+        );
+    }
+
     public function end(int $endPageId, int $durationSeconds): self
     {
         $pagesRead = $this->startPageId
@@ -25,30 +40,15 @@ final readonly class ReadingSession
             : 0;
 
         return new self(
-            id:              $this->id,
-            userId:          $this->userId,
-            bookId:          $this->bookId,
-            startPageId:     $this->startPageId,
-            endPageId:       $endPageId,
-            startedAt:       $this->startedAt,
-            endedAt:         new \DateTimeImmutable(),
-            pagesRead:       $pagesRead,
+            id: $this->id,
+            userId: $this->userId,
+            bookId: $this->bookId,
+            startPageId: $this->startPageId,
+            endPageId: $endPageId,
+            startedAt: $this->startedAt,
+            endedAt: new \DateTimeImmutable(),
+            pagesRead: $pagesRead,
             durationSeconds: $durationSeconds,
-        );
-    }
-
-    public static function begin(int $userId, int $bookId, ?int $startPageId): self
-    {
-        return new self(
-            id:              null,
-            userId:          $userId,
-            bookId:          $bookId,
-            startPageId:     $startPageId,
-            endPageId:       null,
-            startedAt:       new \DateTimeImmutable(),
-            endedAt:         null,
-            pagesRead:       0,
-            durationSeconds: 0,
         );
     }
 }

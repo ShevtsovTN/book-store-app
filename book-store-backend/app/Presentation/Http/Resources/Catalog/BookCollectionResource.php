@@ -8,6 +8,13 @@ use App\Domain\Catalog\ValueObjects\BookCollection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @property BookCollection $resource
+ * @property int $total
+ * @property int $perPage
+ * @property int $currentPage
+ * @property int $totalPages
+ */
 final class BookCollectionResource extends JsonResource
 {
     private BookCoverStorageInterface $storage;
@@ -15,17 +22,17 @@ final class BookCollectionResource extends JsonResource
     public function withStorage(BookCoverStorageInterface $storage): self
     {
         $this->storage = $storage;
+
         return $this;
     }
 
     public function toArray(Request $request): array
     {
-        /** @var BookCollection $collection */
         $collection = $this->resource;
 
         return [
             'data' => array_map(
-                fn (Book $book) => new BookResource($book)
+                fn(Book $book) => new BookResource($book)
                     ->withStorage($this->storage)
                     ->toArray($request),
                 $collection->items,

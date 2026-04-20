@@ -14,7 +14,7 @@ final readonly class ReadingProgress
 
     public function percentage(): float
     {
-        if ($this->totalPages === 0) {
+        if (0 === $this->totalPages) {
             return 0.0;
         }
 

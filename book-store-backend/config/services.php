@@ -41,4 +41,10 @@ return [
         'timeout_ms' => env('MEILI_TIMEOUT_MS', 5000),
         'interval_ms' => env('MEILI_INTERVAL_MS', 5000),
     ],
+
+    'stripe' => [
+        'secret'         => env('STRIPE_SECRET_KEY'),
+        'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
+        'subscription_price_ids' => array_filter(explode(',', env('STRIPE_SUBSCRIPTION_PRICE_IDS', ''))),
+    ],
 ];

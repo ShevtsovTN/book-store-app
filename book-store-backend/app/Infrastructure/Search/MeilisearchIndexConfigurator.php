@@ -10,6 +10,7 @@ use Meilisearch\Client;
 final readonly class MeilisearchIndexConfigurator
 {
     private const string INDEX_NAME   = 'books';
+
     private const string INDEX_BUFFER = 'books_buffer'; // для zero-downtime swap
 
     public function __construct(
@@ -181,7 +182,7 @@ final readonly class MeilisearchIndexConfigurator
         foreach ($books as $book) {
             $batch[] = $this->toDocument($book);
 
-            if (count($batch) === 500) {
+            if (500 === count($batch)) {
                 $task     = $this->client->index(self::INDEX_BUFFER)->addDocuments($batch);
                 $taskUids[] = $task['taskUid'];
                 $batch    = [];
@@ -189,7 +190,7 @@ final readonly class MeilisearchIndexConfigurator
         }
 
         // Последний неполный батч
-        if (!empty($batch)) {
+        if ( ! empty($batch)) {
             $task     = $this->client->index(self::INDEX_BUFFER)->addDocuments($batch);
             $taskUids[] = $task['taskUid'];
         }

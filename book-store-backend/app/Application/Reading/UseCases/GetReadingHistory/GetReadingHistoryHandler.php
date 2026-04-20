@@ -6,6 +6,7 @@ namespace App\Application\Reading\UseCases\GetReadingHistory;
 
 use App\Domain\Reading\Interfaces\ReadingSessionRepositoryInterface;
 use App\Domain\Reading\Interfaces\UserReadingProgressRepositoryInterface;
+use App\Domain\Reading\ValueObjects\ReadingHistoryItem;
 
 final readonly class GetReadingHistoryHandler
 {
@@ -25,14 +26,14 @@ final readonly class GetReadingHistoryHandler
         }
 
         $items = array_map(
-            static fn ($s) => new ReadingHistoryItem(
-                sessionId:       $s->id,
-                bookId:          $s->bookId,
-                pagesRead:       $s->pagesRead,
+            static fn($s) => new ReadingHistoryItem(
+                sessionId: $s->id,
+                bookId: $s->bookId,
+                pagesRead: $s->pagesRead,
                 durationSeconds: $s->durationSeconds,
-                startedAt:       $s->startedAt,
-                endedAt:         $s->endedAt,
-                completion:      $progressByBook[$s->bookId]?->completionPercentage ?? 0.0,
+                startedAt: $s->startedAt,
+                endedAt: $s->endedAt,
+                completion: $progressByBook[$s->bookId]?->completionPercentage ?? 0.0,
             ),
             $sessions,
         );

@@ -18,7 +18,7 @@ final readonly class UploadBookCoverHandler
     {
         $book = $this->books->findById($command->bookId);
 
-        if (!$book) {
+        if ( ! $book) {
             throw new BookNotFoundException($command->bookId);
         }
 
@@ -27,9 +27,9 @@ final readonly class UploadBookCoverHandler
         }
 
         $path = $this->storage->upload(
-            bookId:    $command->bookId,
-            tempPath:  $command->tempPath,
-            filename:  $command->filename,
+            bookId: $command->bookId,
+            tempPath: $command->tempPath,
+            filename: $command->filename,
         );
 
         $updated = new Book(

@@ -23,14 +23,14 @@ final readonly class SyncBookTagsHandler
     {
         $book = $this->books->findById($command->bookId);
 
-        if (!$book) {
+        if ( ! $book) {
             throw new BookNotFoundException($command->bookId);
         }
 
         $existingTags = $this->tags->findByIds($command->tagIds);
 
         if (count($existingTags) !== count($command->tagIds)) {
-            $existingIds = array_map(static fn (Tag $t) => $t->id, $existingTags);
+            $existingIds = array_map(static fn(Tag $t) => $t->id, $existingTags);
             $missing     = array_diff($command->tagIds, $existingIds);
 
             throw new TagNotFoundException(array_values($missing));

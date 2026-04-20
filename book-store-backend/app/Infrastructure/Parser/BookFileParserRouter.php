@@ -6,7 +6,7 @@ use App\Application\Catalog\Interfaces\BookFileParserInterface;
 use App\Application\Catalog\DTOs\ParsedBook;
 use Smalot\PdfParser\Exception\MissingCatalogException;
 
-final readonly class  BookFileParserRouter implements BookFileParserInterface
+final readonly class BookFileParserRouter implements BookFileParserInterface
 {
     public function __construct(
         private PdfBookFileParser  $pdfParser,
@@ -22,7 +22,7 @@ final readonly class  BookFileParserRouter implements BookFileParserInterface
             'application/pdf'      => $this->pdfParser->parse($bookId, $filePath),
             'application/epub+zip' => $this->epubParser->parse($bookId, $filePath),
             default => throw new \InvalidArgumentException(
-                "Invalid format: {$mimeType}"
+                "Invalid format: {$mimeType}",
             ),
         };
     }

@@ -46,7 +46,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  */
 final class BookModel extends Model
 {
-    use SoftDeletes, HasFactory;
+    use SoftDeletes;
+    use HasFactory;
 
     protected $table = 'books';
 
@@ -72,7 +73,7 @@ final class BookModel extends Model
     protected $casts = [
         'price'        => 'integer',
         'pages_count'  => 'integer',
-        'published_at' => 'datetime',
+        'published_at' => 'immutable_datetime',
         'status' => BookStatusEnum::class,
         'access_type' => AccessTypeEnum::class,
     ];
@@ -85,6 +86,11 @@ final class BookModel extends Model
     public function volumes(): HasMany
     {
         return $this->hasMany(BookVolumeModel::class, 'book_id');
+    }
+
+    public function bookmark(): HasMany
+    {
+        return $this->hasMany(BookmarkModel::class, 'book_id');
     }
 
     public function scopePublished(Builder $query): Builder
@@ -124,7 +130,7 @@ final class BookModel extends Model
             TagModel::class,
             'book_tag',
             'book_id',
-            'tag_id'
+            'tag_id',
         );
     }
 

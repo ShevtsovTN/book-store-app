@@ -21,20 +21,39 @@ final readonly class HighlightColor
 
     public static function from(string $name): self
     {
-        if (!isset(self::ALLOWED[$name])) {
+        if ( ! isset(self::ALLOWED[$name])) {
             throw new \InvalidArgumentException(
-                "Invalid color: {$name}. Allowed values: " . implode(', ', array_keys(self::ALLOWED))
+                "Invalid color: {$name}. Allowed values: " . implode(', ', array_keys(self::ALLOWED)),
             );
         }
 
         return new self($name, self::ALLOWED[$name]);
     }
 
-    public static function yellow(): self { return self::from('yellow'); }
-    public static function green(): self  { return self::from('green'); }
-    public static function blue(): self   { return self::from('blue'); }
-    public static function pink(): self   { return self::from('pink'); }
-    public static function orange(): self { return self::from('orange'); }
+    public static function yellow(): self
+    {
+        return self::from('yellow');
+    }
+
+    public static function green(): self
+    {
+        return self::from('green');
+    }
+
+    public static function blue(): self
+    {
+        return self::from('blue');
+    }
+
+    public static function pink(): self
+    {
+        return self::from('pink');
+    }
+
+    public static function orange(): self
+    {
+        return self::from('orange');
+    }
 
     public static function allowedNames(): array
     {

@@ -21,12 +21,12 @@ final readonly class GetBookHandler
     {
         $book = $this->books->findById($command->id);
 
-        if (!$book) {
+        if ( ! $book) {
             throw new BookNotFoundException($command->id);
         }
 
         return new GetBookResult(
-            book:      $book,
+            book: $book,
             fileLinks: $this->resolveFileLinks($book),
         );
     }
@@ -36,10 +36,10 @@ final readonly class GetBookHandler
         $files = $this->fileStorage->listFiles("books/{$book->id}");
 
         return array_map(
-            fn (string $path) => new BookFileLink(
+            fn(string $path) => new BookFileLink(
                 mimeType: $this->resolveMimeType($path),
-                url:      $this->fileStorage->url($path),
-                label:    strtoupper(pathinfo($path, PATHINFO_EXTENSION)),
+                url: $this->fileStorage->url($path),
+                label: mb_strtoupper(pathinfo($path, PATHINFO_EXTENSION)),
             ),
             $files,
         );

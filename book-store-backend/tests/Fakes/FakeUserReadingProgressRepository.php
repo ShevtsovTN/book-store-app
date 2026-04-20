@@ -10,6 +10,7 @@ final class FakeUserReadingProgressRepository implements UserReadingProgressRepo
 {
     /** @var array<string, UserReadingProgress> */
     private array $store = [];
+
     private int $nextId = 1;
 
     public function findByUserAndBook(int $userId, int $bookId): ?UserReadingProgress
@@ -44,7 +45,7 @@ final class FakeUserReadingProgressRepository implements UserReadingProgressRepo
             array_filter(
                 $this->store,
                 static fn(UserReadingProgress $p) => $p->userId === $userId,
-            )
+            ),
         );
     }
 

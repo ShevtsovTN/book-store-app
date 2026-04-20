@@ -30,7 +30,7 @@ final class BookTagController extends Controller
                 new SyncBookTagsCommand(
                     bookId: $id,
                     tagIds: $request->validated()['tag_ids'],
-                )
+                ),
             );
         } catch (BookNotFoundException $e) {
             return new JsonResponse(['message' => $e->getMessage()], 404);
@@ -41,7 +41,7 @@ final class BookTagController extends Controller
             new SyncBookTagsCommand(
                 bookId: $id,
                 tagIds: $request->validated()['tag_ids'],
-            )
+            ),
         );
 
         return new JsonResponse(null, 204);
@@ -53,7 +53,7 @@ final class BookTagController extends Controller
             new AttachBookTagCommand(
                 bookId: $id,
                 tagId: $tagId,
-            )
+            ),
         );
 
         return new JsonResponse(null, 204);
@@ -65,7 +65,7 @@ final class BookTagController extends Controller
             new DetachBookTagCommand(
                 bookId: $id,
                 tagId: $tagId,
-            )
+            ),
         );
 
         return new JsonResponse(null, 204);

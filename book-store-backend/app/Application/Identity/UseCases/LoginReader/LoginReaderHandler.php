@@ -4,11 +4,11 @@ namespace App\Application\Identity\UseCases\LoginReader;
 
 use App\Application\Identity\Interfaces\PasswordHasherInterface;
 use App\Application\Identity\UseCases\AuthResult;
-use App\Domain\Identity\Enums\RoleEnum;
 use App\Domain\Identity\Exceptions\InvalidCredentialsException;
 use App\Domain\Identity\Interfaces\AuthenticationServiceInterface;
 use App\Domain\Identity\Interfaces\UserRepositoryInterface;
 use App\Domain\Identity\ValueObjects\Email;
+use App\Domain\Shared\Enums\RoleEnum;
 
 final readonly class LoginReaderHandler
 {
@@ -23,9 +23,9 @@ final readonly class LoginReaderHandler
         $email  = new Email($command->email);
         $user = $this->users->findByEmail($email);
 
-        if ($user === null
-            || $user->getRole() !== RoleEnum::READER
-            || !$this->hasher->verify($command->plainPassword, $user->getPassword()->value)
+        if (null === $user
+            || RoleEnum::READER !== $user->getRole()
+            || ! $this->hasher->verify($command->plainPassword, $user->getPassword()->value)
         ) {
             throw InvalidCredentialsException::create();
         }

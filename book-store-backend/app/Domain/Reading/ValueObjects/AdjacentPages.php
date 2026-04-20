@@ -15,11 +15,11 @@ final readonly class AdjacentPages
 
     public function hasPrevious(): bool
     {
-        return $this->previous !== null;
+        return null !== $this->previous;
     }
 
     public function hasNext(): bool
     {
-        return $this->next !== null;
+        return null !== $this->next;
     }
 }

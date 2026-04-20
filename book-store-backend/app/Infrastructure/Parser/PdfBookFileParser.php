@@ -8,7 +8,6 @@ use App\Application\Catalog\DTOs\ParsedChapter;
 use App\Domain\Reading\Enums\ContentFormatEnum;
 use Exception;
 use Illuminate\Support\Facades\Storage;
-use Smalot\PdfParser\Exception\MissingCatalogException;
 use Smalot\PdfParser\Page;
 use Smalot\PdfParser\Parser;
 
@@ -27,24 +26,24 @@ final class PdfBookFileParser
             $pages  = $pdf->getPages();
 
             $parsedPages = array_map(
-                static fn (Page $page, int $index) => new ParsedPage(
-                    number:        $index + 1,
-                    content:       $page->getText(),
+                static fn(Page $page, int $index) => new ParsedPage(
+                    number: $index + 1,
+                    content: $page->getText(),
                     contentFormat: ContentFormatEnum::TEXT,
-                    wordCount:     str_word_count($page->getText()),
+                    wordCount: str_word_count($page->getText()),
                 ),
                 $pages,
                 array_keys($pages),
             );
 
             return new ParsedBook(
-                bookId:     $bookId,
+                bookId: $bookId,
                 totalPages: count($parsedPages),
-                chapters:   [
+                chapters: [
                     new ParsedChapter(
-                        title:  'Main chapter',
+                        title: 'Main chapter',
                         number: 1,
-                        pages:  $parsedPages,
+                        pages: $parsedPages,
                     ),
                 ],
             );
@@ -61,6 +60,7 @@ final class PdfBookFileParser
         $localPath = sys_get_temp_dir() . '/' . uniqid('pdf_', true) . '.pdf';
         $contents  = Storage::disk('s3')->get($s3Path);
         file_put_contents($localPath, $contents);
+
         return $localPath;
     }
 }

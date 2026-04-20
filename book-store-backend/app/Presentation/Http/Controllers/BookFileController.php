@@ -12,9 +12,20 @@ use Symfony\Component\HttpFoundation\Response;
 final class BookFileController extends Controller
 {
     public function __construct(
-        private readonly UploadBookFileHandler $uploadFileHandler
+        private readonly UploadBookFileHandler $uploadFileHandler,
     ) {}
 
+    /**
+     * @param UploadBookFileRequest $request
+     * @param int $id
+     * @return JsonResponse
+     *
+     * @response array{
+     *     book_id: int,
+     *     file_path: string,
+     *     status: App\Domain\Catalog\Enums\BookUploadStatusEnum
+     * }
+     */
     public function __invoke(UploadBookFileRequest $request, int $id): JsonResponse
     {
         $file = $request->file('book_file');
@@ -25,7 +36,7 @@ final class BookFileController extends Controller
                 tempPath: $file->getRealPath(),
                 filename: $file->getClientOriginalName(),
                 mimeType: $file->getMimeType(),
-            )
+            ),
         );
 
         return new JsonResponse([

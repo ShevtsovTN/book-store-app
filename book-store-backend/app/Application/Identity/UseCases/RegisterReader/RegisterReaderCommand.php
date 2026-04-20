@@ -15,8 +15,8 @@ final readonly class RegisterReaderCommand
     public static function fromArray(array $data): self
     {
         return new self(
-            name:          $data['name'],
-            email:         $data['email'],
+            name: $data['name'],
+            email: $data['email'],
             plainPassword: $data['password'],
         );
     }

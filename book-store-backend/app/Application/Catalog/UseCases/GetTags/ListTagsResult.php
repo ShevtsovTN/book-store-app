@@ -10,6 +10,5 @@ final readonly class ListTagsResult
 {
     public function __construct(
         public TagCollection $collection,
-    ) {
-    }
+    ) {}
 }

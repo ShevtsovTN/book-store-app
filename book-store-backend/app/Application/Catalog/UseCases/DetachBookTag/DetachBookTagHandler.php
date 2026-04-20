@@ -19,7 +19,7 @@ final readonly class DetachBookTagHandler
     {
         $book = $this->books->findById($command->bookId);
 
-        if (!$book) {
+        if ( ! $book) {
             throw new BookNotFoundException($command->bookId);
         }
 

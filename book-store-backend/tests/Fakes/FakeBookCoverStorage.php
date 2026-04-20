@@ -9,12 +9,14 @@ use App\Application\Catalog\Interfaces\BookCoverStorageInterface;
 final class FakeBookCoverStorage implements BookCoverStorageInterface
 {
     private array $uploaded = [];
+
     private array $deleted  = [];
 
     public function upload(int $bookId, string $tempPath, string $filename): string
     {
         $path = "covers/{$bookId}/{$filename}";
         $this->uploaded[$path] = $tempPath;
+
         return $path;
     }
 

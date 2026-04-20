@@ -11,6 +11,7 @@ use Illuminate\Console\Command;
 final class ReindexBooksCommand extends Command
 {
     protected $signature   = 'search:reindex';
+
     protected $description = 'Reindex all books in MeiliSearch via zero-downtime swap';
 
     public function __construct(
@@ -25,7 +26,7 @@ final class ReindexBooksCommand extends Command
         $this->info('Starting reindex...');
 
         $this->configurator->reindexWithSwap(
-            $this->books->cursor()
+            $this->books->cursor(),
         );
 
         $this->info('Done.');

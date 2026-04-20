@@ -15,27 +15,6 @@ use PHPUnit\Framework\TestCase;
 final class BookTest extends TestCase
 {
     public const string DEFAULT_CURRENCY = 'EUR';
-    private function makeBook(array $overrides = []): Book
-    {
-        return new Book(
-            title: $overrides['title']         ?? 'Master and Margarita',
-            slug: $overrides['slug']          ?? 'master-i-margarita',
-            language: $overrides['language']      ?? 'ru',
-            edition: $overrides['edition']       ?? 1,
-            pagesCount: $overrides['pagesCount']    ?? 0,
-            accessType: $overrides['accessType']    ?? AccessTypeEnum::FREE,
-            price: $overrides['price']         ?? Money::zero(new Currency(self::DEFAULT_CURRENCY)),
-            status: $overrides['status']        ?? BookStatusEnum::DRAFT,
-            description: $overrides['description']   ?? null,
-            isbn: $overrides['isbn']          ?? null,
-            publishedAt: $overrides['publishedAt']   ?? null,
-            coverPath: $overrides['coverPath']     ?? null,
-            filePath: $overrides['filePath']      ?? null,
-            publisher: $overrides['publisher']     ?? null,
-            publishedYear: $overrides['publishedYear'] ?? null,
-            id: $overrides['id']            ?? null,
-        );
-    }
 
     public function test_draft_book_is_not_published(): void
     {
@@ -115,5 +94,27 @@ final class BookTest extends TestCase
 
         $this->assertEquals(BookStatusEnum::DRAFT, $book->status);
         $this->assertNotSame($book, $published);
+    }
+
+    private function makeBook(array $overrides = []): Book
+    {
+        return new Book(
+            title: $overrides['title']         ?? 'Master and Margarita',
+            slug: $overrides['slug']          ?? 'master-i-margarita',
+            language: $overrides['language']      ?? 'ru',
+            edition: $overrides['edition']       ?? 1,
+            pagesCount: $overrides['pagesCount']    ?? 0,
+            accessType: $overrides['accessType']    ?? AccessTypeEnum::FREE,
+            price: $overrides['price']         ?? Money::zero(new Currency(self::DEFAULT_CURRENCY)),
+            status: $overrides['status']        ?? BookStatusEnum::DRAFT,
+            description: $overrides['description']   ?? null,
+            isbn: $overrides['isbn']          ?? null,
+            publishedAt: $overrides['publishedAt']   ?? null,
+            coverPath: $overrides['coverPath']     ?? null,
+            filePath: $overrides['filePath']      ?? null,
+            publisher: $overrides['publisher']     ?? null,
+            publishedYear: $overrides['publishedYear'] ?? null,
+            id: $overrides['id']            ?? null,
+        );
     }
 }
