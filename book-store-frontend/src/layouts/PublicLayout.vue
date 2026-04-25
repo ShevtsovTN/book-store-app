@@ -3,9 +3,12 @@ import { RouterLink, RouterView } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useCartStore } from '@/stores/cart'
 import AppBreadcrumbs from '@/components/ui/AppBreadcrumbs.vue'
+import { onMounted } from 'vue'
 
 const auth = useAuthStore()
 const cart = useCartStore()
+
+onMounted(() => cart.fetchCart())
 </script>
 
 <template>
@@ -55,7 +58,9 @@ const cart = useCartStore()
           </div>
           <div class="cart-btn__info">
             <span class="cart-btn__label">Cart</span>
-            <span v-if="cart.itemsCount > 0" class="cart-btn__total">Total: {{ cart.total }}</span>
+            <span v-if="cart.itemsCount > 0" class="cart-btn__total"
+              >Total: {{ cart.total?.formatted }}</span
+            >
           </div>
         </RouterLink>
       </div>
